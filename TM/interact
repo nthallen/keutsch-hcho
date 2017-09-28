@@ -1,0 +1,12 @@
+# Startup script for hcho
+  Launch memo memo -o $Experiment.log
+  Launch TM/DCo TMbfr
+
+  memo=/dev/huarp/$Experiment/memo
+  echo "Running script interact" >$memo
+
+  Launch DG/cmd hchocol
+  Launch cmd/server hchosrvr
+  Launch - lgr -N `mlf_find LOG`
+  Launch - tmdf
+# Launch - hchoalgo -v
