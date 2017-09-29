@@ -1,0 +1,8 @@
+TM typedef unsigned short BCtr_Cts_t { text "%5u"; }
+
+TM 1 Hz BCtr_Cts_t BCtr_Bins[204];
+
+Group BCtr (BCtr_Bins) {
+  BCtr_collect(BCtr_Bins);
+}
+

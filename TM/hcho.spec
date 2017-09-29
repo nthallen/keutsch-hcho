@@ -1,4 +1,7 @@
 tmcbase = base.tmc
+tmcbase = BCtr.tmc
+
+colbase = BCtr_col.tmc
 
 Module TMbase
 
