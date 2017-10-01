@@ -6,6 +6,9 @@ colbase = BCtr_col.tmc
 cmdbase = BCtr.cmd
 
 genuibase = hcho.genui
+genuibase = BCtr.genui
+
+extbase = BCtr_conv.tmc
 
 Module TMbase
 
