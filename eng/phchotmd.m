@@ -1,5 +1,5 @@
-function pengtmd(varargin);
-% pengtmd( [...] );
+function phchotmd(varargin);
+% phchotmd( [...] );
 % T Mbase Disk
 h = timeplot({'Disk'}, ...
       'T Mbase Disk', ...

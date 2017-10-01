@@ -1,0 +1,23 @@
+%{
+  #include <stdio.h>
+  #include "tmctime.h"
+
+  FILE *ofp;
+
+  void BCtrext_init() {
+    ofp = fopen("BCtrext.csv", "w");
+    if (ofp == 0)
+      nl_error(3, "Unable to write to BCtrext.csv");
+  }
+
+  void BCtrext_output(double T, unsigned short *Bins, int Nbins) {
+    int i;
+    fprintf(ofp, "%.3lf", T);
+    for (i=0; i < Nbins; ++i)
+      fprintf(ofp, ",%u", Bins[i]);
+    fprintf(ofp, "\n");
+  }
+%}
+TM INITFUNC BCtrext_init();
+BCtrext_output(dtime(), BCtr_Bins, 205);
+

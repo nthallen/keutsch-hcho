@@ -19,6 +19,10 @@ hchodispncoui.c
 hchodispncoui.o
 hchodispnc.o
 doit.dep
+BCtrext.cc
+BCtrextoui.c
+BCtrextoui.o
+BCtrext.o
 hchoclt.o
 hchocltoui.c
 hchocltoui.o
@@ -41,6 +45,7 @@ hchosrvr
 hchodisp
 hchodispnc
 doit
+BCtrext
 hchoclt
 hchocltnc
 hchoengext

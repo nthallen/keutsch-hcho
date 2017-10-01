@@ -6,20 +6,20 @@ Effective Frame Dimensions:
   7 Rows 64 Columns
   7 rows/sec
   3584 bits/sec
-  Data:  3336 bits/sec  93 %
+  Data:  3352 bits/sec  94 %
   Synch: 224 bits/sec  6 %
-  Empty: 24 bits/sec  1 %
+  Empty: 8 bits/sec  0 %
 -------End of Frame Statistics-----
 
 
 --------PCM Definition-------------
 7/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
 7/1 Hz 2 bytes Datum Synch (1,0,62,2)
-1/1 Hz 408 bytes Group BCtr (7,0,2,60) (7,1,2,60) (7,2,2,60) (7,3,2,60) (7,4,2,60) (7,5,2,60) (7,6,2,48)
-1/1 Hz 408 bytes Member BCtr_Bins (7,0,2,60) (7,1,2,60) (7,2,2,60) (7,3,2,60) (7,4,2,60) (7,5,2,60) (7,6,2,48)
-1/1 Hz 4 bytes Datum SysTDrift (7,6,50,4)
-1/1 Hz 2 bytes Datum Disk (7,6,54,2)
-1/1 Hz 2 bytes Datum freemem (7,6,56,2)
-1/1 Hz 1 bytes Datum CPU_Pct (7,6,58,1)
+1/1 Hz 410 bytes Group BCtr (7,0,2,60) (7,1,2,60) (7,2,2,60) (7,3,2,60) (7,4,2,60) (7,5,2,60) (7,6,2,50)
+1/1 Hz 410 bytes Member BCtr_Bins (7,0,2,60) (7,1,2,60) (7,2,2,60) (7,3,2,60) (7,4,2,60) (7,5,2,60) (7,6,2,50)
+1/1 Hz 4 bytes Datum SysTDrift (7,6,52,4)
+1/1 Hz 2 bytes Datum Disk (7,6,56,2)
+1/1 Hz 2 bytes Datum freemem (7,6,58,2)
+1/1 Hz 1 bytes Datum CPU_Pct (7,6,60,1)
 -------End of PCM Definition-------
 

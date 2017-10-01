@@ -10,21 +10,30 @@
   
   void BCtr_init() {
     int i;
+    unsigned short status = 1;
     sbwr(BCtr_BASE, 0);
     sbwr(BCtr_BASE, 0x8000);
+    while (status) {
+      status = sbrw(BCtr_BASE);
+    }
     for (i = 0; i < N_BIN_SPECS; ++i) {
-      sbwr(BCtr_BASE+1+2*i, NA[i]);
-      sbwr(BCtr_BASE+2+2*i, NB[i]);
+      sbwr(BCtr_BASE+3+2*i, NA[i]);
+      sbwr(BCtr_BASE+4+2*i, NB[i]);
     }
     sbwr(BCtr_BASE+11, (unsigned short) (NC & 0xFFFFL));
     sbwr(BCtr_BASE+12, (unsigned short) ((NC>>16) & 0xFFFFL));
-    BCtr_req = pack_mread_request(204, "20,21|CA@22");
+    BCtr_req = pack_mread_request(205, "20,21|CB@22");
   }
 
   void BCtr_collect(unsigned short *Bins) {
     unsigned short nw;
+    static unsigned short saw_nw = 0;
     mread_subbus_nw(BCtr_req, Bins, &nw);
-    while (nw < 204) {
+    if (nw != saw_nw) {
+      nl_error(0, "nw = %u", nw);
+      saw_nw = nw;
+    }
+    while (nw < 205) {
       Bins[nw++] = 0;
     }
   }

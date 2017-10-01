@@ -3,6 +3,10 @@ tmcbase = BCtr.tmc
 
 colbase = BCtr_col.tmc
 
+cmdbase = BCtr.cmd
+
+genuibase = hcho.genui
+
 Module TMbase
 
 SCRIPT = interact
@@ -11,5 +15,6 @@ IGNORE = Makefile
 
 hchocol : -lsubbus
 hchosrvr : -lsubbus
-hchodisp : HCHO.tbl
+hchodisp : BCtr_conv.tmc HCHO.tbl
 doit : hcho.doit
+BCtrext : BCtrext.tmc

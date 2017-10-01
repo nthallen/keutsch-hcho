@@ -1,5 +1,7 @@
 # Startup script for hcho
   Launch memo memo -o $Experiment.log
+  stty baud=115200 -onlcr -imaxbel </dev/serusb2
+  Launch /dev/huarp/subbus subbusd_serusb
   Launch TM/DCo TMbfr
 
   memo=/dev/huarp/$Experiment/memo

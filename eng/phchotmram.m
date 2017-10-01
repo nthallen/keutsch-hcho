@@ -1,5 +1,5 @@
-function pengtmram(varargin);
-% pengtmram( [...] );
+function phchotmram(varargin);
+% phchotmram( [...] );
 % T Mbase RAM
 h = timeplot({'freemem'}, ...
       'T Mbase RAM', ...
