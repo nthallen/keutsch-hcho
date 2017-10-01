@@ -1,0 +1,127 @@
+#! /bin/bash
+function nl_error {
+  echo "getrun: $*" >&2
+  exit 1
+}
+
+flt=''
+# gse=hcigse.arp.harvard.edu
+gse=nortvmnat
+# gse=10.0.5.19
+relay=fugue.arp.harvard.edu
+RAW_Dir=RAW
+HCL_Dir=.
+use_relay=no
+HomeDir=/home/hcho
+Exp=HCHO
+RunType=''
+Copy_CSV=yes
+Copy_SSP=no
+Decimate=no
+Matlab=no
+SCPOPTS=-Cp
+
+function usage {
+  echo "./getrun [options] [ [axis] [runtype] <run> ]+"
+  echo " options:"
+  echo "   relay: Relay through gateway machine: $relay"
+  echo "   nocsv: Don't copy csv files or start matlab"
+  echo "   nomatlab: Don't start matlab after transfer"
+  echo " runtype: flight, cal, data, junk"
+  echo "   runtype selection stays in effect until another runtype is selected"
+# echo " axis: SSP"
+# echo "   copy SSP data for the specified axis"
+# echo "   axis selections are 'sticky' and apply to all runs"
+  exit 0
+}
+
+function do_scp {
+  RC=''
+  [ $use_relay = yes ] && RC="-o 'ProxyCommand /usr/bin/ssh $relay /usr/bin/nc $gse 22'"
+  eval time scp $SCPOPTS $RC $*
+}
+
+function do_tar {
+  # do_tar $run $dir
+  # Accesses globals:
+  #   use_relay gse relay flt HomeDir RunType Decimate
+  run=$1
+  src=$2
+  PC="ProxyCommand /usr/bin/ssh $relay /usr/bin/nc $gse 22"
+  RC=''
+  DC=''
+  [ $use_relay = yes ] && RC="-o 'ProxyCommand /usr/bin/ssh $relay /usr/bin/nc $gse 22'"
+  [ $Decimate = yes ] && DC='--exclude="*[1-9].dat"'
+  echo Retrieving $HomeDir/raw/$RunType/$run/$src
+  eval time ssh $RC $gse tar -czf- -C $HomeDir/raw/$RunType/$run $DC $src | tar -C $RAW_Dir/$run$flt -xzf-
+}
+
+for run in $*; do
+  case $run in
+    -f) flt=F; RunType=flight;;
+    nocsv) Copy_CSV=no;;
+    [Ss][Ss][Pp]) Copy_SSP=yes;;
+    gse=*) gse=${run#gse=};;
+    relay) use_relay=yes;;
+    relay=*) use_relay=yes; relay=${run#relay=};;
+    nomatlab) Matlab=no;;
+    help) usage;;
+    --help) usage;;
+    cal) flt=''; RunType=cal;;
+    flight) flt=F; RunType=flight;;
+    data) flt=''; RunType=data;;
+    junk) flt=''; RunType=junk;;
+    [1-9][0-9][0-9][0-9][0-9][0-9].[0-9]*)
+      echo $run
+      [ -d $RAW_Dir ] || mkdir $RAW_Dir
+      [ -d $RAW_Dir/$run$flt ] || mkdir $RAW_Dir/$run$flt
+      if [ $Copy_CSV = yes ]; then
+        [ $Matlab = yes -a ! -f startup.m ] &&
+          nl_error "startup.m is missing: copy from HCl eng or select nomatlab"
+        do_scp $gse:$HomeDir/anal/$run/*.csv $RAW_Dir/$run$flt
+        echo "$RAW_Dir/$run$flt" >>runs.dat
+      fi
+      if [ -n "$RunType" ]; then
+        [ -f $RAW_Dir/$run$flt/$Exp.log ] ||
+          do_scp $gse:$HomeDir/raw/$RunType/$run/$Exp.log $RAW_Dir/$run$flt/$Exp.log
+        [ -f $RAW_Dir/$run$flt/saverun.log ] ||
+          do_scp $gse:$HomeDir/raw/$RunType/$run/saverun.log $RAW_Dir/$run$flt/saverun.log
+        [ -f $RAW_Dir/$run$flt/flight.sh.log ] ||
+          do_scp $gse:$HomeDir/raw/$RunType/$run/flight.sh.log $RAW_Dir/$run$flt/flight.sh.log
+      fi;;
+    *) nl_error "Unrecognized option: '$run'";;
+  esac
+done
+
+[ -f runs.dat ] && [ $Matlab = yes ] && matlab
+for run in $*; do
+  case $run in
+    -f) :;;
+    [Ss][Ss][Pp]) :;;
+    gse=*) :;;
+    nocsv) :;;
+    decimate) :;;
+    nomatlab) :;;
+    cal) flt=''; RunType=cal;;
+    flight) flt=F; RunType=flight;;
+    data) flt=''; RunType=data;;
+    junk) flt=''; RunType=junk;;
+    preflt) flt=''; RunType=preflt;;
+    [1-9][0-9][0-9][0-9][0-9][0-9].[0-9]*)
+      echo $run
+      if [ -n "$RunType" ]; then
+#       [ -f $RAW_Dir/$run$flt/waves.m ] ||
+#         do_scp $gse:$HomeDir/raw/$RunType/$run/Base/waves.m $RAW_Dir/$run$flt/waves.m
+        if [ $Copy_SSP = yes ]; then
+          [ -d $RAW_Dir ] || mkdir $RAW_Dir
+          [ -d $RAW_Dir/$run$flt ] || mkdir $RAW_Dir/$run$flt
+          [ -d $HCL_Dir ] || mkdir $HCL_Dir
+          [ -d $HCL_Dir/$run$flt ] || mkdir $HCL_Dir/$run$flt
+          do_tar $run SSP
+        fi
+      else
+        echo "No run type specified for SSP copy"
+      fi;;
+    *) nl_error "Unrecognized option in second pass: '$run'";;
+  esac
+done
