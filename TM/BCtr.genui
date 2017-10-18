@@ -1,15 +1,15 @@
- 1 BCtr_0_a    BCtr Cts
- 1 BCtr_1_a    BCtr Cts
- 1 BCtr_NWords BCtr NWords
- 1 BCtr_NSkip  BCtr NSkip
- 1 BCtr_NAB    BCtr NAB
+ 10 BCtr_0_a    BCtr Cts
+ 10 BCtr_1_a    BCtr Cts
+ 10 BCtr_NWords BCtr NWords
+ 10 BCtr_NSkip  BCtr NSkip
+ 10 BCtr_NAB    BCtr NAB
 
- 1 BCtr_Ready:BCtr_Status:5 BCtr Status
- 1 BCtr_Enable:BCtr_Status:0 BCtr Status
- 1 BCtr_DRdy:BCtr_Status:1 BCtr Status
- 1 BCtr_Tx:BCtr_Status:2 BCtr Status
- 1 BCtr_CfgOvf:BCtr_Status:3 BCtr Status
- 1 BCtr_CfgNAB:BCtr_Status:4 BCtr Status
- 1 BCtr_TxOvf:BCtr_Status:9 BCtr Status
+ 10 BCtr_Ready:BCtr_Status:5 BCtr Status
+ 10 BCtr_Enable:BCtr_Status:0 BCtr Status
+ 10 BCtr_DRdy:BCtr_Status:1 BCtr Status
+ 10 BCtr_Tx:BCtr_Status:2 BCtr Status
+ 10 BCtr_CfgOvf:BCtr_Status:3 BCtr Status
+ 10 BCtr_CfgNAB:BCtr_Status:4 BCtr Status
+ 10 BCtr_TxOvf:BCtr_Status:9 BCtr Status
 
 

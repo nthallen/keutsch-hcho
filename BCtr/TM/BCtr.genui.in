@@ -1,0 +1,15 @@
+ @rate@ BCtr_0_a    BCtr Cts
+ @rate@ BCtr_1_a    BCtr Cts
+ @rate@ BCtr_NWords BCtr NWords
+ @rate@ BCtr_NSkip  BCtr NSkip
+ @rate@ BCtr_NAB    BCtr NAB
+
+ @rate@ BCtr_Ready:BCtr_Status:5 BCtr Status
+ @rate@ BCtr_Enable:BCtr_Status:0 BCtr Status
+ @rate@ BCtr_DRdy:BCtr_Status:1 BCtr Status
+ @rate@ BCtr_Tx:BCtr_Status:2 BCtr Status
+ @rate@ BCtr_CfgOvf:BCtr_Status:3 BCtr Status
+ @rate@ BCtr_CfgNAB:BCtr_Status:4 BCtr Status
+ @rate@ BCtr_TxOvf:BCtr_Status:9 BCtr Status
+
+

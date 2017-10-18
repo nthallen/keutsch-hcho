@@ -1,3 +1,7 @@
+BCtrext.cc
+BCtrextoui.c
+BCtrextoui.o
+BCtrext.o
 hchocol.cc
 tm.dac
 hchocoloui.c
@@ -19,10 +23,6 @@ hchodispncoui.c
 hchodispncoui.o
 hchodispnc.o
 doit.dep
-BCtrext.cc
-BCtrextoui.c
-BCtrextoui.o
-BCtrext.o
 hchoclt.o
 hchocltoui.c
 hchocltoui.o
@@ -40,12 +40,12 @@ HCHOtbl.tmc.dep
 HCHOtblnc.tmc.dep
 *.err
 Makefile
+BCtrext
 hchocol
 hchosrvr
 hchodisp
 hchodispnc
 doit
-BCtrext
 hchoclt
 hchocltnc
 hchoengext

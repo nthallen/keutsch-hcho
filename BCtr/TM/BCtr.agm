@@ -1,0 +1,20 @@
+Moduledef BCtr [ NAB=2 NA=1,220 NB=100,1 NC=297000L NW=205 from=15 to=99 rate=1 ] {
+  BCtr Module takes the following parameters:
+    NAB: The number of elements in the NA and NB arguments
+    NA: A comma-separated list of bin width values
+    NB: A comma-separated list of bin count values
+    NC: The NC value (number of triggers per integration period
+    NW: The number of words in the acquisition: 3+2*sum(NB)
+    from,to: Index range for wide bin
+    rate: The reporting rate in Hz
+}
+
+mode (default) {
+  tmcbase = BCtr.tmc:BCtr.tmc.in
+  colbase = BCtr_col.tmc:BCtr_col.tmc.in
+  cmdbase = BCtr.cmd:BCtr.cmd.in
+  extbase = BCtr_conv.tmc:BCtr_conv.tmc.in
+  genuibase = BCtr.genui:BCtr.genui.in
+  BCtrext : BCtrext.tmc:BCtrext.tmc.in
+}
+

@@ -1,25 +1,25 @@
 
 --------Frame Statistics-----------
-Major Frame: 7 minor frames, 1 Hz
-Minor Frame: 64 bytes, 7 Hz
+Major Frame: 70 minor frames, 1 Hz
+Minor Frame: 63 bytes, 70 Hz
 Effective Frame Dimensions:
-  7 Rows 64 Columns
-  7 rows/sec
-  3584 bits/sec
-  Data:  3352 bits/sec  94 %
-  Synch: 224 bits/sec  6 %
-  Empty: 8 bits/sec  0 %
+  70 Rows 63 Columns
+  70 rows/sec
+  -30256 bits/sec
+  Data:  -32664 bits/sec  -108 %
+  Synch: 2240 bits/sec  -7 %
+  Empty: 168 bits/sec  -1 %
 -------End of Frame Statistics-----
 
 
 --------PCM Definition-------------
-7/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
-7/1 Hz 2 bytes Datum Synch (1,0,62,2)
-1/1 Hz 410 bytes Group BCtr (7,0,2,60) (7,1,2,60) (7,2,2,60) (7,3,2,60) (7,4,2,60) (7,5,2,60) (7,6,2,50)
-1/1 Hz 410 bytes Member BCtr_Bins (7,0,2,60) (7,1,2,60) (7,2,2,60) (7,3,2,60) (7,4,2,60) (7,5,2,60) (7,6,2,50)
-1/1 Hz 4 bytes Datum SysTDrift (7,6,52,4)
-1/1 Hz 2 bytes Datum Disk (7,6,56,2)
-1/1 Hz 2 bytes Datum freemem (7,6,58,2)
-1/1 Hz 1 bytes Datum CPU_Pct (7,6,60,1)
+70/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
+70/1 Hz 2 bytes Datum Synch (1,0,61,2)
+10/1 Hz 410 bytes Group BCtr (7,0,2,59) (7,1,2,59) (7,2,2,59) (7,3,2,59) (7,4,2,59) (7,5,2,59) (7,6,2,56)
+10/1 Hz 410 bytes Member BCtr_Bins (7,0,2,59) (7,1,2,59) (7,2,2,59) (7,3,2,59) (7,4,2,59) (7,5,2,59) (7,6,2,56)
+1/1 Hz 4 bytes Datum SysTDrift (70,6,58,3) (70,13,58,1)
+1/1 Hz 2 bytes Datum Disk (70,13,59,2)
+1/1 Hz 2 bytes Datum freemem (70,20,58,2)
+1/1 Hz 1 bytes Datum CPU_Pct (70,20,60,1)
 -------End of PCM Definition-------
 
