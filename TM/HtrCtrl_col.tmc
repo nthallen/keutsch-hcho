@@ -1,0 +1,8 @@
+%{
+  #include "subbus.h"
+  static subbus_mread_req *HtrCtrlReq = pack_mread_request(7,"50:1:56");
+  static int HtrCtrl_collect(unsigned short*data) {
+    return mread_subbus(HtrCtrlReq, data);
+  }
+%}
+

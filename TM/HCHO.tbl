@@ -1,6 +1,7 @@
 Input "TMbase.tbl";
 Input "BCtr.tbl";
+Input "HtrCtrl.tbl";
 
-{ HBox { |; [BCtr]; |; [TMbaseB]; | };
+{ HBox { |+; [BCtr]; |+; { [HtrCtrl]; [TMbaseB] }; |+ };
   -;
 }

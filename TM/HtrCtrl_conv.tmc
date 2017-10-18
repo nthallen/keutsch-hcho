@@ -1,0 +1,14 @@
+%{
+  #define HtrFresh(x) (x?" ":"*")
+%}
+
+TM typedef unsigned short HtrFresh_t { text "%1d" HtrFresh(); }
+
+HtrFresh_t HtrDAC1_Fresh; Invalidate HtrDAC1_Fresh;
+{ HtrDAC1_Fresh = (Htr_Status>>7)&1; Validate HtrDAC1_Fresh; }
+HtrFresh_t HtrDAC2_Fresh; Invalidate HtrDAC2_Fresh;
+{ HtrDAC2_Fresh = (Htr_Status>>11)&1; Validate HtrDAC2_Fresh; }
+HtrFresh_t HtrADC1_Fresh; Invalidate HtrADC1_Fresh;
+{ HtrADC1_Fresh = (Htr_Status>>2)&1; Validate HtrADC1_Fresh; }
+HtrFresh_t HtrADC2_Fresh; Invalidate HtrADC2_Fresh;
+{ HtrADC2_Fresh = (Htr_Status>>3)&1; Validate HtrADC2_Fresh; }

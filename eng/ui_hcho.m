@@ -1,5 +1,8 @@
 function ui_hcho
 f = ne_dialg('HCHO Instrument',1);
+f = ne_dialg(f, 'add', 0, 1, 'ghchohc', 'Htr Ctrl' );
+f = ne_dialg(f, 'add', 1, 0, 'phchohcv', 'V' );
+f = ne_dialg(f, 'add', 1, 0, 'phchohcs', 'Status' );
 f = ne_dialg(f, 'add', 0, 1, 'ghchotm', 'T Mbase' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotmtd', 'T Drift' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotmcpu', 'CPU' );

@@ -1,25 +1,33 @@
 
 --------Frame Statistics-----------
-Major Frame: 70 minor frames, 1 Hz
-Minor Frame: 63 bytes, 70 Hz
+Major Frame: 80 minor frames, 1 Hz
+Minor Frame: 58 bytes, 80 Hz
 Effective Frame Dimensions:
-  70 Rows 63 Columns
-  70 rows/sec
-  -30256 bits/sec
-  Data:  -32664 bits/sec  -108 %
-  Synch: 2240 bits/sec  -7 %
-  Empty: 168 bits/sec  -1 %
+  80 Rows 58 Columns
+  80 rows/sec
+  -28416 bits/sec
+  Data:  -31544 bits/sec  -111 %
+  Synch: 2560 bits/sec  -9 %
+  Empty: 568 bits/sec  -2 %
 -------End of Frame Statistics-----
 
 
 --------PCM Definition-------------
-70/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
-70/1 Hz 2 bytes Datum Synch (1,0,61,2)
-10/1 Hz 410 bytes Group BCtr (7,0,2,59) (7,1,2,59) (7,2,2,59) (7,3,2,59) (7,4,2,59) (7,5,2,59) (7,6,2,56)
-10/1 Hz 410 bytes Member BCtr_Bins (7,0,2,59) (7,1,2,59) (7,2,2,59) (7,3,2,59) (7,4,2,59) (7,5,2,59) (7,6,2,56)
-1/1 Hz 4 bytes Datum SysTDrift (70,6,58,3) (70,13,58,1)
-1/1 Hz 2 bytes Datum Disk (70,13,59,2)
-1/1 Hz 2 bytes Datum freemem (70,20,58,2)
-1/1 Hz 1 bytes Datum CPU_Pct (70,20,60,1)
+80/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
+80/1 Hz 2 bytes Datum Synch (1,0,56,2)
+10/1 Hz 410 bytes Group BCtr (8,0,2,54) (8,1,2,54) (8,2,2,54) (8,3,2,54) (8,4,2,54) (8,5,2,54) (8,6,2,54) (8,7,2,32)
+10/1 Hz 410 bytes Member BCtr_Bins (8,0,2,54) (8,1,2,54) (8,2,2,54) (8,3,2,54) (8,4,2,54) (8,5,2,54) (8,6,2,54) (8,7,2,32)
+10/1 Hz 14 bytes Group HtrCtrl (8,7,34,14)
+10/1 Hz 2 bytes Member HtrADC2 (8,7,34,2)
+10/1 Hz 2 bytes Member HtrADC1 (8,7,36,2)
+10/1 Hz 2 bytes Member HtrDAC2_RB (8,7,38,2)
+10/1 Hz 2 bytes Member HtrDAC2_SP (8,7,40,2)
+10/1 Hz 2 bytes Member HtrDAC1_RB (8,7,42,2)
+10/1 Hz 2 bytes Member HtrDAC1_SP (8,7,44,2)
+10/1 Hz 2 bytes Member Htr_Status (8,7,46,2)
+1/1 Hz 4 bytes Datum SysTDrift (80,7,48,4)
+1/1 Hz 2 bytes Datum Disk (80,7,52,2)
+1/1 Hz 2 bytes Datum freemem (80,7,54,2)
+1/1 Hz 1 bytes Datum CPU_Pct (80,15,48,1)
 -------End of PCM Definition-------
 

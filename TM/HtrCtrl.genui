@@ -1,0 +1,11 @@
+ 10 HtrDAC1_SP HtrCtrl V
+ 10 HtrDAC1_RB HtrCtrl V
+ 10 HtrDAC2_SP HtrCtrl V
+ 10 HtrDAC2_RB HtrCtrl V
+ 10 HtrADC1 HtrCtrl V
+ 10 HtrADC2 HtrCtrl V
+ 10 HtrDAC1_Fresh:Htr_Status:7  HtrCtrl Status
+ 10 HtrDAC2_Fresh:Htr_Status:11 HtrCtrl Status
+ 10 HtrADC1_Fresh:Htr_Status:2  HtrCtrl Status
+ 10 HtrADC2_Fresh:Htr_Status:3  HtrCtrl Status
+
