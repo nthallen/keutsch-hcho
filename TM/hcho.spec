@@ -1,5 +1,5 @@
 tmcbase = base.tmc
-
+cmdbase = /usr/local/share/huarp/phrtg.cmd
 genuibase = hcho.genui
 
 # Heater Controller block is hard coded to 10 Hz.
@@ -24,5 +24,6 @@ IGNORE = Makefile
 hchocol : -lsubbus
 hchosrvr : -lsubbus
 hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc HCHO.tbl
+hchortgext : BCtr_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 doit : hcho.doit
 # BCtrext : BCtrext.tmc

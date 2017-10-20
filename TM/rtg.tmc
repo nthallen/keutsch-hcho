@@ -1,0 +1,3 @@
+ci_sendfcmd(2, "PhRTG Datum CPU_Pct %lu %s\n", itime(), text(CPU_Pct));
+ci_sendfcmd(2, "PhRTG Datum BCtr_0 %.3lf %s\n", dtime(), text(BCtr_0_a));
+ci_sendfcmd(2, "PhRTG Datum BCtr_NSkip %.3lf %s\n", dtime(), text(BCtr_NSkip));
