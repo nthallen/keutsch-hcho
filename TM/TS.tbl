@@ -1,0 +1,10 @@
+TS {
+  HBox { +-; Title: "Temp Sensors"; -+;};
+  ""        >Temp<    ""       >Cnt<;
+  "0"       (TS0_T,9) V        (TS0_cnt,3);
+  "1"       (TS1_T,9) V        (TS1_cnt,3);
+  "2"       (TS2_T,9) V        (TS2_cnt,3);
+  "3"       (TS3_T,9) V        (TS3_cnt,3);
+  "4"       (TS4_T,9) V        (TS4_cnt,3);
+  "5"       (TS5_T,9) V        (TS5_cnt,3);
+}

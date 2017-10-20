@@ -6,9 +6,9 @@ Effective Frame Dimensions:
   80 Rows 58 Columns
   80 rows/sec
   -28416 bits/sec
-  Data:  -31544 bits/sec  -111 %
+  Data:  -31256 bits/sec  -110 %
   Synch: 2560 bits/sec  -9 %
-  Empty: 568 bits/sec  -2 %
+  Empty: 280 bits/sec  -1 %
 -------End of Frame Statistics-----
 
 
@@ -25,9 +25,22 @@ Effective Frame Dimensions:
 10/1 Hz 2 bytes Member HtrDAC1_RB (8,7,42,2)
 10/1 Hz 2 bytes Member HtrDAC1_SP (8,7,44,2)
 10/1 Hz 2 bytes Member Htr_Status (8,7,46,2)
-1/1 Hz 4 bytes Datum SysTDrift (80,7,48,4)
-1/1 Hz 2 bytes Datum Disk (80,7,52,2)
-1/1 Hz 2 bytes Datum freemem (80,7,54,2)
-1/1 Hz 1 bytes Datum CPU_Pct (80,15,48,1)
+1/1 Hz 36 bytes Group TS (80,7,48,8) (80,15,48,8) (80,23,48,8) (80,31,48,8) (80,39,48,4)
+1/1 Hz 4 bytes Member TS5_raw (80,7,48,4)
+1/1 Hz 2 bytes Member TS5_cnt (80,7,52,2)
+1/1 Hz 4 bytes Member TS4_raw (80,7,54,2) (80,15,48,2)
+1/1 Hz 2 bytes Member TS4_cnt (80,15,50,2)
+1/1 Hz 4 bytes Member TS3_raw (80,15,52,4)
+1/1 Hz 2 bytes Member TS3_cnt (80,23,48,2)
+1/1 Hz 4 bytes Member TS2_raw (80,23,50,4)
+1/1 Hz 2 bytes Member TS2_cnt (80,23,54,2)
+1/1 Hz 4 bytes Member TS1_raw (80,31,48,4)
+1/1 Hz 2 bytes Member TS1_cnt (80,31,52,2)
+1/1 Hz 4 bytes Member TS0_raw (80,31,54,2) (80,39,48,2)
+1/1 Hz 2 bytes Member TS0_cnt (80,39,50,2)
+1/1 Hz 4 bytes Datum SysTDrift (80,39,52,4)
+1/1 Hz 2 bytes Datum Disk (80,47,48,2)
+1/1 Hz 2 bytes Datum freemem (80,47,50,2)
+1/1 Hz 1 bytes Datum CPU_Pct (80,47,52,1)
 -------End of PCM Definition-------
 

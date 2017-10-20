@@ -1,0 +1,32 @@
+%{
+  #define TS_cnt(x) TS_buf[x].cnt
+  #define TS_raw(x) TS_buf[x].raw
+  #define TS_buf_ptr (unsigned short *)TS_buf
+%}
+TM typedef signed long TS_raw_t;
+TM typedef unsigned short TS_cnt_t { text "%3u"; }
+/* TM typedef double TS_T_t { text "%7.2lf"; convert CELCIUS; } */
+TM typedef double TS_T_t { text "%9.5lf"; }
+
+TM 1 Hz TS_raw_t TS0_raw; TM 1 Hz TS_cnt_t TS0_cnt;
+TM 1 Hz TS_raw_t TS1_raw; TM 1 Hz TS_cnt_t TS1_cnt;
+TM 1 Hz TS_raw_t TS2_raw; TM 1 Hz TS_cnt_t TS2_cnt;
+TM 1 Hz TS_raw_t TS3_raw; TM 1 Hz TS_cnt_t TS3_cnt;
+TM 1 Hz TS_raw_t TS4_raw; TM 1 Hz TS_cnt_t TS4_cnt;
+TM 1 Hz TS_raw_t TS5_raw; TM 1 Hz TS_cnt_t TS5_cnt;
+
+Group TS (
+    TS0_cnt, TS0_raw,
+    TS1_cnt, TS1_raw,
+    TS2_cnt, TS2_raw,
+    TS3_cnt, TS3_raw,
+    TS4_cnt, TS4_raw,
+    TS5_cnt, TS5_raw) {
+  mread_subbus(TS_req, TS_buf_ptr);
+  TS0_cnt = TS_cnt(0); TS0_raw = TS_raw(0);
+  TS1_cnt = TS_cnt(1); TS1_raw = TS_raw(1);
+  TS2_cnt = TS_cnt(2); TS2_raw = TS_raw(2);
+  TS3_cnt = TS_cnt(3); TS3_raw = TS_raw(3);
+  TS4_cnt = TS_cnt(4); TS4_raw = TS_raw(4);
+  TS5_cnt = TS_cnt(5); TS5_raw = TS_raw(5);
+}
