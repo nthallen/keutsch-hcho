@@ -3,6 +3,12 @@ Input "BCtr.tbl";
 Input "HtrCtrl.tbl";
 Input "TS.tbl";
 
-{ HBox { |+; [BCtr]; |+; [TS]; |+; { [HtrCtrl]; [TMbaseB] }; |+ };
+PPS {
+  HBox{ +-; Title: "PPS"; -+ };
+  PPS:  (PPS_drift,6);
+  Fine: (PPS_fine,6);
+}
+
+{ HBox { |+; [BCtr]; |+; [TS]; |+; { [HtrCtrl]; [PPS]; [TMbaseB] }; |+ };
   -;
 }

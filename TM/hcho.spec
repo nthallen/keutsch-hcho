@@ -14,8 +14,11 @@ colbase = TS_col.tmc
 extbase = TS_conv.tmc
 genuibase = TS.genui
 
+tmcbase = pps.tmc
+cmdbase = pps.cmd
+
 Module TMbase
-Module BCtr rate=10 NC=29700L
+Module BCtr rate=10 NC=29700L NA=2,220 NB=50,1 NW=105 from=8 to=48
 
 SCRIPT = interact
 TGTDIR = $(TGTNODE)/home/hcho
@@ -26,4 +29,4 @@ hchosrvr : -lsubbus
 hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc HCHO.tbl
 hchortgext : BCtr_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 doit : hcho.doit
-# BCtrext : BCtrext.tmc
+hchoalgo : hcho.tma

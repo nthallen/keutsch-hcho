@@ -19,5 +19,5 @@
   }
 %}
 TM INITFUNC BCtrext_init();
-BCtrext_output(dtime(), BCtr_Bins, 205);
+BCtrext_output(dtime(), BCtr_Bins, 105);
 

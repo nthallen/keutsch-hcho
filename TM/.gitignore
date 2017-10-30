@@ -27,6 +27,11 @@ hchortgextoui.c
 hchortgextoui.o
 hchortgext.o
 doit.dep
+hchoalgoa.tmc
+hchoalgo.cc
+hchoalgooui.c
+hchoalgooui.o
+hchoalgo.o
 hchoclt.o
 hchocltoui.c
 hchocltoui.o
@@ -51,6 +56,7 @@ hchodisp
 hchodispnc
 hchortgext
 doit
+hchoalgo
 hchoclt
 hchocltnc
 hchoengext

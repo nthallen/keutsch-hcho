@@ -1,0 +1,23 @@
+%{
+  #include <math.h>
+  #include "subbus.h"
+%}
+TM typedef double PPS_Seconds { text "%6.4lf"; }
+TM typedef unsigned short PPS_t {
+  text "%6.4lf";
+  convert PPS_Seconds;
+}
+Calibration (PPS_t, PPS_Seconds) { 0, 0, 48828.125, 1 }
+TM typedef signed short PPS_fine_t { text "%6d"; }
+
+TM 10 Hz PPS_t PPS_time; collect PPS_time = sbrwa(0x60);
+TM 1  Hz PPS_fine_t PPS_fine; collect PPS_fine = sbrwa(0x61);
+
+PPS_Seconds PPS_drift; Invalidate PPS_drift;
+{ double dt;
+  dt = dtime();
+  dt = convert(PPS_time) - dt + floor(dt) + 0.5;
+  dt = dt - floor(dt) - 0.5;
+  PPS_drift = dt;
+  Validate PPS_drift;
+}

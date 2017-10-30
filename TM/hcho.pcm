@@ -1,46 +1,48 @@
 
 --------Frame Statistics-----------
-Major Frame: 80 minor frames, 1 Hz
-Minor Frame: 58 bytes, 80 Hz
+Major Frame: 40 minor frames, 1 Hz
+Minor Frame: 62 bytes, 40 Hz
 Effective Frame Dimensions:
-  80 Rows 58 Columns
-  80 rows/sec
-  -28416 bits/sec
-  Data:  -31256 bits/sec  -110 %
-  Synch: 2560 bits/sec  -9 %
-  Empty: 280 bits/sec  -1 %
+  40 Rows 62 Columns
+  40 rows/sec
+  19840 bits/sec
+  Data:  18456 bits/sec  93 %
+  Synch: 1280 bits/sec  6 %
+  Empty: 104 bits/sec  1 %
 -------End of Frame Statistics-----
 
 
 --------PCM Definition-------------
-80/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
-80/1 Hz 2 bytes Datum Synch (1,0,56,2)
-10/1 Hz 410 bytes Group BCtr (8,0,2,54) (8,1,2,54) (8,2,2,54) (8,3,2,54) (8,4,2,54) (8,5,2,54) (8,6,2,54) (8,7,2,32)
-10/1 Hz 410 bytes Member BCtr_Bins (8,0,2,54) (8,1,2,54) (8,2,2,54) (8,3,2,54) (8,4,2,54) (8,5,2,54) (8,6,2,54) (8,7,2,32)
-10/1 Hz 14 bytes Group HtrCtrl (8,7,34,14)
-10/1 Hz 2 bytes Member HtrADC2 (8,7,34,2)
-10/1 Hz 2 bytes Member HtrADC1 (8,7,36,2)
-10/1 Hz 2 bytes Member HtrDAC2_RB (8,7,38,2)
-10/1 Hz 2 bytes Member HtrDAC2_SP (8,7,40,2)
-10/1 Hz 2 bytes Member HtrDAC1_RB (8,7,42,2)
-10/1 Hz 2 bytes Member HtrDAC1_SP (8,7,44,2)
-10/1 Hz 2 bytes Member Htr_Status (8,7,46,2)
-1/1 Hz 36 bytes Group TS (80,7,48,8) (80,15,48,8) (80,23,48,8) (80,31,48,8) (80,39,48,4)
-1/1 Hz 4 bytes Member TS5_raw (80,7,48,4)
-1/1 Hz 2 bytes Member TS5_cnt (80,7,52,2)
-1/1 Hz 4 bytes Member TS4_raw (80,7,54,2) (80,15,48,2)
-1/1 Hz 2 bytes Member TS4_cnt (80,15,50,2)
-1/1 Hz 4 bytes Member TS3_raw (80,15,52,4)
-1/1 Hz 2 bytes Member TS3_cnt (80,23,48,2)
-1/1 Hz 4 bytes Member TS2_raw (80,23,50,4)
-1/1 Hz 2 bytes Member TS2_cnt (80,23,54,2)
-1/1 Hz 4 bytes Member TS1_raw (80,31,48,4)
-1/1 Hz 2 bytes Member TS1_cnt (80,31,52,2)
-1/1 Hz 4 bytes Member TS0_raw (80,31,54,2) (80,39,48,2)
-1/1 Hz 2 bytes Member TS0_cnt (80,39,50,2)
-1/1 Hz 4 bytes Datum SysTDrift (80,39,52,4)
-1/1 Hz 2 bytes Datum Disk (80,47,48,2)
-1/1 Hz 2 bytes Datum freemem (80,47,50,2)
-1/1 Hz 1 bytes Datum CPU_Pct (80,47,52,1)
+40/1 Hz 2 bytes Datum MFCtr (1,0,0,2)
+40/1 Hz 2 bytes Datum Synch (1,0,60,2)
+10/1 Hz 210 bytes Group BCtr (4,0,2,58) (4,1,2,58) (4,2,2,58) (4,3,2,36)
+10/1 Hz 210 bytes Member BCtr_Bins (4,0,2,58) (4,1,2,58) (4,2,2,58) (4,3,2,36)
+10/1 Hz 14 bytes Group HtrCtrl (4,3,38,14)
+10/1 Hz 2 bytes Member HtrADC2 (4,3,38,2)
+10/1 Hz 2 bytes Member HtrADC1 (4,3,40,2)
+10/1 Hz 2 bytes Member HtrDAC2_RB (4,3,42,2)
+10/1 Hz 2 bytes Member HtrDAC2_SP (4,3,44,2)
+10/1 Hz 2 bytes Member HtrDAC1_RB (4,3,46,2)
+10/1 Hz 2 bytes Member HtrDAC1_SP (4,3,48,2)
+10/1 Hz 2 bytes Member Htr_Status (4,3,50,2)
+10/1 Hz 2 bytes Datum PPS_time (4,3,52,2)
+1/1 Hz 36 bytes Group TS (40,3,54,6) (40,7,54,6) (40,11,54,6) (40,15,54,6) (40,19,54,6) (40,23,54,6)
+1/1 Hz 4 bytes Member TS5_raw (40,3,54,4)
+1/1 Hz 2 bytes Member TS5_cnt (40,3,58,2)
+1/1 Hz 4 bytes Member TS4_raw (40,7,54,4)
+1/1 Hz 2 bytes Member TS4_cnt (40,7,58,2)
+1/1 Hz 4 bytes Member TS3_raw (40,11,54,4)
+1/1 Hz 2 bytes Member TS3_cnt (40,11,58,2)
+1/1 Hz 4 bytes Member TS2_raw (40,15,54,4)
+1/1 Hz 2 bytes Member TS2_cnt (40,15,58,2)
+1/1 Hz 4 bytes Member TS1_raw (40,19,54,4)
+1/1 Hz 2 bytes Member TS1_cnt (40,19,58,2)
+1/1 Hz 4 bytes Member TS0_raw (40,23,54,4)
+1/1 Hz 2 bytes Member TS0_cnt (40,23,58,2)
+1/1 Hz 4 bytes Datum SysTDrift (40,27,54,4)
+1/1 Hz 2 bytes Datum Disk (40,27,58,2)
+1/1 Hz 2 bytes Datum freemem (40,31,54,2)
+1/1 Hz 2 bytes Datum PPS_fine (40,31,56,2)
+1/1 Hz 1 bytes Datum CPU_Pct (40,31,58,1)
 -------End of PCM Definition-------
 
