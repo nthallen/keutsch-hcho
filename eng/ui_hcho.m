@@ -2,6 +2,7 @@ function ui_hcho
 f = ne_dialg('HCHO Instrument',1);
 f = ne_dialg(f, 'add', 0, 1, 'ghchopps', 'PPS' );
 f = ne_dialg(f, 'add', 1, 0, 'phchoppst', 'Time' );
+f = ne_dialg(f, 'add', 1, 0, 'phchoppsr', 'Raw' );
 f = ne_dialg(f, 'add', 1, 0, 'phchoppsf', 'Fine' );
 f = ne_dialg(f, 'add', 0, 1, 'ghchohc', 'Htr Ctrl' );
 f = ne_dialg(f, 'add', 1, 0, 'phchohcv', 'V' );
@@ -14,6 +15,7 @@ f = ne_dialg(f, 'add', 1, 0, 'phchotmtd', 'T Drift' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotmcpu', 'CPU' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotmram', 'RAM' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotmd', 'Disk' );
+f = ne_dialg(f, 'newcol');
 f = ne_dialg(f, 'add', 0, 1, 'ghchobc', 'B Ctr' );
 f = ne_dialg(f, 'add', 1, 0, 'phchobcc', 'Cts' );
 f = ne_dialg(f, 'add', 1, 0, 'phchobcnw', 'N Words' );
