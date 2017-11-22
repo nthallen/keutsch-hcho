@@ -15,7 +15,7 @@ extbase = TS_conv.tmc
 genuibase = TS.genui
 
 tmcbase = pps.tmc
-colbase = SB.cc
+colbase = SB.cc SB.oui
 cmdbase = pps.cmd
 
 Module TMbase
@@ -26,7 +26,7 @@ TGTDIR = $(TGTNODE)/home/hcho
 IGNORE = Makefile
 
 hchocol : -lsubbuspp
-hchosrvr : SB.cc -lsubbuspp
+hchosrvr : SB.cc SB.oui -lsubbuspp
 hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc HCHO.tbl
 hchortgext : BCtr_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 TSrawext : TSraw.cdf

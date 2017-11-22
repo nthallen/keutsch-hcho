@@ -7,26 +7,38 @@ SB_t::SB_t() {
   BCtr = 0;
   FCC = 0;
   FCC2 = 0;
-  
-  load_lib("SB1");
-  load_lib("SB1");
-  load_lib("SB1");
+  SB1 = 0;
+  SB2 = 0;
+  SB3 = 0;
+  initialized = false;
 }
 
-SB_t::~SB_t() {}
+void SB_t::init() {
+  if (!initialized) {
+    SB1 = load_lib("SB1");
+    SB2 = load_lib("SB2");
+    SB3 = load_lib("SB3");
+    initialized = true;
+  }
+}
+
+SB_t::~SB_t() {
+  if (SB1) SB1->subbus_quit();
+  if (SB2) SB2->subbus_quit();
+  if (SB3) SB3->subbus_quit();
+}
 
 void SB_t::check_spot(subbuspp *lib, const char *devname,
     subbuspp *&spot, const char *spotname) {
   if (spot) {
     nl_error(2, "Duplicate %s found on %s", spotname, devname);
-    delete lib;
   } else {
     spot = lib;
     nl_error(0, "%s lib found at %s", spotname, devname);
   }
 }
 
-void SB_t::load_lib(const char *devname) {
+subbuspp *SB_t::load_lib(const char *devname) {
   subbuspp *lib;
   
   lib = new subbuspp(devname);
@@ -44,12 +56,18 @@ void SB_t::load_lib(const char *devname) {
         break;
       default:
         nl_error(3, "Unknown device code %d on device %s", BdID, devname);
-        delete lib;
+        break;
     }
+    return lib;
   } else {
     nl_error(2, "Device %s not found", devname);
     delete lib;
+    return 0;
   }
+}
+
+void SB_init() {
+  SB.init();
 }
 
 int tick_sic() {}

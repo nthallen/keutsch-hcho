@@ -1,0 +1,5 @@
+<package> SB
+<include> "SB.h"
+<follow> msg
+<init>
+  SB_init();
