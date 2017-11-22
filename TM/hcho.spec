@@ -18,7 +18,10 @@ tmcbase = pps.tmc
 cmdbase = pps.cmd
 
 Module TMbase
-Module BCtr rate=10 NC=29700L NA=2,220 NB=50,1 NW=105 from=8 to=48
+Module BCtr rate=10 NC=29700L
+# This invocation was for slower baud rate, went with 'a' and 'b'
+# suffix in VERSION
+#Module BCtr rate=10 NC=29700L NA=2,220 NB=50,1 NW=105 from=8 to=48
 
 SCRIPT = interact
 TGTDIR = $(TGTNODE)/home/hcho
@@ -28,5 +31,6 @@ hchocol : -lsubbus
 hchosrvr : -lsubbus
 hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc HCHO.tbl
 hchortgext : BCtr_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
+TSrawext : TSraw.cdf
 doit : hcho.doit
 hchoalgo : hcho.tma

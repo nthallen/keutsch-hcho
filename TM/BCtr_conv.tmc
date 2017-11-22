@@ -1,33 +1,40 @@
 %{
   #include "nl_assert.h"
-  #define BCTR_N_CHANNELS 2
-  #define BCTR_BIN_SIZE 105
   #define BCtr_Yes_No_txt(x) ((x)?"Yes":" No")
   #define BCtr_OK_FAIL_txt(x) ((x)?"FAIL":"  OK")
 
   unsigned short BCtr_sum(BCtr_Cts_t *Cts, int chan, int from, int to) {
     unsigned short sum = 0;
-    int i, last = 3+to*BCTR_N_CHANNELS+chan;
+    int i, last = BCTR_DATA_OFFSET + to*BCTR_N_CHANNELS + chan;
     nl_assert(chan < BCTR_N_CHANNELS);
-    nl_assert(last < 105);
-    nl_assert(from < to);
-    // check that chan < BCTR_N_CHANNELS
-    // check that 0 <= from <= to < BCTR_NB_TOTAL
-    for (i = 3+BCTR_N_CHANNELS*from+chan; i <= last; i+=BCTR_N_CHANNELS)
+    nl_assert(last < BCTR_BIN_SIZE);
+    nl_assert(0 <= from);
+    nl_assert(from <= to);
+    nl_assert(to < BCTR_NB_TOTAL);
+    for (i = BCTR_DATA_OFFSET + from*BCTR_N_CHANNELS + chan;
+         i <= last; i += BCTR_N_CHANNELS)
       sum += Cts[i];
     return sum;
   }
+
+  #define short2long(x,y) (x + (((unsigned long)y)<<16))
 %}
-TM typedef unsigned short BCtr_Yes_No { text "%3d" BCtr_Yes_No_txt(); }
-TM typedef unsigned short BCtr_OK_FAIL { text "%3d" BCtr_OK_FAIL_txt(); }
-TM typedef unsigned short BCtr_NAB_t { text "%1d"; }
 
 BCtr_Cts_t BCtr_Status; Invalidate BCtr_Status;
 { BCtr_Status = BCtr_Bins[0]; Validate BCtr_Status; }
+
 BCtr_Cts_t BCtr_NWords; Invalidate BCtr_NWords;
 { BCtr_NWords = BCtr_Bins[1]; Validate BCtr_NWords; }
-BCtr_Cts_t BCtr_NSkip; Invalidate BCtr_NSkip;
-{ BCtr_NSkip = BCtr_Bins[2]; Validate BCtr_NSkip; }
+
+BCtr_NAB_t BCtr_IPnum; Invalidate BCtr_IPnum;
+{ BCtr_IPnum = BCtr_Bins[2]; Validate BCtr_IPnum; }
+
+BCtr_Trigger_t BCtr_NTrigger; Invalidate BCtr_NTrigger;
+{ BCtr_NTrigger = short2long(BCtr_Bins[3], BCtr_Bins[4]);
+  Validate BCtr_NTrigger; }
+
+BCtr_DAC_t BCtr_LaserV; Invalidate BCtr_LaserV;
+{ BCtr_LaserV = BCtr_Bins[5]; Validate BCtr_LaserV; }
 
 BCtr_Yes_No BCtr_Enable; Invalidate BCtr_Enable;
 { BCtr_Enable = (BCtr_Bins[0]>>0)&1; Validate BCtr_Enable; }
@@ -50,12 +57,15 @@ BCtr_Yes_No BCtr_Ready; Invalidate BCtr_Ready;
 BCtr_OK_FAIL BCtr_TxErrOvf; Invalidate BCtr_TxErrOvf;
 { BCtr_TxErrOvf = (BCtr_Bins[0]>>9)&1; Validate BCtr_TxErrOvf; }
 
+BCtr_OK_FAIL BCtr_Expired; Invalidate BCtr_Expired;
+{ BCtr_Expired = (BCtr_Bins[0]>>10)&1; Validate BCtr_Expired; }
+
 BCtr_NAB_t BCtr_NAB; Invalidate BCtr_NAB;
 { BCtr_NAB = (BCtr_Bins[0]>>6)&7; Validate BCtr_NAB; }
 
 BCtr_Cts_t BCtr_0_a; Invalidate BCtr_0_a;
-{ BCtr_0_a = BCtr_sum(BCtr_Bins, 0, 8, 48); Validate BCtr_0_a; }
+{ BCtr_0_a = BCtr_sum(BCtr_Bins, 0, 15, 99); Validate BCtr_0_a; }
 
 BCtr_Cts_t BCtr_1_a; Invalidate BCtr_1_a;
-{ BCtr_1_a = BCtr_sum(BCtr_Bins, 1, 8, 48); Validate BCtr_1_a; }
+{ BCtr_1_a = BCtr_sum(BCtr_Bins, 1, 15, 99); Validate BCtr_1_a; }
 

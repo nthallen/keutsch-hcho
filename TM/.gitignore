@@ -26,6 +26,12 @@ hchortgext.cc
 hchortgextoui.c
 hchortgextoui.o
 hchortgext.o
+TSrawextcdf.oui
+TSrawcdf.tmc
+TSrawext.cc
+TSrawextoui.c
+TSrawextoui.o
+TSrawext.o
 doit.dep
 hchoalgoa.tmc
 hchoalgo.cc
@@ -55,6 +61,7 @@ hchosrvr
 hchodisp
 hchodispnc
 hchortgext
+TSrawext
 doit
 hchoalgo
 hchoclt

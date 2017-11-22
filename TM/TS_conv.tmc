@@ -1,12 +1,13 @@
 %{
 
   #define to_double(x) (double)x
+  #define TS_FS_CNT 268435456.
 %}
 TS_T_t TS0_T; Invalidate TS0_T;
 {
   if (TS0_cnt > 0) {
     TS0_T = (to_double(TS0_raw))/TS0_cnt;
-    TS0_T = 1.25 * TS0_T/8388608.;
+    TS0_T = 1.25 * TS0_T/TS_FS_CNT;
   } else {
     TS0_T = -10.0;
   }
@@ -17,7 +18,7 @@ TS_T_t TS1_T; Invalidate TS1_T;
 {
   if (TS1_cnt > 1) {
     TS1_T = (to_double(TS1_raw))/TS1_cnt;
-    TS1_T = 1.25 * TS1_T/8388608.;
+    TS1_T = 1.25 * TS1_T/TS_FS_CNT;
   } else {
     TS1_T = -10.0;
   }
@@ -28,7 +29,7 @@ TS_T_t TS2_T; Invalidate TS2_T;
 {
   if (TS2_cnt > 0) {
     TS2_T = (to_double(TS2_raw))/TS2_cnt;
-    TS2_T = 1.25 * TS2_T/8388608.;
+    TS2_T = 1.25 * TS2_T/TS_FS_CNT;
   } else {
     TS2_T = -10.0;
   }
@@ -39,7 +40,7 @@ TS_T_t TS3_T; Invalidate TS3_T;
 {
   if (TS3_cnt > 0) {
     TS3_T = (to_double(TS3_raw))/TS3_cnt;
-    TS3_T = 1.25 * TS3_T/8388608.;
+    TS3_T = 1.25 * TS3_T/TS_FS_CNT;
   } else {
     TS3_T = -10.0;
   }
@@ -50,7 +51,7 @@ TS_T_t TS4_T; Invalidate TS4_T;
 {
   if (TS4_cnt > 0) {
     TS4_T = (to_double(TS4_raw))/TS4_cnt;
-    TS4_T = 1.25 * TS4_T/8388608.;
+    TS4_T = 1.25 * TS4_T/TS_FS_CNT;
   } else {
     TS4_T = -10.0;
   }
@@ -61,7 +62,7 @@ TS_T_t TS5_T; Invalidate TS5_T;
 {
   if (TS5_cnt > 0) {
     TS5_T = (to_double(TS5_raw))/TS5_cnt;
-    TS5_T = 1.25 * TS5_T/8388608.;
+    TS5_T = 1.25 * TS5_T/TS_FS_CNT;
   } else {
     TS5_T = -10.0;
   }
