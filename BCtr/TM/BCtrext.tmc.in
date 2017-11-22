@@ -10,14 +10,13 @@
       nl_error(3, "Unable to write to BCtrext.csv");
   }
 
-  void BCtrext_output(double T, unsigned short *Bins, int Nbins) {
+  void BCtrext_output(double T, unsigned short *Bins) {
     int i;
     fprintf(ofp, "%.3lf", T);
-    for (i=0; i < Nbins; ++i)
+    for (i=0; i < BCTR_BIN_SIZE; ++i)
       fprintf(ofp, ",%u", Bins[i]);
     fprintf(ofp, "\n");
   }
 %}
 TM INITFUNC BCtrext_init();
-BCtrext_output(dtime(), BCtr_Bins, @NW@);
-
+BCtrext_output(dtime(), BCtr_Bins);

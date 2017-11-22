@@ -2,7 +2,13 @@
   Launch memo memo -o $Experiment.log
   # Pick one:
 # Launch /dev/huarp/subbus subbusd_serusb -b 57600 -p /dev/serusb2
-  Launch /dev/huarp/subbus subbusd_serusb -b 115200 -p /dev/serusb1
+# Launch /dev/huarp/subbus subbusd_serusb -b 115200 -p /dev/serusb1
+  [ -e /dev/serusb1 ] &&
+    Launch SB1 -b 115200 -p /dev/serusb1 -N SB1
+  [ -e /dev/serusb2 ] &&
+    Launch SB2 -b 115200 -p /dev/serusb2 -N SB2
+  [ -e /dev/serusb3 ] &&
+    Launch SB3 -b 115200 -p /dev/serusb3 -N SB3
   Launch TM/DCo TMbfr
 
   memo=/dev/huarp/$Experiment/memo

@@ -1,5 +1,5 @@
 %{
-  #include "subbus.h"
+  #include "SB.h"
 %}
 
 &command
@@ -10,7 +10,7 @@
       if (bits < 0) bits = 0;
       if (bits > 65535.) bits = 65535;
       ibits = (unsigned short) bits;
-      sbwr($2, ibits);
+      if (SB.BCtr) SB.BCtr->sbwr($2, ibits);
     }
   ;
 

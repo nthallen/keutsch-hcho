@@ -1,6 +1,7 @@
 %{
   #include <math.h>
-  #include "subbus.h"
+  #include "SB.h"
+  #define BCtr_rd(x) (SB.BCtr ? SB.BCtr->sbrd(x) : 0)
 %}
 TM typedef double PPS_Seconds { text "%6.4lf"; }
 TM typedef unsigned short PPS_t {
@@ -10,8 +11,8 @@ TM typedef unsigned short PPS_t {
 Calibration (PPS_t, PPS_Seconds) { 0, 0, 48828.125, 1 }
 TM typedef signed short PPS_fine_t { text "%6d"; }
 
-TM 10 Hz PPS_t PPS_time; collect PPS_time = sbrwa(0x60);
-TM 1  Hz PPS_fine_t PPS_fine; collect PPS_fine = sbrwa(0x61);
+TM 10 Hz PPS_t PPS_time; collect PPS_time = BCtr_rd(0x60);
+TM 1  Hz PPS_fine_t PPS_fine; collect PPS_fine = BCtr_rd(0x61);
 
 PPS_Seconds PPS_drift; Invalidate PPS_drift;
 { double dt;

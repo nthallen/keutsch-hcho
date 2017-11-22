@@ -1,9 +1,9 @@
 %{
-  #include "subbus.h"
+  #include "SB.h"
 %}
 
 &command
-  : BCtr &BCtr &BCtrCmd * { sbwr($2, $3); }
+  : BCtr &BCtr &BCtrCmd * { if (SB.BCtr) SB.BCtr->sbwr($2, $3); }
   ;
 
 &BCtr <unsigned short>

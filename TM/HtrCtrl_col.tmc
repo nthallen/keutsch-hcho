@@ -1,8 +1,15 @@
 %{
-  #include "subbus.h"
-  static subbus_mread_req *HtrCtrlReq = pack_mread_request(7,"50:1:56");
+  #include "SB.h"
+  static subbus_mread_req *HtrCtrlReq;
+
   static int HtrCtrl_collect(unsigned short*data) {
-    return mread_subbus(HtrCtrlReq, data);
+    return (SB.BCtr ? SB.Bctr->mread_subbus(HtrCtrlReq, data) : 0);
+  }
+  static void HtrCtrl_init() {
+    HtrCtrlReq = SB.BCtr ?
+      SB.BCtr->pack_mread_request(7,"50:1:56") :
+      0;
   }
 %}
 
+TM INITFUNC HtrCtrl_init();

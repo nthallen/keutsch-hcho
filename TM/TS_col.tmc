@@ -9,5 +9,10 @@
 
   TS_rec_t TS_buf[6];
   subbus_mread_req *TS_req;
+  
+  static void TS_req_init() {
+    TS_req = SB.Bctr ?
+      SB.Bctr->pack_mread_request(18, "30:1:41") : 0;
+  }
 %}
-TM INITFUNC TS_req = pack_mread_request(18, "30:1:41");
+TM INITFUNC TS_req_init();

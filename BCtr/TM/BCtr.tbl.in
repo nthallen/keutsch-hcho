@@ -1,18 +1,20 @@
 BCtr {
   HBox { +-; Title: BCtr; -+ };
   Ready:  (BCtr_Ready,3);
-  NAB:    (BCtr_NAB,1);
   Enable: (BCtr_Enable,3);
   DRdy:   (BCtr_DRdy,3);
+  Exp:    (BCtr_Expired,4);
+  NAB:    (BCtr_NAB,1);
   TxAct:  (BCtr_TxActive,3);
   NWords: (BCtr_NWords,5);
-  NSkip:  (BCtr_NSkip,5);
+  IPnum:  (BCtr_IPnum,1);
+  NTrig:  (BCtr_NTrigger,6);
   BCtr_0: (BCtr_0_a,5);
   BCtr_1: (BCtr_1_a,5);
+  LaserV: (BCtr_LaserV,5) V;
   CfgErr:;
   " Ovf:" (BCtr_CfgErrOvf,4);
   " NAB:" (BCtr_CfgErrNAB,4);
   TxErr:;
   " Ovf:" (BCtr_TxErrOvf,4);
 }
-

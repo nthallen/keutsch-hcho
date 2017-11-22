@@ -1,7 +1,10 @@
- @rate@ BCtr_0_a    BCtr Cts
- @rate@ BCtr_1_a    BCtr Cts
- @rate@ BCtr_NWords BCtr NWords
- @rate@ BCtr_NSkip  BCtr NSkip
+ @rate@ BCtr_0_a       BCtr Cts
+ @rate@ BCtr_1_a       BCtr Cts
+ @rate@ BCtr_NWords    BCtr NWords
+ @rate@ BCtr_IPnum     BCtr IPnum
+ @rate@ BCtr_NTrigger  BCtr NTrigger
+ @rate@ BCtr_LaserV    BCtr LaserV
+
  @rate@ BCtr_NAB    BCtr NAB
 
  @rate@ BCtr_Ready:BCtr_Status:5 BCtr Status
@@ -11,5 +14,4 @@
  @rate@ BCtr_CfgOvf:BCtr_Status:3 BCtr Status
  @rate@ BCtr_CfgNAB:BCtr_Status:4 BCtr Status
  @rate@ BCtr_TxOvf:BCtr_Status:9 BCtr Status
-
-
+ @rate@ BCtr_Expired:BCtr_Status:10 BCtr Status

@@ -1,4 +1,6 @@
 %{
+  #include "SB.h"
+  
   #define TS_cnt(x) TS_buf[x].cnt
   #define TS_raw(x) TS_buf[x].raw
   #define TS_buf_ptr (unsigned short *)TS_buf
@@ -22,11 +24,13 @@ Group TS (
     TS3_cnt, TS3_raw,
     TS4_cnt, TS4_raw,
     TS5_cnt, TS5_raw) {
-  mread_subbus(TS_req, TS_buf_ptr);
-  TS0_cnt = TS_cnt(0); TS0_raw = TS_raw(0);
-  TS1_cnt = TS_cnt(1); TS1_raw = TS_raw(1);
-  TS2_cnt = TS_cnt(2); TS2_raw = TS_raw(2);
-  TS3_cnt = TS_cnt(3); TS3_raw = TS_raw(3);
-  TS4_cnt = TS_cnt(4); TS4_raw = TS_raw(4);
-  TS5_cnt = TS_cnt(5); TS5_raw = TS_raw(5);
+  if (TS_req && SB.Bctr) {
+    SB.Bctr->mread_subbus(TS_req, TS_buf_ptr);
+    TS0_cnt = TS_cnt(0); TS0_raw = TS_raw(0);
+    TS1_cnt = TS_cnt(1); TS1_raw = TS_raw(1);
+    TS2_cnt = TS_cnt(2); TS2_raw = TS_raw(2);
+    TS3_cnt = TS_cnt(3); TS3_raw = TS_raw(3);
+    TS4_cnt = TS_cnt(4); TS4_raw = TS_raw(4);
+    TS5_cnt = TS_cnt(5); TS5_raw = TS_raw(5);
+  }
 }
