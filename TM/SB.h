@@ -16,5 +16,7 @@ class SB_t {
 };
 
 extern SB_t SB;
+int tick_sic();
+int disarm_sic();
 
 #endif

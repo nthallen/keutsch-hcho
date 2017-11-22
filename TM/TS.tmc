@@ -24,8 +24,8 @@ Group TS (
     TS3_cnt, TS3_raw,
     TS4_cnt, TS4_raw,
     TS5_cnt, TS5_raw) {
-  if (TS_req && SB.Bctr) {
-    SB.Bctr->mread_subbus(TS_req, TS_buf_ptr);
+  if (TS_req && SB.BCtr) {
+    SB.BCtr->mread_subbus(TS_req, TS_buf_ptr);
     TS0_cnt = TS_cnt(0); TS0_raw = TS_raw(0);
     TS1_cnt = TS_cnt(1); TS1_raw = TS_raw(1);
     TS2_cnt = TS_cnt(2); TS2_raw = TS_raw(2);

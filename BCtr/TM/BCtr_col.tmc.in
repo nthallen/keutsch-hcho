@@ -39,7 +39,7 @@
       while (status) {
         status = SB.BCtr->sbrw(BCtr_BASE);
       }
-      for (i = 0; i < N_BIN_SPECS; ++i) {
+      for (i = 0; i < BCTR_N_BIN_SPECS; ++i) {
         SB.BCtr->sbwr(BCtr_BASE+3+2*i, NA[i]);
         SB.BCtr->sbwr(BCtr_BASE+4+2*i, NB[i]);
       }

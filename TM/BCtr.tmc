@@ -1,12 +1,8 @@
-%{ /* BCtr.tmc */
+%{
   #define BCTR_N_CHANNELS 2
-  #define BCTR_N_BIN_SPECS 2
-  #define BCTR_NA 1,220
-  #define BCTR_NB 100,1
-  #define BCTR_NB_TOTAL 101
   #define BCTR_DATA_OFFSET 6
-  #define BCTR_BIN_SIZE (BCTR_NB_TOTAL*BCTR_N_CHANNELS+BCTR_DATA_OFFSET)
-  /* 208 */
+  #define BCTR_BIN_SIZE 208
+  #define BCTR_NB_TOTAL ((BCTR_BIN_SIZE-BCTR_DATA_OFFSET)/BCTR_N_CHANNELS)
 %}
 TM typedef unsigned short BCtr_Cts_t { text "%5u"; }
 TM typedef unsigned short BCtr_Yes_No { text "%3d" BCtr_Yes_No_txt(); }

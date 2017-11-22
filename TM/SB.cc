@@ -13,6 +13,8 @@ SB_t::SB_t() {
   load_lib("SB1");
 }
 
+SB_t::~SB_t() {}
+
 void SB_t::check_spot(subbuspp *lib, const char *devname,
     subbuspp *&spot, const char *spotname) {
   if (spot) {
@@ -49,3 +51,7 @@ void SB_t::load_lib(const char *devname) {
     delete lib;
   }
 }
+
+int tick_sic() {}
+int disarm_sic() {}
+

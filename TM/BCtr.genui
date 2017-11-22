@@ -15,5 +15,3 @@
  10 BCtr_CfgNAB:BCtr_Status:4 BCtr Status
  10 BCtr_TxOvf:BCtr_Status:9 BCtr Status
  10 BCtr_Expired:BCtr_Status:10 BCtr Status
-
-
