@@ -15,26 +15,25 @@ Calibration (HtrADC_t, HtrVolts) {
    32768,  6.144
 }
 
-TM 10 Hz HtrStatus_t Htr_Status;
-TM 10 Hz HtrDAC_t HtrDAC1_SP;
-TM 10 Hz HtrDAC_t HtrDAC1_RB;
-TM 10 Hz HtrDAC_t HtrDAC2_SP;
-TM 10 Hz HtrDAC_t HtrDAC2_RB;
-TM 10 Hz HtrADC_t HtrADC1;
-TM 10 Hz HtrADC_t HtrADC2;
+TM 1 Hz HtrStatus_t Htr_Status;
+TM 1 Hz HtrDAC_t HtrDAC1_SP;
+TM 1 Hz HtrDAC_t HtrDAC1_RB;
+/* TM 1 Hz HtrDAC_t HtrDAC2_SP; */
+/* TM 1 Hz HtrDAC_t HtrDAC2_RB; */
+TM 1 Hz HtrADC_t HtrADC1;
+/* TM 1 Hz HtrADC_t HtrADC2; */
 
 Group HtrCtrl (Htr_Status, HtrDAC1_SP, HtrDAC1_RB,
-              HtrDAC2_SP, HtrDAC2_RB,
-              HtrADC1, HtrADC2) {
-  unsigned short data[7];
+              HtrADC1) {
+  unsigned short data[4];
   if (HtrCtrl_collect(data) >= 0) {
     Htr_Status = data[0];
     HtrDAC1_SP = data[1];
     HtrDAC1_RB = data[2];
-    HtrDAC2_SP = data[3];
-    HtrDAC2_RB = data[4];
-    HtrADC1 = data[5];
-    HtrADC2 = data[6];
+    HtrADC1 = data[4];
+    /* HtrDAC2_SP = data[3]; */
+    /* HtrDAC2_RB = data[4]; */
+    /* HtrADC2 = data[6]; */
   } else {
     Htr_Status = 0;
   }

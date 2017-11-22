@@ -5,3 +5,6 @@ HOMEDIR HCHO_DATA_DIR
  10 PPS_drift PPS Time
  10 PPS_time  PPS Raw  %.0lf
   1 PPS_fine  PPS Fine
+  1 IPS_fine  IPS Fine
+  1 IPS_err   IPS Error
+  1 IPS_status IPS Status

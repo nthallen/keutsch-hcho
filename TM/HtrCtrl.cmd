@@ -16,5 +16,5 @@
 
 &HtrChan <unsigned short>
   : Heater 1 { $0 = 0x51; }
-  : Heater 2 { $0 = 0x53; }
+# : Heater 2 { $0 = 0x53; }
   ;

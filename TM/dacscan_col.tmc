@@ -1,0 +1,15 @@
+%{
+  #include "SB.h"
+  static subbus_mread_req *DACscanReq;
+
+  static int DACscan_collect(unsigned short*data) {
+    return (SB.BCtr ? SB.BCtr->mread_subbus(DACscanReq, data) : 0);
+  }
+  static void DACscan_init() {
+    DACscanReq = SB.BCtr ?
+      SB.BCtr->pack_mread_request(8,"80:1:87") :
+      0;
+  }
+%}
+
+TM INITFUNC DACscan_init();

@@ -1,0 +1,11 @@
+dacscan {
+  HBox { +-; Title: "Laser Control"; -+ };
+  Status:  (LV_status,8);
+  LaserV:  (LaserV,6) V;
+  Start:   (LV_start,6) V;
+  Stop:    (LV_stop,6) V;
+  Step:    (LV_step,6) V;
+  Online:  (LV_online,6) V;
+  Offline: (LV_offline,6) V;
+  Dither:  (LV_dither,6) V;
+}

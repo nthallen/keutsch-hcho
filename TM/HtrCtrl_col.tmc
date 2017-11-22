@@ -7,7 +7,8 @@
   }
   static void HtrCtrl_init() {
     HtrCtrlReq = SB.BCtr ?
-      SB.BCtr->pack_mread_request(7,"50:1:56") :
+      //SB.BCtr->pack_mread_request(7,"50:1:56") :
+      SB.BCtr->pack_mread_request(4,"50,51,52,55") :
       0;
   }
 %}

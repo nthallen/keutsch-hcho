@@ -1,9 +1,7 @@
 HtrCtrl {
   HBox { +-; Title: "Heater Control"; -+ };
-  Set:  (HtrDAC1_SP,6) (HtrDAC2_SP,6) V;
-  RB:   HBox{(HtrDAC1_Fresh,1);(HtrDAC1_RB,6)}
-          HBox{(HtrDAC2_Fresh,1);(HtrDAC2_RB,6)} V;
-  Ctrl: HBox{(HtrADC1,6);(HtrADC1_Fresh,1)}
-          HBox{(HtrADC2,6);(HtrADC2_Fresh,1)}    V;
+  Set:  (HtrDAC1_SP,6) V;
+  RB:   HBox{(HtrDAC1_Fresh,1);(HtrDAC1_RB,6)}  V;
+  Ctrl: HBox{(HtrADC1,6);(HtrADC1_Fresh,1)}     V;
 }
 

@@ -10,9 +10,13 @@ TM typedef unsigned short PPS_t {
 }
 Calibration (PPS_t, PPS_Seconds) { 0, 0, 48828.125, 1 }
 TM typedef signed short PPS_fine_t { text "%6d"; }
+TM typedef unsigned char IPS_stat_t { text "%3d"; }
 
 TM 10 Hz PPS_t PPS_time; collect PPS_time = BCtr_rd(0x60);
 TM 1  Hz PPS_fine_t PPS_fine; collect PPS_fine = BCtr_rd(0x61);
+TM 1  Hz PPS_fine_t IPS_fine; collect IPS_fine = BCtr_rd(0x73);
+TM 1  Hz PPS_fine_t IPS_err; collect IPS_err = BCtr_rd(0x74);
+TM 1  Hz IPS_stat_t IPS_status; collect IPS_status = BCtr_rd(0x75);
 
 PPS_Seconds PPS_drift; Invalidate PPS_drift;
 { double dt;

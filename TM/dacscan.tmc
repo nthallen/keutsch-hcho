@@ -1,0 +1,55 @@
+%{
+/* dacscan.tmc. This definition must follow HtrCtrl.tmc
+ * 0x80 Status online/offline/scanning
+ * 0x81 Current Setpoint
+ * 0x82 Scan Start
+ * 0x83 Scan End
+ * 0x84 Scan Step * 8
+ * 0x85 Online Position
+ * 0x86 Offline Position
+ * 0x87 Dither amount (unsigned)
+ */
+ 
+  const char *LV_stat_text(unsigned char val) {
+    switch (val) {
+      case 0: return "        ";
+      case 1: return "scanning";
+      case 2: return "  online";
+      case 4: return " offline";
+      default: return "********";
+    }
+  }
+%}
+
+TM typedef unsigned char LVstat_t { text "%8d" LV_stat_text(); }
+TM typedef unsigned short LasVstep_t { text "%6.4lf"; convert HtrVolts; }
+Calibration (LasVstep_t, HtrVolts) {
+   0, 0,
+   104.8576, 0.001
+}
+
+TM 1 Hz LVstat_t   LV_status;
+TM 1 Hz HtrDAC_t   LaserV;
+TM 1 Hz HtrDAC_t   LV_start;
+TM 1 Hz HtrDAC_t   LV_stop;
+TM 1 Hz LasVstep_t LV_step;
+TM 1 Hz HtrDAC_t   LV_online;
+TM 1 Hz HtrDAC_t   LV_offline;
+TM 1 Hz HtrDAC_t   LV_dither;
+
+Group DACscan (LV_status, LaserV, LV_start,
+    LV_stop, LV_step, LV_online, LV_offline, LV_dither) {
+  unsigned short data[8];
+  if (DACscan_collect(data) >= 0) {
+    LV_status = data[0];
+    LaserV = data[1];
+    LV_start = data[2];
+    LV_stop = data[3];
+    LV_step = data[4];
+    LV_online = data[5];
+    LV_offline = data[6];
+    LV_dither = data[7];
+  } else {
+    LV_status = 8;
+  }
+}
