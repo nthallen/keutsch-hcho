@@ -2,7 +2,7 @@ tmcbase = base.tmc
 cmdbase = /usr/local/share/huarp/phrtg.cmd
 genuibase = hcho.genui
 
-# Heater Controller block is hard coded to 10 Hz.
+# Heater Controller block is hard coded to 1 Hz.
 # HtrCtrl.tmc and HtrCtrl.genui could easily be modularized
 tmcbase = HtrCtrl.tmc
 colbase = HtrCtrl_col.tmc
@@ -17,6 +17,11 @@ genuibase = TS.genui
 tmcbase = pps.tmc
 colbase = SB.cc SB.oui
 cmdbase = pps.cmd
+
+tmcbase = dacscan.tmc
+colbase = dacscan_col.tmc
+cmdbase = dacscan.cmd
+genuibase = dacscan.genui
 
 Module TMbase
 Module BCtr rate=10

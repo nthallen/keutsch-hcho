@@ -5,8 +5,8 @@
 # Launch /dev/huarp/subbus subbusd_serusb -b 115200 -p /dev/serusb1
   [ -e /dev/serusb1 ] && [ ! -e /dev/huarp/HCHO/SB1 ] &&
     Launch SB1 subbusd_serusb -b 115200 -p /dev/serusb1 -N SB1 -h SB1
-# [ -e /dev/serusb2 ] && [ ! -e /dev/huarp/HCHO/SB2 ] &&
-#   Launch SB2 subbusd_serusb -b 115200 -p /dev/serusb2 -N SB2 -h SB2
+  [ -e /dev/serusb2 ] && [ ! -e /dev/huarp/HCHO/SB2 ] &&
+    Launch SB2 subbusd_serusb -b 115200 -p /dev/serusb2 -N SB2 -h SB2
   [ -e /dev/serusb3 ] && [ ! -e /dev/huarp/HCHO/SB3 ] &&
     Launch SB3 subbusd_serusb -b 115200 -p /dev/serusb3 -N SB3 -h SB3
   Launch TM/DCo TMbfr
