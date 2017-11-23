@@ -23,6 +23,11 @@ colbase = dacscan_col.tmc
 cmdbase = dacscan.cmd
 genuibase = dacscan.genui
 
+tmcbase = fcc.tmc
+colbase = fcc_col.tmc
+cmdbase = fcc.cmd
+genuibase = fcc.genui
+
 Module TMbase
 Module BCtr rate=10
 
@@ -32,7 +37,7 @@ IGNORE = Makefile
 
 hchocol : -lsubbuspp
 hchosrvr : SB.cc SB.oui -lsubbuspp
-hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc HCHO.tbl
+hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc fcc_conv.tmc HCHO.tbl
 hchortgext : BCtr_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 TSrawext : TSraw.cdf
 doit : hcho.doit

@@ -1,0 +1,48 @@
+%{
+  /* fcc.tmc: Handles data for the flow controllers:
+     0x10 flow0
+     0x11 flow1
+     0x12 flow2
+     0x13 flow3
+     0x14 FLSET0
+     0x15 FLSET1
+     0x16 FLSET2
+     0x17 FLSET3
+     0x18 CmdStatus
+     0x19 ADC_U2_T
+     0x20 ADC_U3_T
+   */
+  #include "SB.h"
+%}
+TM typedef double FCC_Volts;
+TM typedef unsigned char FCC_status_t { text "%3d"; }
+TM typedef signed short FCC_ADC_t { text "%6.4lf"; convert FCC_Volts; }
+TM typedef unsigned short FCC_DAC_t { text "%6.4lf"; convert FCC_Volts; }
+Calibration (FCC_ADC_t, FCC_Volts) { 0, 0, 32768, 6.144 }
+Calibration (FCC_DAC_t, FCC_Volts) { 0, 0, 65536, 5 }
+
+TM 1 Hz FCC_ADC_t FC0_Flow;
+TM 1 Hz FCC_ADC_t FC1_Flow;
+TM 1 Hz FCC_ADC_t FC2_Flow;
+TM 1 Hz FCC_ADC_t FCC_U2_T;
+TM 1 Hz FCC_ADC_t FCC_U3_T;
+TM 1 Hz FCC_DAC_t FC0_Set;
+TM 1 Hz FCC_DAC_t FC1_Set;
+TM 1 Hz FCC_DAC_t FC2_Set;
+TM 1 Hz FCC_status_t FCC0_Status;
+
+Group fcc (FC0_Flow, FC1_Flow, FC2_Flow, FCC_U2_T, FCC_U3_T,
+            FC0_Set, FC1_Set, FC2_Set, FCC0_Status) {
+  unsigned short data[9];
+  if (FCC0_collect(data) >= 0) {
+    FC0_Flow = data[0];
+    FC1_Flow = data[1];
+    FC2_Flow = data[2];
+    FC0_Set = data[3];
+    FC1_Set = data[4];
+    FC2_Set = data[5];
+    FCC0_Status = data[6];
+    FCC_U2_T = data[7];
+    FCC_U3_T = data[8];
+  }
+}

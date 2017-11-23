@@ -1,0 +1,28 @@
+%{
+  #include <stdint.h>
+  /* fcc_conv.tmc */
+  static const char *Flow_status_text(uint8_t stat) {
+    switch (stat) {
+      case 0:  return "control";
+      case 1: return " opened";
+      case 2: return " closed";
+      default: return "*******";
+    }
+  }
+  
+  static uint8_t FCC_Flow_Bits(uint8_t status, uint8_t OB, uint8_t CB) {
+    return ((status&OB) ? 1 : 0) + ((status&CB) ? 2 : 0);
+  }
+%}
+TM typedef FCC_FC_Status_t { text "%7d" Flow_status_text(); }
+
+FCC_FC_Status_t FC0_Stat; Invalidate FC0_Stat;
+{ FC0_Stat = FCC_Flow_Bits(FCC0_Status, 0x01, 0x10); Validate FC0_Stat; }
+FCC_FC_Status_t FC1_Stat; Invalidate FC1_Stat;
+{ FC1_Stat = FCC_Flow_Bits(FCC0_Status, 0x02, 0x20); Validate FC1_Stat; }
+FCC_FC_Status_t FC2_Stat; Invalidate FC2_Stat;
+{ FC2_Stat = FCC_Flow_Bits(FCC0_Status, 0x04, 0x40); Validate FC2_Stat; }
+FCC_FC_Status_t Vlv1_Stat; Invalidate Vlv1_Stat;
+{ Vlv1_Stat = (FCC0_Status&0x08)?1:2; Validate Vlv1_Stat; }
+FCC_FC_Status_t Vlv2_Stat; Invalidate Vlv2_Stat;
+{ Vlv2_Stat = (FCC0_Status&0x80)?1:2; Validate Vlv2_Stat; }

@@ -1,0 +1,50 @@
+%{
+  #include <stdint.h>
+  #include "SB.h"
+  /* fcc.cmd */
+%}
+
+&command
+  : Flow &flowchan Set %f (Volts) * {
+      double dsp = $4*65536./5.;
+      uint16_t usp;
+      
+      if (dsp > 65535) usp = 65535;
+      else if (dsp < 0) usp = 0;
+      else usp = dsp;
+      if (SB.FCC) SB.FCC->sbwr(0x14+$2, usp);
+      else nl_error(2, "FCC not present");
+    }
+  : Flow &flowchan Solenoid &OpenCloseCtrl * {
+      uint16_t cmd = $2<<2 + $4;
+      if (SB.FCC) SB.FCC->sbwr(0x18, cmd);
+      else nl_error(2, "FCC not present");
+    }
+  : Valve &ValveSelect &OpenClose * {
+      uint16_t cmd = 38 + $2*2 + $3;
+      if (SB.FCC) SB.FCC->sbwr(0x18, cmd);
+      else nl_error(2, "FCC not present");
+    }
+  ;
+
+&flowchan <uint16_t>
+  : Zero { $0 = 0; }
+  : Span { $0 = 1; }
+  : Bypass { $0 = 2; }
+  ;
+
+&OpenCloseCtrl <uint16_t>
+  : Open { $0 = 2; }
+  : Close { $0 = 1; }
+  : Control { $0 = 0; }
+  ;
+
+&ValveSelect <uint16_t>
+  : 1 { $0 = 0; }
+  : 2 { $0 = 1; }
+  ;
+
+&OpenClose <uint16_t>
+  : On { $0 = 1; }
+  : Off { $0 = 0; }
+  ;
