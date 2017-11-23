@@ -49,12 +49,13 @@ Group fcc (FC0_Flow, FC1_Flow, FC2_Flow, FCC_U2_T, FCC_U3_T,
 
 TM typedef double FCC2_SCCM { text "%4.0lf"; }
 TM typedef signed short FCC2_10SLM_t { text "%5.0lf"; convert FCC2_SCCM; }
-Calibration (FCC2_10SLM_t, FCC2_SCCM) { 5333.333 0 28354.667 10000 }
+
+Calibration (FCC2_10SLM_t, FCC2_SCCM) { 5333.333, 0, 28354.667, 10000 }
 TM typedef signed short FCC2_5SLM_t { text "%4.0lf"; convert FCC2_SCCM; }
-Calibration (FCC2_10SLM_t, FCC2_SCCM) { 5333.333 0 28354.667 5000 }
+calibration (FCC2_5SLM_t, FCC2_SCCM) { 5333.333, 0, 28354.667, 5000 }
 TM typedef double FCC2_TORR { text "%6.2lf"; }
 TM typedef signed short FCC2_Omega_t { text "%6.2lf"; convert FCC2_TORR; }
-Calibration (FCC2_Omega_t, FCC2_TORR) { 0 0 26666.667 775.7 }
+calibration (FCC2_Omega_t, FCC2_TORR) { 0, 0, 26666.667, 775.7 }
 
 TM 1 Hz FCC2_10SLM_t SampleFlow;
 TM 1 Hz FCC2_5SLM_t PurgeFlow;

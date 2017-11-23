@@ -1,0 +1,5 @@
+%{
+  /* SWData_col.tmc */
+  #include "SWData.h"
+  SWData_t SWData;
+%}

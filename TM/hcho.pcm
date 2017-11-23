@@ -6,9 +6,9 @@ Effective Frame Dimensions:
   80 Rows 58 Columns
   80 rows/sec
   -28416 bits/sec
-  Data:  -31360 bits/sec  -110 %
+  Data:  -31304 bits/sec  -110 %
   Synch: 2560 bits/sec  -9 %
-  Empty: 384 bits/sec  -1 %
+  Empty: 328 bits/sec  -1 %
 -------End of Frame Statistics-----
 
 
@@ -56,12 +56,17 @@ Effective Frame Dimensions:
 1/1 Hz 2 bytes Member HtrDAC1_RB (80,47,44,2)
 1/1 Hz 2 bytes Member HtrDAC1_SP (80,47,46,2)
 1/1 Hz 2 bytes Member Htr_Status (80,47,48,2)
-1/1 Hz 4 bytes Datum SysTDrift (80,47,50,4)
-1/1 Hz 2 bytes Datum freemem (80,47,54,2)
-1/1 Hz 2 bytes Datum IPS_err (80,55,42,2)
-1/1 Hz 2 bytes Datum IPS_fine (80,55,44,2)
-1/1 Hz 2 bytes Datum PPS_fine (80,55,46,2)
-1/1 Hz 1 bytes Datum CPU_Pct (80,55,48,1)
-1/1 Hz 1 bytes Datum IPS_status (80,55,49,1)
+1/1 Hz 6 bytes Group fcc2 (80,47,50,6)
+1/1 Hz 2 bytes Member OmegaP (80,47,50,2)
+1/1 Hz 2 bytes Member PurgeFlow (80,47,52,2)
+1/1 Hz 2 bytes Member SampleFlow (80,47,54,2)
+1/1 Hz 4 bytes Datum SysTDrift (80,55,42,4)
+1/1 Hz 2 bytes Datum freemem (80,55,46,2)
+1/1 Hz 2 bytes Datum IPS_err (80,55,48,2)
+1/1 Hz 2 bytes Datum IPS_fine (80,55,50,2)
+1/1 Hz 2 bytes Datum PPS_fine (80,55,52,2)
+1/1 Hz 1 bytes Datum CPU_Pct (80,55,54,1)
+1/1 Hz 1 bytes Datum IPS_status (80,55,55,1)
+1/1 Hz 1 bytes Datum SWStat (80,63,42,1)
 -------End of PCM Definition-------
 

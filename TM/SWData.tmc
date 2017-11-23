@@ -1,0 +1,3 @@
+TM "Receive" SWData 0;
+
+TM 1 Hz UCHAR SWStat; collect SWStat = SWData.SWStat;
