@@ -25,8 +25,8 @@ State PPS_synch3 nolog {
    +1 { double adj;
         if (PPS_drift > 0) Validate PPS_rate_synch;
         else {
-          adj = (0.0005-PPS_drift)*400000;
           unsigned short adju;
+          adj = (0.0005-PPS_drift)*400000;
           if (adj > 30000) adj = 30000;
           adju = adj;
           ci_sendfcmd(0, "PPS Offset Adjust %u\n", adju);
@@ -44,19 +44,19 @@ State PPS_synch3 nolog {
   /* UpdatePeriod = 5; */
 %}
 
-State PPS_rate_synch nolog {
+State PPS_rate_synch {
   {
     PPS_integral = PPS_integral + PPS_min_drift;
     if (PPS_integral > PPS_INT_LIMIT) PPS_integral = PPS_INT_LIMIT;
     else if (PPS_integral < -PPS_INT_LIMIT) PPS_integral = -PPS_INT_LIMIT;
   }
-   +4 { double rate_adj;
-        rate_adj = PPS_min_drift * GP + PPS_integral * GI;
-        if (rate_adj > PPS_CLIP_LIMIT) rate_adj = PPS_CLIP_LIMIT;
-        else if (rate_adj < -PPS_CLIP_LIMIT) rate_adj = -PPS_CLIP_LIMIT;
-        if (rate_adj != PPS_fine)
-          ci_sendfcmd(2, "PPS Rate Adjust %.0lf\n", rate_adj);
-      }
+  { double rate_adj;
+    rate_adj = PPS_min_drift * GP + PPS_integral * GI;
+    if (rate_adj > PPS_CLIP_LIMIT) rate_adj = PPS_CLIP_LIMIT;
+    else if (rate_adj < -PPS_CLIP_LIMIT) rate_adj = -PPS_CLIP_LIMIT;
+    if (rate_adj != PPS_fine)
+      ci_sendfcmd(2, "PPS Rate Adjust %.0lf\n", rate_adj);
+  }
 }
 
 

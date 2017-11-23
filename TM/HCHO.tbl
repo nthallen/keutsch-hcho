@@ -7,6 +7,7 @@ Input "dacscan.tbl";
 PPS {
   HBox{ +-; Title: "PPS"; -+ };
   PPS_drift:  (PPS_drift,6);
+  PPS_min:  (PPS_min_drift,6);
   PPS_fine: (PPS_fine,6);
   IPS_fine: (IPS_fine,6);
   IPS_err:  (IPS_err,6);

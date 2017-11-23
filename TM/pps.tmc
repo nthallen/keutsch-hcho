@@ -35,7 +35,8 @@ PPS_Seconds PPS_drift; Invalidate PPS_drift;
 PPS_Seconds PPS_min_drift; Invalidate PPS_min_drift;
 depending on (1 Hz) {
   int i;
-  double minval = PPS_drift_record[0];
+  double minval;
+  minval = PPS_drift_record[0];
   for (i = 1; i < PPS_DELAY; ++i) {
     if (PPS_drift_record[i] < minval)
       minval = PPS_drift_record[i];
