@@ -12,20 +12,20 @@ State PPS_synch nolog {
     }
   }
   +1 > PPS Offset Adjust 30000
-  +6 Validate PPS_synch;
+  +4 Validate PPS_synch;
 }
 
 State PPS_synch2 nolog {
   +1 { if (PPS_drift > -0.075) Validate PPS_synch3; }
   +1 > PPS Offset Adjust 30000
-  +6 Validate PPS_synch;
+  +4 Validate PPS_synch;
 }
 
 State PPS_synch3 nolog {
    +1 { double adj;
-        adj = (0.0005-PPS_drift)*400000;
-        if (adj < 0) Validate PPS_rate_synch;
+        if (PPS_drift > 0) Validate PPS_rate_synch;
         else {
+          adj = (0.0005-PPS_drift)*400000;
           unsigned short adju;
           if (adj > 30000) adj = 30000;
           adju = adj;
