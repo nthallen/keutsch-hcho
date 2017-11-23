@@ -3,6 +3,7 @@ Input "BCtr.tbl";
 Input "HtrCtrl.tbl";
 Input "TS.tbl";
 Input "dacscan.tbl";
+Input "fcc.tbl";
 
 PPS {
   HBox{ +-; Title: "PPS"; -+ };
@@ -14,6 +15,10 @@ PPS {
   IPS_stat: (IPS_status,3);
 }
 
-{ HBox { |+; [BCtr]; |+; { [TS]; [dacscan] };|+; { [HtrCtrl]; [PPS]; [TMbaseB] }; |+ };
+{ HBox {
+    |+; [BCtr]; |+;
+    { [FCC];
+      HBox { [TS]; |+; [dacscan] } }; |+;
+    { [HtrCtrl]; [PPS]; [TMbaseB] }; |+ };
   -;
 }
