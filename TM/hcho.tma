@@ -35,7 +35,26 @@ State PPS_synch3 nolog {
    +6 Validate PPS_synch3;
 }
 
+%{
+  double PPS_integral;
+  #define GP 1.1e7
+  #define GI 1e6
+  #define PPS_CLIP_LIMIT 30000
+  #define PPS_INT_LIMIT (PPS_CLIP_LIMIT/GI)
+  /* UpdatePeriod = 5; */
+%}
+
 State PPS_rate_synch {
+  { double rate_adj;
+    PPS_integral = PPS_integral + PPS_min_drift;
+    if (PPS_integral > PPS_INT_LIMIT) PPS_integral = PPS_INT_LIMIT;
+    else if (PPS_integral < -PPS_INT_LIMIT) PPS_integral = -PPS_INT_LIMIT;
+    rate_adj = PPS_min_drift * GP + PPS_integral * GI;
+    if (rate_adj > PPS_CLIP_LIMIT) rate_adj = PPS_CLIP_LIMIT;
+    else if (rate_adj < -PPS_CLIP_LIMIT) rate_adj = -PPS_CLIP_LIMIT;
+    if (rate_adj != PPS_fine)
+      ci_sendfcmd(2, "PPS Rate Adjust %.0lf\n", rate_adj);
+  }
 }
 
 

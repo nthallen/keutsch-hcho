@@ -2,6 +2,9 @@
   #include <math.h>
   #include "SB.h"
   #define BCtr_rd(x) (SB.BCtr ? SB.BCtr->sbrd(x) : 0)
+  #define PPS_DELAY 70 /* How many samples to take for running min */
+  double PPS_drift_record[PPS_DELAY];
+  int PPS_sample;
 %}
 TM typedef double PPS_Seconds { text "%6.4lf"; }
 TM typedef unsigned short PPS_t {
@@ -24,5 +27,19 @@ PPS_Seconds PPS_drift; Invalidate PPS_drift;
   dt = convert(PPS_time) - dt + floor(dt) + 0.5;
   dt = dt - floor(dt) - 0.5;
   PPS_drift = dt;
+  PPS_drift_record[PPS_sample] = PPS_drift;
+  if (++PPS_sample >= PPS_DELAY) PPS_sample = 0;
   Validate PPS_drift;
+}
+
+PPS_Seconds PPS_min_drift; Invalidate PPS_min_drift;
+depending on (1 Hz) {
+  int i;
+  double minval = PPS_drift_record[0];
+  for (i = 1; i < PPS_DELAY; ++i) {
+    if (PPS_drift_record[i] < minval)
+      minval = PPS_drift_record[i];
+  }
+  PPS_min_drift = minval;
+  Validate PPS_min_drift;
 }

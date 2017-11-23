@@ -1,4 +1,5 @@
 ci_sendfcmd(2, "PhRTG Datum CPU_Pct %lu %s\n", itime(), text(CPU_Pct));
 ci_sendfcmd(2, "PhRTG Datum BCtr_0 %.3lf %s\n", dtime(), text(BCtr_0_a));
-ci_sendfcmd(2, "PhRTG Datum PPS_drift %.3lf %s\n", dtime(), text(PPS_drift));
+ci_sendfcmd(2, "PhRTG Datum PPS_drift %.3lf %.1lf %.1lf\n", dtime(),
+  PPS_drift*1e3, PPS_min_drift*1e3);
 ci_sendfcmd(2, "PhRTG Datum SysTDrift %.3lf %s\n", dtime(), text(SysTDrift));
