@@ -14,7 +14,7 @@
     return ((status&OB) ? 1 : 0) + ((status&CB) ? 2 : 0);
   }
 %}
-TM typedef FCC_FC_Status_t { text "%7d" Flow_status_text(); }
+TM typedef unsigned char FCC_FC_Status_t { text "%7d" Flow_status_text(); }
 
 FCC_FC_Status_t FC0_Stat; Invalidate FC0_Stat;
 { FC0_Stat = FCC_Flow_Bits(FCC0_Status, 0x01, 0x10); Validate FC0_Stat; }

@@ -6,9 +6,9 @@ Effective Frame Dimensions:
   80 Rows 58 Columns
   80 rows/sec
   -28416 bits/sec
-  Data:  -31496 bits/sec  -111 %
+  Data:  -31360 bits/sec  -110 %
   Synch: 2560 bits/sec  -9 %
-  Empty: 520 bits/sec  -2 %
+  Empty: 384 bits/sec  -1 %
 -------End of Frame Statistics-----
 
 
@@ -31,27 +31,37 @@ Effective Frame Dimensions:
 1/1 Hz 2 bytes Member TS1_cnt (80,23,42,2)
 1/1 Hz 4 bytes Member TS0_raw (80,23,44,4)
 1/1 Hz 2 bytes Member TS0_cnt (80,23,48,2)
-1/1 Hz 15 bytes Group DACscan (80,23,50,1) (80,31,42,14)
-1/1 Hz 2 bytes Member LV_dither (80,23,50,1) (80,31,42,1)
-1/1 Hz 4 bytes Datum SysTDrift (80,23,51,4)
-1/1 Hz 1 bytes Datum CPU_Pct (80,23,55,1)
-1/1 Hz 2 bytes Member LV_offline (80,31,43,2)
-1/1 Hz 2 bytes Member LV_online (80,31,45,2)
-1/1 Hz 2 bytes Member LV_step (80,31,47,2)
-1/1 Hz 2 bytes Member LV_stop (80,31,49,2)
-1/1 Hz 2 bytes Member LV_start (80,31,51,2)
-1/1 Hz 2 bytes Member LaserV (80,31,53,2)
-1/1 Hz 1 bytes Member LV_status (80,31,55,1)
-1/1 Hz 8 bytes Group HtrCtrl (80,39,42,8)
-1/1 Hz 2 bytes Member HtrADC1 (80,39,42,2)
-1/1 Hz 2 bytes Member HtrDAC1_RB (80,39,44,2)
-1/1 Hz 2 bytes Member HtrDAC1_SP (80,39,46,2)
-1/1 Hz 2 bytes Member Htr_Status (80,39,48,2)
-1/1 Hz 2 bytes Datum Disk (80,39,50,2)
-1/1 Hz 2 bytes Datum freemem (80,39,52,2)
-1/1 Hz 2 bytes Datum IPS_err (80,39,54,2)
-1/1 Hz 2 bytes Datum IPS_fine (80,47,42,2)
-1/1 Hz 2 bytes Datum PPS_fine (80,47,44,2)
-1/1 Hz 1 bytes Datum IPS_status (80,47,46,1)
+1/1 Hz 17 bytes Group fcc (80,23,50,3) (80,31,42,14)
+1/1 Hz 1 bytes Member FCC0_Status (80,23,50,1)
+1/1 Hz 2 bytes Member FC2_Set (80,23,51,2)
+1/1 Hz 15 bytes Group DACscan (80,23,53,1) (80,39,42,14)
+1/1 Hz 2 bytes Member LV_dither (80,23,53,1) (80,39,42,1)
+1/1 Hz 2 bytes Datum Disk (80,23,54,2)
+1/1 Hz 2 bytes Member FC1_Set (80,31,42,2)
+1/1 Hz 2 bytes Member FC0_Set (80,31,44,2)
+1/1 Hz 2 bytes Member FCC_U3_T (80,31,46,2)
+1/1 Hz 2 bytes Member FCC_U2_T (80,31,48,2)
+1/1 Hz 2 bytes Member FC2_Flow (80,31,50,2)
+1/1 Hz 2 bytes Member FC1_Flow (80,31,52,2)
+1/1 Hz 2 bytes Member FC0_Flow (80,31,54,2)
+1/1 Hz 2 bytes Member LV_offline (80,39,43,2)
+1/1 Hz 2 bytes Member LV_online (80,39,45,2)
+1/1 Hz 2 bytes Member LV_step (80,39,47,2)
+1/1 Hz 2 bytes Member LV_stop (80,39,49,2)
+1/1 Hz 2 bytes Member LV_start (80,39,51,2)
+1/1 Hz 2 bytes Member LaserV (80,39,53,2)
+1/1 Hz 1 bytes Member LV_status (80,39,55,1)
+1/1 Hz 8 bytes Group HtrCtrl (80,47,42,8)
+1/1 Hz 2 bytes Member HtrADC1 (80,47,42,2)
+1/1 Hz 2 bytes Member HtrDAC1_RB (80,47,44,2)
+1/1 Hz 2 bytes Member HtrDAC1_SP (80,47,46,2)
+1/1 Hz 2 bytes Member Htr_Status (80,47,48,2)
+1/1 Hz 4 bytes Datum SysTDrift (80,47,50,4)
+1/1 Hz 2 bytes Datum freemem (80,47,54,2)
+1/1 Hz 2 bytes Datum IPS_err (80,55,42,2)
+1/1 Hz 2 bytes Datum IPS_fine (80,55,44,2)
+1/1 Hz 2 bytes Datum PPS_fine (80,55,46,2)
+1/1 Hz 1 bytes Datum CPU_Pct (80,55,48,1)
+1/1 Hz 1 bytes Datum IPS_status (80,55,49,1)
 -------End of PCM Definition-------
 
