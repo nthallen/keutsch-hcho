@@ -1,6 +1,7 @@
 %{
   #include "SB.h"
   static subbus_mread_req *FCC0Req;
+  static subbus_mread_req *FCC2Req;
 
   static int FCC0_collect(unsigned short*data) {
     return (SB.FCC ? SB.FCC->mread_subbus(FCC0Req, data) : 0);
@@ -10,6 +11,15 @@
       SB.FCC->pack_mread_request(9,"10,11,12,14,15,16,18,19,1A") :
       0;
   }
+  static int FCC2_collect(unsigned short*data) {
+    return (SB.FCC2 ? SB.FCC2->mread_subbus(FCC2Req, data) : 0);
+  }
+  static void FCC2_init() {
+    FCC2Req = SB.FCC2 ?
+      SB.FCC2->pack_mread_request(3,"10,11,12") :
+      0;
+  }
 %}
 
 TM INITFUNC FCC0_init();
+TM INITFUNC FCC2_init();

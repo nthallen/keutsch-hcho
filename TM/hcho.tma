@@ -59,4 +59,6 @@ State PPS_rate_synch {
   }
 }
 
-
+State Shutdown {
+  +2 > Quit
+}

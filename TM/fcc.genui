@@ -15,3 +15,7 @@
   1 FC2Closed:FCC0_Status:5 FCC Status
   1 FC2Closed:FCC0_Status:6 FCC Status
   1 Vlv2:FCC0_Status:7      FCC Status
+
+  1 SampleFlow FCC2 Flow
+  1 PurgeFlow  FCC2 Flow
+  1 OmegaP     FCC2 P

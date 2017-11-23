@@ -15,10 +15,16 @@ PPS {
   IPS_stat: (IPS_status,3);
 }
 
+System {
+  HBox{ +-; Title: "System"; -+ };
+  SWStat: (SWStat,3);
+  [TMbase];
+}
+
 { HBox {
     |+; [BCtr]; |+;
     { [FCC];
-      HBox { [TS]; |+; [dacscan] } }; |+;
-    { [HtrCtrl]; [PPS]; [TMbaseB] }; |+ };
+      HBox { {[TS]; [FCC2] }; |+; [dacscan] } }; |+;
+    { [HtrCtrl]; [PPS]; [System] }; |+ };
   -;
 }

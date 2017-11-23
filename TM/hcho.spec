@@ -1,6 +1,7 @@
 tmcbase = base.tmc
 cmdbase = /usr/local/share/huarp/phrtg.cmd
 genuibase = hcho.genui
+swsbase = hcho.sws
 
 # Heater Controller block is hard coded to 1 Hz.
 # HtrCtrl.tmc and HtrCtrl.genui could easily be modularized

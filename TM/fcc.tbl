@@ -6,3 +6,10 @@ FCC {
   Status: (FC2_Stat,7) (FC0_Stat,7) (FC1_Stat,7);
   Valve1: (Vlv1_Stat,7) Valve2:     (Vlv2_Stat,7);
 }
+
+FCC2 {
+  HBox { +-; Title: "Flow"; -+ };
+  Sample: (SampleFlow,6) sccm;
+  Purge:  (PurgeFlow,6)  sccm;
+  P:      (OmegaP,6)     Torr;
+}
