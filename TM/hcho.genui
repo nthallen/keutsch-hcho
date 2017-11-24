@@ -2,7 +2,8 @@ HEADER HCHO Instrument
 MNEMONIC hcho
 HOMEDIR HCHO_DATA_DIR
 
- 10 PPS_drift PPS Time
+ 10 PPS_drift PPS Drift
+ 10 PPS_min_drift PPS Drift
  10 PPS_time  PPS Raw  %.0lf
   1 PPS_fine  PPS Fine
   1 IPS_fine  IPS Fine

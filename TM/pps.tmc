@@ -6,12 +6,12 @@
   double PPS_drift_record[PPS_DELAY];
   int PPS_sample;
 %}
-TM typedef double PPS_Seconds { text "%6.4lf"; }
+TM typedef double PPS_msecs { text "%7.2lf"; }
 TM typedef unsigned short PPS_t {
   text "%6.4lf";
-  convert PPS_Seconds;
+  convert PPS_msecs;
 }
-Calibration (PPS_t, PPS_Seconds) { 0, 0, 48828.125, 1 }
+Calibration (PPS_t, PPS_msecs) { 0, 0, 48828.125, 1000 }
 TM typedef signed short PPS_fine_t { text "%6d"; }
 TM typedef unsigned char IPS_stat_t { text "%3d"; }
 
@@ -21,18 +21,18 @@ TM 1  Hz PPS_fine_t IPS_fine; collect IPS_fine = BCtr_rd(0x73);
 TM 1  Hz PPS_fine_t IPS_err; collect IPS_err = BCtr_rd(0x74);
 TM 1  Hz IPS_stat_t IPS_status; collect IPS_status = BCtr_rd(0x75);
 
-PPS_Seconds PPS_drift; Invalidate PPS_drift;
+PPS_msecs PPS_drift; Invalidate PPS_drift;
 { double dt;
   dt = dtime();
   dt = convert(PPS_time) - dt + floor(dt) + 0.5;
   dt = dt - floor(dt) - 0.5;
-  PPS_drift = dt;
+  PPS_drift = dt*1000;
   PPS_drift_record[PPS_sample] = PPS_drift;
   if (++PPS_sample >= PPS_DELAY) PPS_sample = 0;
   Validate PPS_drift;
 }
 
-PPS_Seconds PPS_min_drift; Invalidate PPS_min_drift;
+PPS_msecs PPS_min_drift; Invalidate PPS_min_drift;
 depending on (1 Hz) {
   int i;
   double minval;
