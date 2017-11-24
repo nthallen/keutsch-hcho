@@ -56,7 +56,7 @@
       SB.BCtr->mread_subbus_nw(BCtr_req, Bins, &nw);
     }
     if (nw != saw_nw) {
-      nl_error(0, "nw = %u", nw);
+      // nl_error(0, "nw = %u", nw);
       saw_nw = nw;
     }
     while (nw < 208) {

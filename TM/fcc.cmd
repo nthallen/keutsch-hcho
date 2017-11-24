@@ -16,7 +16,8 @@
       else nl_error(2, "FCC not present");
     }
   : Flow &flowchan Solenoid &OpenCloseCtrl * {
-      uint16_t cmd = $2<<2 + $4;
+      uint16_t cmd = ($2<<2) + $4;
+      nl_error(0, "FCC command is %u", cmd);
       if (SB.FCC) SB.FCC->sbwr(0x18, cmd);
       else nl_error(2, "FCC not present");
     }
@@ -24,6 +25,12 @@
       uint16_t cmd = 38 + $2*2 + $3;
       if (SB.FCC) SB.FCC->sbwr(0x18, cmd);
       else nl_error(2, "FCC not present");
+    }
+  : FCC2 Measure Single Ended * {
+      if (SB.FCC2) SB.FCC2->sbwr(0x18, 36);
+    }
+  : FCC2 Measure Differentially * {
+      if (SB.FCC2) SB.FCC2->sbwr(0x18, 35);
     }
   ;
 

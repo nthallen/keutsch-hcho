@@ -42,4 +42,4 @@ hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc fcc_conv.tmc HCHO.tbl
 hchortgext : BCtr_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 TSrawext : TSraw.cdf
 doit : hcho.doit
-hchoalgo : hcho.tma
+hchoalgo : hcho.tma hcho.sws

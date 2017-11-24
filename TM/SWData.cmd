@@ -14,6 +14,8 @@
   : SWStat &SWStat { SWData.SWStat = $2; }
   ;
 &SWStat <unsigned char>
-  : Shutdown { $0 = SWS_SHUTDOWN; }
+  : PPS Idle { $0 = SWS_PPS_IDLE; }
   : Set %d { $0 = $2; }
+  : PPS Sync { $0 = SWS_PPS_SYNC; }
+  : Shutdown { $0 = SWS_SHUTDOWN; }
   ;

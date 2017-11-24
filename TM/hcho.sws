@@ -1,3 +1,5 @@
 SW_Variable: SWStat
 
+SWS_PPS_IDLE     1   PPS Idle: Validate PPS_idle; break;
+SWS_PPS_SYNC     2   PPS Sync: Validate PPS_synch; break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;

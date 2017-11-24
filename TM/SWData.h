@@ -7,6 +7,8 @@ typedef struct __attribute__((__packed__)) {
 } SWData_t;
 extern SWData_t SWData;
 
+#define SWS_PPS_IDLE 1
+#define SWS_PPS_SYNC 2
 #define SWS_SHUTDOWN 255
 
 #endif

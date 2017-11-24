@@ -4,19 +4,27 @@ State Init {
       Validate PPS_synch;
 }
 
+State Shutdown {
+  +2 > Quit
+}
+
+Partition
+
+State PPS_idle {}
+
 State PPS_synch nolog {
-  { if (PPS_drift > 0 && PPS_drift < 3.000) {
+  { if (PPS_min_drift > 0 && PPS_min_drift < 3.000) {
       Validate PPS_rate_synch;
-    } else if (PPS_drift < 0 && PPS_drift > -75.0) {
+    } else if (PPS_min_drift < 0 && PPS_min_drift > -75.0) {
       Validate PPS_synch3;
     }
   }
   +1 > PPS Offset Adjust 30000
-  +4 Validate PPS_synch;
+  +7 Validate PPS_synch;
 }
 
 State PPS_synch3 nolog {
-   +3 { double adj;
+   +1 { double adj;
         if (PPS_min_drift > 0) Validate PPS_rate_synch;
         else {
           unsigned short adju;
@@ -26,7 +34,7 @@ State PPS_synch3 nolog {
           ci_sendfcmd(0, "PPS Offset Adjust %u\n", adju);
         }
       }
-   +4 Validate PPS_synch3;
+   +7 Validate PPS_synch3;
 }
 
 %{
@@ -51,8 +59,4 @@ State PPS_rate_synch {
     if (rate_adj != PPS_fine)
       ci_sendfcmd(2, "PPS Rate Adjust %.0lf\n", rate_adj);
   }
-}
-
-State Shutdown {
-  +2 > Quit
 }

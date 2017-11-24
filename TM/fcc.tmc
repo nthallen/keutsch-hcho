@@ -57,8 +57,8 @@ TM typedef double FCC2_TORR { text "%6.2lf"; }
 TM typedef signed short FCC2_Omega_t { text "%6.2lf"; convert FCC2_TORR; }
 calibration (FCC2_Omega_t, FCC2_TORR) { 0, 0, 26666.667, 775.7 }
 
-TM 1 Hz FCC2_10SLM_t SampleFlow;
-TM 1 Hz FCC2_5SLM_t PurgeFlow;
+TM 1 Hz FCC_ADC_t SampleFlow; /* FCC2_10SLM_t */
+TM 1 Hz FCC_ADC_t PurgeFlow; /* FCC2_5SLM_t */
 TM 1 Hz FCC2_Omega_t OmegaP;
 
 Group fcc2 (SampleFlow, PurgeFlow, OmegaP) {

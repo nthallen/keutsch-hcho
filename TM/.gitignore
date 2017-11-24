@@ -34,6 +34,7 @@ TSrawextoui.c
 TSrawextoui.o
 TSrawext.o
 doit.dep
+hchosws.tma
 hchoalgoa.tmc
 hchoalgo.cc
 hchoalgooui.c
