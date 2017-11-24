@@ -5,40 +5,34 @@ State Init {
 }
 
 State PPS_synch nolog {
-  { if (PPS_drift > 0 && PPS_drift < 0.001) {
+  { if (PPS_drift > 0 && PPS_drift < 3.000) {
       Validate PPS_rate_synch;
-    } else if (PPS_drift < 0) {
-      Validate PPS_synch2;
+    } else if (PPS_drift < 0 && PPS_drift > -75.0) {
+      Validate PPS_synch3;
     }
   }
   +1 > PPS Offset Adjust 30000
   +4 Validate PPS_synch;
 }
 
-State PPS_synch2 nolog {
-  +1 { if (PPS_drift > -0.075) Validate PPS_synch3; }
-  +1 > PPS Offset Adjust 30000
-  +4 Validate PPS_synch;
-}
-
 State PPS_synch3 nolog {
-   +1 { double adj;
-        if (PPS_drift > 0) Validate PPS_rate_synch;
+   +3 { double adj;
+        if (PPS_min_drift > 0) Validate PPS_rate_synch;
         else {
           unsigned short adju;
-          adj = (0.0005-PPS_drift)*400000;
+          adj = (2-PPS_min_drift)*400;
           if (adj > 30000) adj = 30000;
           adju = adj;
           ci_sendfcmd(0, "PPS Offset Adjust %u\n", adju);
         }
       }
-   +6 Validate PPS_synch3;
+   +4 Validate PPS_synch3;
 }
 
 %{
   double PPS_integral;
-  #define GP 1.1e7
-  #define GI 1e6
+  #define GP 1.1e4
+  #define GI 1e3
   #define PPS_CLIP_LIMIT 30000
   #define PPS_INT_LIMIT (PPS_CLIP_LIMIT/GI)
   /* UpdatePeriod = 5; */
