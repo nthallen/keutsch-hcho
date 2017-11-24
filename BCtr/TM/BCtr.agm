@@ -1,10 +1,10 @@
-Moduledef BCtr [ NAB=2 NA=1,220 NB=100,1 NW=208 from=15 to=99 rate=1 HEXCNT=CE ] {
+Moduledef BCtr [ NAB=2 NA=1,220 NB=100,1 NW=209 from=15 to=99 rate=1 HEXCNT=CE ] {
   BCtr Module takes the following parameters:
     NAB: The number of elements in the NA and NB arguments
     NA: A comma-separated list of bin width values
     NB: A comma-separated list of bin count values
-    NW: The number of words in the acquisition: 6+2*sum(NB)
-    HEXCNT: Hex encoding of NW-2
+    NW: The number of words in the acquisition: 7+2*sum(NB)
+    HEXCNT: Hex encoding of NW-3
     from,to: Index range for wide bin
     rate: The reporting rate in Hz
 }

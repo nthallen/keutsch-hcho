@@ -1,6 +1,6 @@
 %{
   #define BCTR_N_CHANNELS 2
-  #define BCTR_DATA_OFFSET 6
+  #define BCTR_DATA_OFFSET 7
   #define BCTR_BIN_SIZE @NW@
   #define BCTR_NB_TOTAL ((BCTR_BIN_SIZE-BCTR_DATA_OFFSET)/BCTR_N_CHANNELS)
 %}
@@ -14,8 +14,4 @@ TM typedef unsigned short BCtr_DAC_t { text "%5.3lf"; convert BCtr_VOLTS; }
 Calibration (BCtr_DAC_t, BCtr_VOLTS) { 0, 0, 65536, 5 }
 
 TM @rate@ Hz BCtr_Cts_t BCtr_Bins[@NW@];
-
-Group BCtr (BCtr_Bins) {
-  BCtr_collect(BCtr_Bins);
-}
-
+Collect BCtr_Bins { BCtr_collect(BCtr_Bins); }

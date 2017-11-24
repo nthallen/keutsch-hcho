@@ -22,8 +22,8 @@
      values which are not read from address 22)
 
      For the values listed above, we have:
-        BCTR_BIN_SIZE = 101*2 + 6 = 208
-        NWORDS_FIFO = BCTR_BIN_SIZE-2 = 206 = 0xCE
+        BCTR_BIN_SIZE = 101*2 + 7 = 208
+        NWORDS_FIFO = BCTR_BIN_SIZE-3 = 206 = 0xCE
    */
   unsigned short NA[BCTR_N_BIN_SPECS] = { @NA@ };
   unsigned short NB[BCTR_N_BIN_SPECS] = { @NB@ };
@@ -43,20 +43,20 @@
         SB.BCtr->sbwr(BCtr_BASE+3+2*i, NA[i]);
         SB.BCtr->sbwr(BCtr_BASE+4+2*i, NB[i]);
       }
-      BCtr_req = SB.BCtr->pack_mread_request(BCTR_BIN_SIZE, "20,21|CE@22");
+      BCtr_req = SB.BCtr->pack_mread_request(BCTR_BIN_SIZE, "60,20,21|CE@22");
     } else {
       nl_error(2, "BCtr lib not found");
     }
   }
 
-  void BCtr_collect(unsigned short *Bins) {
+  unsigned short BCtr_collect(unsigned short *Bins) {
     unsigned short nw;
     static unsigned short saw_nw = 0;
     if (SB.BCtr) {
       SB.BCtr->mread_subbus_nw(BCtr_req, Bins, &nw);
     }
     if (nw != saw_nw) {
-      nl_error(0, "nw = %u", nw);
+      // nl_error(0, "nw = %u", nw);
       saw_nw = nw;
     }
     while (nw < @NW@) {

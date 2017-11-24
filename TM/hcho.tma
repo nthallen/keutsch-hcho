@@ -10,12 +10,24 @@ State Shutdown {
 
 Partition
 
+%{
+  double PPS_integral;
+  #define GP 1.1e4
+  #define GI 1e3
+  #define PPS_CLIP_LIMIT 30000
+  #define PPS_INT_LIMIT (PPS_CLIP_LIMIT/GI)
+  #define PPS_SETPOINT (-18.0)
+  /* UpdatePeriod = 5; */
+%}
+
 State PPS_idle {}
 
 State PPS_synch nolog {
-  { if (PPS_min_drift > 0 && PPS_min_drift < 3.000) {
+  { if (PPS_min_drift > PPS_SETPOINT &&
+        PPS_min_drift < PPS_SETPOINT+3.000) {
       Validate PPS_rate_synch;
-    } else if (PPS_min_drift < 0 && PPS_min_drift > -75.0) {
+    } else if (PPS_min_drift < PPS_SETPOINT &&
+        PPS_min_drift > PPS_SETPOINT-75.0) {
       Validate PPS_synch3;
     }
   }
@@ -25,10 +37,10 @@ State PPS_synch nolog {
 
 State PPS_synch3 nolog {
    +1 { double adj;
-        if (PPS_min_drift > 0) Validate PPS_rate_synch;
+        if (PPS_min_drift > PPS_SETPOINT) Validate PPS_rate_synch;
         else {
           unsigned short adju;
-          adj = (2-PPS_min_drift)*400;
+          adj = (PPS_SETPOINT+2.0-PPS_min_drift)*400;
           if (adj > 30000) adj = 30000;
           adju = adj;
           ci_sendfcmd(0, "PPS Offset Adjust %u\n", adju);
@@ -37,23 +49,14 @@ State PPS_synch3 nolog {
    +7 Validate PPS_synch3;
 }
 
-%{
-  double PPS_integral;
-  #define GP 1.1e4
-  #define GI 1e3
-  #define PPS_CLIP_LIMIT 30000
-  #define PPS_INT_LIMIT (PPS_CLIP_LIMIT/GI)
-  /* UpdatePeriod = 5; */
-%}
-
 State PPS_rate_synch {
   {
-    PPS_integral = PPS_integral + PPS_min_drift;
+    PPS_integral = PPS_integral + (PPS_min_drift-PPS_SETPOINT);
     if (PPS_integral > PPS_INT_LIMIT) PPS_integral = PPS_INT_LIMIT;
     else if (PPS_integral < -PPS_INT_LIMIT) PPS_integral = -PPS_INT_LIMIT;
   }
   { double rate_adj;
-    rate_adj = PPS_min_drift * GP + PPS_integral * GI;
+    rate_adj = (PPS_min_drift-PPS_SETPOINT) * GP + PPS_integral * GI;
     if (rate_adj > PPS_CLIP_LIMIT) rate_adj = PPS_CLIP_LIMIT;
     else if (rate_adj < -PPS_CLIP_LIMIT) rate_adj = -PPS_CLIP_LIMIT;
     if (rate_adj != PPS_fine)
