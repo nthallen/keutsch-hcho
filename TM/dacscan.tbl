@@ -1,15 +1,15 @@
 dacscan {
   HBox { +-; Title: "Laser Control"; -+ };
   Status:  (LV_status,8);
-  LaserV:  (LaserV,6) V;
+  LaserV:  (LaserV,6) mV;
   PwrIn:   (LasIn_mW,6) mW;
   PwrOut:  (LasOut_mW,6) mW;
-  Start:   (LV_start,6) V;
-  Stop:    (LV_stop,6) V;
-  Step:    (LV_step,6) V;
-  Online:  (LV_online,6) V;
-  Offline: (LV_offline,6) V;
-  Dither:  (LV_dither,6) V;
+  Start:   (LV_start,6) mV;
+  Stop:    (LV_stop,6) mV;
+  Step:    (LV_step,6) mV;
+  Online:  (LV_online,6) mV;
+  Offline: (LV_offline,6) mV;
+  Dither:  (LV_dither,6) mV;
 }
 
 DS_SWStat {

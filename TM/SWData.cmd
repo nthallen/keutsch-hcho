@@ -37,5 +37,5 @@
   : Set %d (Enter mVolts) { $0 = $2; }
   ;
 &Drift_Limit <unsigned short>
-  : Set %d (Enter mV of laser voltage) * { $0 = $2; }
+  : Set %d (Enter mV of laser voltage) { $0 = $2; }
   ;

@@ -30,7 +30,7 @@ System {
 { HBox {
     |+; [BCtr]; |+;
     { [FCC];
-      HBox { {[TS]; [FCC2] }; |+;
+      HBox { {[Cell]; [FCC2]; [TS]} ; |+;
              {[dacscan]; [DS_SWStat] } } }; |+;
     { [HtrCtrl]; [PPS]; [System] }; |+ };
   -;

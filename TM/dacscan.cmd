@@ -7,6 +7,7 @@
   : Laser Set &laserv %f (Enter value in mVolts) * {
       uint16_t usp;
       double sp = floor($4*65536/5000);
+      if ($3 = 0x84) sp = sp*8; // The Step has *8 resolution
       if (sp < 0) sp = 0;
       else if (sp > 65535) sp = 65535;
       usp = floor(sp);
