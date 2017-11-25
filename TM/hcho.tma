@@ -16,7 +16,7 @@ Partition
   #define GI 1e3
   #define PPS_CLIP_LIMIT 30000
   #define PPS_INT_LIMIT (PPS_CLIP_LIMIT/GI)
-  #define PPS_SETPOINT (-18.0)
+  #define PPS_SETPOINT (-50.0)
   /* UpdatePeriod = 5; */
 %}
 
