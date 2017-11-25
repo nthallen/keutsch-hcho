@@ -7,8 +7,8 @@
 %}
 TM typedef signed long TS_raw_t;
 TM typedef unsigned short TS_cnt_t { text "%3u"; }
-TM typdef double TS_CELCIUS;
-TM typedef double TS_T_t { text "%7.2lf"; convert TS_CELCIUS; } */
+TM typedef double TS_CELCIUS;
+TM typedef double TS_T_t { text "%7.2lf"; convert TS_CELCIUS; }
 TM typedef double TS_V_t { text "%9.5lf"; }
 TM typedef double Laser_mW;
 TM typedef double LaserPwr_t { text "%6.4lf"; convert Laser_mW; }

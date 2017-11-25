@@ -12,7 +12,7 @@ dacscan {
   Dither:  (LV_dither,6) V;
 }
 
-DS_SWstat {
+DS_SWStat {
   -;
   "NPts On:" (NPts_Online,5) ds;
   "Npts Off:" (Npts_Offline,5) ds;
