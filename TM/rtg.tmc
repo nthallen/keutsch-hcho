@@ -9,3 +9,4 @@ ci_sendfcmd(2, "PhRTG Datum SysTDrift %.3lf %s\n", dtime(), text(SysTDrift));
 
 ci_sendfcmd(2, "PhRTG Datum LasIn_mW %.3lf %s\n", dtime(), text(LasIn_mW));
 ci_sendfcmd(2, "PhRTG Datum LasOut_mW %.3lf %s\n", dtime(), text(LasOut_mW));
+ci_sendfcmd(2, "PhRTG Datum CellP %.3lf %s\n", dtime(), text(OmegaP));

@@ -22,6 +22,8 @@
   : PPS Idle { $0 = SWS_PPS_IDLE; }
   : Set %d { $0 = $2; }
   : PPS Sync { $0 = SWS_PPS_SYNC; }
+  : Pressure Control Idle { $0 = SWS_PCTRL_IDLE; }
+  : Pressure Control Activate { $0 = SWS_PCTRL_ACTIVE; }
   : Shutdown { $0 = SWS_SHUTDOWN; }
   ;
 &Flag <unsigned char>
