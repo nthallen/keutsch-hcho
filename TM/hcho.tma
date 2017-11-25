@@ -63,3 +63,35 @@ State PPS_rate_synch {
       ci_sendfcmd(2, "PPS Rate Adjust %.0lf\n", rate_adj);
   }
 }
+
+Partition
+
+%{
+  double CellP_integral;
+  #define CELLP_GP (-10000/65)
+  #define CELLP_GI 20
+  #define CELLP_CLIP_LIMIT 10000
+  #define CELLP_INT_LIMIT (CELLP_CLIP_LIMIT/GI)
+  #define CELLP_SETPOINT (115.0)
+  /* UpdatePeriod = 5; */
+%}
+
+State CellP_idle {}
+
+State CellP_control {
+  { double err_term, rate_adj;
+    err_term = (convert(CellP)-CELLP_SETPOINT);
+    CellP_integral += err_term;
+    if (CellP_integral > CELLP_INT_LIMIT)
+      CellP_integral = CELLP_INT_LIMIT;
+    else if (CellP_integral < -CELLP_INT_LIMIT)
+      CellP_integral = -CELLP_INT_LIMIT;
+    rate_adj = 5000 + err_term * CELLP_GP +
+      CellP_integral * CELLP_GI;
+    if (rate_adj > CELLP_CLIP_LIMIT)
+      rate_adj = CELLP_CLIP_LIMIT;
+    else if (rate_adj < 0) rate_adj = 0;
+    if (rate_adj != FC2_Set)
+      ci_sendfcmd(2, "Flow Bypass Set SCCM %.0lf\n", rate_adj);
+  }
+}

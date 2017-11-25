@@ -1,6 +1,9 @@
 SW_Variable: SWStat
 SWS_PPS_IDLE     1   PPS Idle: Validate PPS_idle; break;
 SWS_PPS_SYNC     2   PPS Sync: Validate PPS_synch; break;
+SWS_PCTRL_IDLE   3   Pressure Control Idle: Validate CellP_idle; break;
+SWS_PCTRL_IDLE   4   Pressure Control Activate:
+  Validate CellP_control; break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
 
 SW_Variable: Flag
