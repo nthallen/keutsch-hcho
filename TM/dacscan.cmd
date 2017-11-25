@@ -4,29 +4,19 @@
   #include "SB.h"
 %}
 &command
-  : Laser Voltage Set &laserv %f (Enter Volts) * {
+  : Laser Set &laserv %f (Enter value in mVolts) * {
       uint16_t usp;
-      double sp = floor($5*65536/5);
+      double sp = floor($4*65536/5000);
       if (sp < 0) sp = 0;
       else if (sp > 65535) sp = 65535;
       usp = floor(sp);
 
       if (SB.BCtr)
-        SB.BCtr->sbwr($4, usp);
+        SB.BCtr->sbwr($3, usp);
     }
-  : Laser mVolts Set Step %f (Enter mVolts) * {
-      uint16_t usp;
-      double sp = floor($5*65536*8/5000);
-      if (sp < 0) sp = 0;
-      else if (sp > 65535) sp = 65535;
-      usp = floor(sp);
-
-      if (SB.BCtr)
-        SB.BCtr->sbwr(0x84, usp);
-    }
-  : Laser &lasercmd * {
+  : Laser Command &lasercmd * {
         if (SB.BCtr)
-          SB.BCtr->sbwr(0x80, $2);
+          SB.BCtr->sbwr(0x80, $3);
       }
   ;
 
@@ -34,6 +24,7 @@
   : Setpoint { $0 = 0x81; }
   : Scan Start { $0 = 0x82; }
   : Scan Stop { $0 = 0x83; }
+  : Scan Step { $0 = 0x84; }
   : Online { $0 = 0x85; }
   : Offline { $0 = 0x86; }
   : Dither { $0 = 0x87; }

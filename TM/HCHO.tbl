@@ -15,16 +15,23 @@ PPS {
   IPS_stat: (IPS_status,3);
 }
 
+Cell {
+  HBox{ +-; Title: "PPS"; -+ };
+  CellT: (CellT,7) C;
+  CellP: (OmegaP,6) Torr;
+}
+
 System {
   HBox{ +-; Title: "System"; -+ };
-  SWStat: (SWStat,3);
+  SWStat: (SWStat,3) Flag: (Flag,3);
   [TMbase];
 }
 
 { HBox {
     |+; [BCtr]; |+;
     { [FCC];
-      HBox { {[TS]; [FCC2] }; |+; [dacscan] } }; |+;
+      HBox { {[TS]; [FCC2] }; |+;
+             {[dacscan]; [DS_SWStat] } } }; |+;
     { [HtrCtrl]; [PPS]; [System] }; |+ };
   -;
 }
