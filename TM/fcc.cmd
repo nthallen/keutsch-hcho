@@ -2,11 +2,14 @@
   #include <stdint.h>
   #include "SB.h"
   /* fcc.cmd */
+  #ifdef SERVER
+    int SCCM_Span[3] = { 5000, 20, 10000};
+  #endif
 %}
 
 &command
-  : Flow &flowchan Set %f (Volts) * {
-      double dsp = $4*65536./5.;
+  : Flow &flowchan Set Volts %f (Enter value in Volts) * {
+      double dsp = $5*65536./5.;
       uint16_t usp;
       
       if (dsp > 65535) usp = 65535;
@@ -14,6 +17,19 @@
       else usp = dsp;
       if (SB.FCC) SB.FCC->sbwr(0x14+$2, usp);
       else nl_error(2, "FCC not present");
+    }
+  : Flow &flowchan Set SCCM %f (Enter value in SCCM) * {
+      double dsp;
+      uint16_t usp;
+      
+      if ($2 >= 0 && $2 <= 2) {
+        dsp = $5*65536./SCCM_Span[$2];
+        if (dsp > 65535) usp = 65535;
+        else if (dsp < 0) usp = 0;
+        else usp = dsp;
+        if (SB.FCC) SB.FCC->sbwr(0x14+$2, usp);
+        else nl_error(2, "FCC not present");
+      } else nl_error(2, "Invalid DAC Channel: %d", $2);
     }
   : Flow &flowchan Solenoid &OpenCloseCtrl * {
       uint16_t cmd = ($2<<2) + $4;

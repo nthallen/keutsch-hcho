@@ -1,0 +1,7 @@
+%{
+  /* SWStat.tmc: typedefs */
+%}
+TM typedef unsigned char UCHAR { text "%3u"; }
+TM typedef unsigned short DS_POINTS { text "%5u"; }
+TM typedef signed short DS_DELTA_t { text "%6d"; }
+TM typedef unsigned short DS_DRIFT_t { text "5u"; }

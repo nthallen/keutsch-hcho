@@ -9,3 +9,5 @@ HOMEDIR HCHO_DATA_DIR
   1 IPS_fine  IPS Fine
   1 IPS_err   IPS Error
   1 IPS_status IPS Status
+  1 CellT     Cell T
+  1 OmegaP    Cell P

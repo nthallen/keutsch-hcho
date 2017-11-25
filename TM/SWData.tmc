@@ -1,3 +1,8 @@
 TM "Receive" SWData 0;
 
 TM 1 Hz UCHAR SWStat; collect SWStat = SWData.SWStat;
+TM 1 Hz UCHAR Flag; collect Flag = SWData.Flag;
+TM 1 Hz DS_POINTS NPts_Online; collect NPts_Online = SWData.NPts_Online;
+TM 1 Hz DS_POINTS NPts_Offline; collect NPts_Offline = SWData.NPts_Offline;
+TM 1 Hz DS_DELTA_t Offline_Delta; collect Offline_Delta = SWData.Offline_Delta;
+TM 1 Hz DS_DRIFT_t Drift_Limit; collect Drift_Limit = SWData.Drift_Limit;

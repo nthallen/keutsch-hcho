@@ -4,6 +4,11 @@
 
 typedef struct __attribute__((__packed__)) {
   unsigned char SWStat;
+  unsigned char Flag;
+  unsigned short NPts_Online;
+  unsigned short NPts_Offline;
+  signed short Offline_Delta;
+  unsigned short Drift_Limit;
 } SWData_t;
 extern SWData_t SWData;
 

@@ -1,5 +1,16 @@
 SW_Variable: SWStat
-
 SWS_PPS_IDLE     1   PPS Idle: Validate PPS_idle; break;
 SWS_PPS_SYNC     2   PPS Sync: Validate PPS_synch; break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
+
+SW_Variable: Flag
+  : Set %d { $0 = $2; }
+
+SW_Variable: <unsigned short,DS_POINTS> NPts_Online Laser NPoints Online
+  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
+SW_Variable: <unsigned short,DS_POINTS> NPts_Offline Laser NPoints Offline
+  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
+SW_Variable: <signed short,DS_DELTA_t> Offline_Delta Laser Offline Delta
+  : Set %d (Enter mVolts) { $0 = $2; }
+SW_Variable: <unsigned short,DS_DRIFT_t> Drift_Limit Laser Drift Limit
+  : Set %d (Enter mV of laser voltage) * { $0 = $2; }
