@@ -1,5 +1,18 @@
+%{
+  int scan_requested = 0;
+  int chop_exit_requested = 0;
+%}
+
 State Init {
       > Telemetry Start
+   +1 >
+   +1 > Laser Set Scan Start 100
+      > Laser Set Scan Stop 600
+      > Laser Set Scan Step 1
+      > Laser Offline Delta Set -30
+      > Laser NPoints Online Set 50
+      > Laser NPoints Offline Set 50
+      > Laser Drift Limit Set 30
   +10 > Log Initiating PPS Synchronization
       Validate PPS_synch;
 }
@@ -96,4 +109,99 @@ State CellP_control nolog {
       ci_sendfcmd(2, "Flow Bypass Set SCCM %.0lf\n", rate_adj);
     Validate CellP_control;
   }
+}
+
+Partition
+
+{
+  int scanning;
+  Laser_mW cur_LasIn_mW;
+  cur_LasIn_mW = convert(LasIn_mW);
+  double max_norm_ref_cts;
+  HtrDAC_mV_t cur_peak_laser_V, peak_laser_V;
+  depending on (BCtr_LaserV once, BCtr_0_a once, BCtr_LaserV once) {
+    double norm_ref_cts = BCtr_0_a/cur_LasIn_mW;
+    if (BCtr_LaserV == LV_start) {
+      scanning = 1;
+      max_norm_ref_cts = norm_ref_cts;
+      cur_peak_laser_V = BCtr_LaserV;
+    } else if (scanning = 1) {
+      if (norm_ref_cts > max_norm_ref_cts) {
+        max_norm_ref_cts = norm_ref_cts;
+        cur_peak_laser_V = BCtr_LaserV;
+      }
+      if (BCtr_LaserV == LV_stop) {
+        scanning = 0;
+        peak_laser_V = cur_peak_laser_V;
+        Validate peak_laser_V;
+      }
+    }
+  }
+}
+
+State Laser_Scan_Watch {
+  hold until (LV_status & 1);
+  hold until ((LV_status & 0) && !scanning);
+  +1 { 
+       if (convert(peak_laser_V) > convert(LV_online)+Drift_Limit ||
+           convert(peak_laser_V) < convert(LV_online)-Drift_Limit) {
+         nl_error(2,
+          "Peak detected at %.1lf mV outside drift limit %d from %.1lf",
+          convert(peak_laser_V), Drift_Limit, convert(LV_online));
+       } else {
+         ci_sendfcmd(0, "Laser Set Online %.0lf\n",
+            convert(peak_laser_V));
+         ci_sendfcmd(0, "Laser Set Offline %.0lf\n",
+            convert(peak_laser_V) + Offline_Delta);
+       }
+       Validate Laser_Scan_Watch;
+     }
+}
+
+State Laser_Scan_No_Watch {}
+
+Partition
+
+{
+  int cur_npts;
+  int is_online;
+  DS_POINTS cur_npts_online;
+  DS_POINTS cur_npts_offline;
+  cur_npts_online = NPts_Online;
+  cur_npts_offline = NPts_Offline;
+}
+
+State Chop_Idle {}
+
+State Chop_Active {
+  { cur_npts = 0;
+    is_online = 0;
+  }
+  depending on (10 Hz) {
+    if (is_online) {
+      if (--cur_npts <= 0) {
+        ci_sendfcmd(2,"Laser Command Drive Offline\n");
+        cur_npts = cur_npts_offline-1;
+        is_online = 0;
+      }
+    } else if (--cur_npts <= 0) {
+      if (scan_requested) {
+        scan_requested = 0;
+        Validate Chop_Scan;
+      } else if (chop_exit_requested) {
+        chop_exit_requested = 0;
+        Validate Chop_Idle;
+      } else {
+        is_online = 1;
+        ci_sendfcmd(2,"Laser Command Drive Online\n");
+        cur_npts = cur_npts_online-1;
+      }
+    }
+  }
+}
+
+State Chop_Scan {
+  > Laser Command Scan Start
+  Hold until (LaserV == LV_stop);
+  Validate Chop_Active;
 }
