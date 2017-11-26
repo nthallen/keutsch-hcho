@@ -126,7 +126,7 @@ Partition
       scanning = 1;
       max_norm_ref_cts = norm_ref_cts;
       cur_peak_laser_V = BCtr_LaserV;
-    } else if (scanning = 1) {
+    } else if (scanning == 1) {
       if (norm_ref_cts > max_norm_ref_cts) {
         max_norm_ref_cts = norm_ref_cts;
         cur_peak_laser_V = BCtr_LaserV;

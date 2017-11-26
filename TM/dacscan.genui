@@ -5,6 +5,6 @@
  1 LV_online Laser Volts
  1 LV_offline Laser Volts
  1 LV_dither Laser Step
- 1 LV_scanning:LV_status:0 Laser Status
- 1 LV_online:LV_status:1 Laser Status
- 1 LV_offline:LV_status:2 Laser Status
+ 1 LV_scanning:LV_status:0 Laser Status %.0lf
+ 1 LV_online:LV_status:1 Laser Status %.0lf
+ 1 LV_offline:LV_status:2 Laser Status %.0lf
