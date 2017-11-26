@@ -116,33 +116,48 @@ Partition
 {
   int scanning;
   Laser_mW cur_LasIn_mW;
-  cur_LasIn_mW = convert(LasIn_mW);
   double max_norm_ref_cts;
   HtrDAC_mV_t cur_peak_laser_V, peak_laser_V;
-  depending on (BCtr_LaserV once, BCtr_0_a once, BCtr_LaserV once) {
+  HtrDAC_mV_t prev_laser_V;
+  HtrDAC_mV_t cur_LV_start;
+  HtrDAC_mV_t cur_LV_stop;
+  HtrDAC_mV_t cur_LV_step;
+
+  cur_LasIn_mW = convert(LasIn_mW);
+  cur_LV_start = LV_start;
+  cur_LV_stop = LV_stop;
+  cur_LV_step = (LV_step+7)/8;
+
+  depending on (BCtr_LaserV once, BCtr_0_a once) {
     double norm_ref_cts;
     norm_ref_cts = BCtr_0_a/cur_LasIn_mW;
-    if (BCtr_LaserV == LV_start) {
+    if (BCtr_LaserV == cur_LV_start) {
       scanning = 1;
       max_norm_ref_cts = norm_ref_cts;
       cur_peak_laser_V = BCtr_LaserV;
     } else if (scanning == 1) {
-      if (norm_ref_cts > max_norm_ref_cts) {
-        max_norm_ref_cts = norm_ref_cts;
-        cur_peak_laser_V = BCtr_LaserV;
-      }
-      if (BCtr_LaserV == LV_stop) {
+      if (BCtr_LaserV == prev_laser_V) {
         scanning = 0;
-        peak_laser_V = cur_peak_laser_V;
-        Validate peak_laser_V;
+      } else {
+        if (norm_ref_cts > max_norm_ref_cts) {
+          max_norm_ref_cts = norm_ref_cts;
+          cur_peak_laser_V = BCtr_LaserV;
+        }
+        if (BCtr_LaserV >= cur_LV_stop-cur_LV_step) {
+          scanning = 0;
+          peak_laser_V = cur_peak_laser_V;
+        }
       }
     }
+    prev_laser_V = BCtr_LaserV;
   }
 }
 
 State Laser_Scan_Watch {
   hold until (LV_status & 1);
-  hold until ((LV_status & 0) && !scanning);
+  > Log Scan Start Observed
+  hold until (!(LV_status & 1) && !scanning);
+  > Log Scan Stop Observed
   +1 { 
        if (convert(peak_laser_V) > convert(LV_online)+Drift_Limit ||
            convert(peak_laser_V) < convert(LV_online)-Drift_Limit) {
