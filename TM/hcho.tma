@@ -120,7 +120,8 @@ Partition
   double max_norm_ref_cts;
   HtrDAC_mV_t cur_peak_laser_V, peak_laser_V;
   depending on (BCtr_LaserV once, BCtr_0_a once, BCtr_LaserV once) {
-    double norm_ref_cts = BCtr_0_a/cur_LasIn_mW;
+    double norm_ref_cts;
+    norm_ref_cts = BCtr_0_a/cur_LasIn_mW;
     if (BCtr_LaserV == LV_start) {
       scanning = 1;
       max_norm_ref_cts = norm_ref_cts;

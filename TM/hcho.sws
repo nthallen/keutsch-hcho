@@ -5,7 +5,7 @@ SWS_PCTRL_IDLE   3   Pressure Control Idle: Validate CellP_idle; break;
 SWS_PCTRL_ACTIVE 4   Pressure Control Activate:
   Validate CellP_control; break;
 SWS_CHOP_START   5   Chop Start: Validate Chop_Active; break;
-SWS_CHOP_STOP    6   Chop Stop: stop_exit_requested = 1; break;
+SWS_CHOP_STOP    6   Chop Stop: chop_exit_requested = 1; break;
 SWS_CHOP_ABORT   7   Chop Abort: Validate Chop_Idle; break;
 SWS_CHOP_SCAN    8   Chop Scan: scan_requested = 1; break;
 SWS_PEAK_ENABLE  9   Peak Detect Enable:
