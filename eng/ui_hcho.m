@@ -25,6 +25,7 @@ f = ne_dialg(f, 'add', 0, 1, 'ghchots', 'Temp Sensors' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotst', 'Temp' );
 f = ne_dialg(f, 'add', 1, 0, 'phchotsc', 'Count' );
 f = ne_dialg(f, 'add', 0, 1, 'ghchol', 'Laser' );
+f = ne_dialg(f, 'add', 1, 0, 'phcholp', 'Power' );
 f = ne_dialg(f, 'add', 1, 0, 'phcholv', 'Volts' );
 f = ne_dialg(f, 'add', 1, 0, 'phchols', 'Step' );
 f = ne_dialg(f, 'add', 1, 0, 'phcholstatus', 'Status' );
