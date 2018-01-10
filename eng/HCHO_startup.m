@@ -8,12 +8,15 @@ if fd > 0
             if exist('BCtrext.csv')
               BCtr = load('BCtrext.csv');
               TBCtr = BCtr(:,1);
-              Status = BCtr(:,2);
-              NWords = BCtr(:,3);
-              NSkip = BCtr(:,4);
-              BCtr0 = BCtr(:,5:2:end);
-              BCtr1 = BCtr(:,6:2:end);
-              save BCtr.mat TBCtr Status NWords NSkip BCtr0 BCtr1
+              PPSoffset = BCtr(:,2);
+              Status = BCtr(:,3);
+              NWords = BCtr(:,4);
+              IPnum = BCtr(:,5);
+              NTrigger = BCtr(:,6)+65536*BCtr(:,7);
+              LaserV = BCtr(:,8);
+              BCtr0 = BCtr(:,9:2:end);
+              BCtr1 = BCtr(:,10:2:end);
+              save BCtr.mat TBCtr PPSoffset Status NWords IPnum NTrigger LaserV BCtr0 BCtr1
               movefile('BCtrext.csv','BCtrext.csv.done');
               clear TBCtr BCtr Status NWords NSkip BCtr0 BCtr1
               %delete BCtrext.csv
