@@ -10,3 +10,34 @@ ci_sendfcmd(2, "PhRTG Datum SysTDrift %.3lf %s\n", dtime(), text(SysTDrift));
 ci_sendfcmd(2, "PhRTG Datum LasIn_mW %.3lf %s\n", dtime(), text(LasIn_mW));
 ci_sendfcmd(2, "PhRTG Datum LasOut_mW %.3lf %s\n", dtime(), text(LasOut_mW));
 ci_sendfcmd(2, "PhRTG Datum CellP %.3lf %s\n", dtime(), text(OmegaP));
+
+int rtg_is_scanning, rtg_was_scanning;
+int scan_index;
+rtg_is_scanning = LV_status & 1;
+BCtr_DAC_t prev_LaserV;
+
+Laser_mW rtg_LasIn_mW;
+rtg_LasIn_mW = convert(LasIn_mW);
+
+depending on (BCtr_LaserV once, BCtr_0_a once) {
+  if (rtg_is_scanning) {
+    rtg_was_scanning = 1;
+    if (BCtr_LaserV != prev_LaserV) {
+      double norm_ref_cts;
+      norm_ref_cts = BCtr_0_a/rtg_LasIn_mW;
+      ci_sendfcmd(2, "phRTG Datum Scan%d %.4lf %d\n",
+        scan_index,
+        BCtr_LaserV*5./65536,
+        BCtr_0_a);
+      ci_sendfcmd(2, "phRTG Datum NormScan%d %.4lf %.1lf\n",
+        scan_index,
+        BCtr_LaserV*5./65536,
+        norm_ref_cts);
+    }
+    prev_LaserV = BCtr_LaserV;
+  } else if (rtg_was_scanning) {
+    if (++scan_index == 2) scan_index = 0;
+    rtg_was_scanning = 0;
+  }
+}
+

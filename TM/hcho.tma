@@ -5,7 +5,6 @@
 
 State Init {
       > Telemetry Start
-   +1 >
    +1 > Laser Set Scan Start 100
       > Laser Set Scan Stop 600
       > Laser Set Scan Step 1
@@ -214,10 +213,13 @@ State Chop_Active {
       }
     }
   }
+  +1:00 { scan_requested = 1; }
 }
 
 State Chop_Scan {
-  > Laser Command Scan Start
-  Hold until (LaserV == LV_stop);
+  +1 { ci_sendfcmd(0, "Laser Set Setpoint %.0lf\n", convert(LV_start)); }
+  +2 > Laser Command Scan Start
+  hold until (LV_status & 1);
+  hold until (!(LV_status & 1) && !scanning);
   Validate Chop_Active;
 }
