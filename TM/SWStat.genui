@@ -1,7 +1,4 @@
 # SWStat.genui
   1 SWStat        SWStatus SWStat
   1 Flag          SWStatus Flag
-  1 NPts_Online   SWStatus NPts
-  1 NPts_Offline  SWStatus NPts
-  1 Offline_Delta SWStatus Delta
   1 Drift_Limit   SWStatus Drift

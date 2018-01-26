@@ -8,9 +8,9 @@ State Init {
    +1 > Laser Set Scan Start 100
       > Laser Set Scan Stop 600
       > Laser Set Scan Step 1
-      > Laser Offline Delta Set -30
-      > Laser NPoints Online Set 50
-      > Laser NPoints Offline Set 50
+      > Laser Set Offline Delta -30
+      > Laser Chop NPts Online 50
+      > Laser Chop NPts Offline 50
       > Laser Drift Limit Set 30
   +10 > Log Initiating PPS Synchronization
       Validate PPS_synch;
@@ -174,7 +174,7 @@ State Chop_Period_1 {
   Hold Until (BCtr_LVstat & 1);
   Hold Until (!(BCtr_LVstat & 1) && !scanning);
   > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIME_WARP) or 1:00;
+  Hold Until (SWStat == SWS_TIMEWARP) or 1:00;
   Validate Chop_Period_1;
 }
 
@@ -183,7 +183,7 @@ State Chop_Period_5 {
   Hold Until (BCtr_LVstat & 1);
   Hold Until (!(BCtr_LVstat & 1) && !scanning);
   > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIME_WARP) or 5:00;
+  Hold Until (SWStat == SWS_TIMEWARP) or 5:00;
   Validate Chop_Period_5;
 }
 
@@ -192,7 +192,7 @@ State Chop_Period_10 {
   Hold Until (BCtr_LVstat & 1);
   Hold Until (!(BCtr_LVstat & 1) && !scanning);
   > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIME_WARP) or 10:00;
+  Hold Until (SWStat == SWS_TIMEWARP) or 10:00;
   Validate Chop_Period_10;
 }
 
@@ -201,7 +201,7 @@ State Chop_Period_30 {
   Hold Until (BCtr_LVstat & 1);
   Hold Until (!(BCtr_LVstat & 1) && !scanning);
   > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIME_WARP) or 30:00;
+  Hold Until (SWStat == SWS_TIMEWARP) or 30:00;
   Validate Chop_Period_30;
 }
 

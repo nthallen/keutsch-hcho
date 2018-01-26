@@ -13,9 +13,6 @@
 &SWTM
   : SWStat &SWStat { SWData.SWStat = $2; }
   : Flag &Flag { SWData.Flag = $2; }
-  : Laser NPoints Online &NPts_Online { SWData.NPts_Online = $4; }
-  : Laser NPoints Offline &NPts_Offline { SWData.NPts_Offline = $4; }
-  : Laser Offline Delta &Offline_Delta { SWData.Offline_Delta = $4; }
   : Laser Drift Limit &Drift_Limit { SWData.Drift_Limit = $4; }
   ;
 &SWStat <unsigned char>
@@ -30,19 +27,13 @@
   : Chop Scan { $0 = SWS_CHOP_SCAN; }
   : Peak Detect Enable { $0 = SWS_PEAK_ENABLE; }
   : Peak Detect Disable { $0 = SWS_PEAK_DISABLE; }
+  : Chop Dither Enable { $0 = SWS_DITHER_ENABLE; }
+  : Chop Dither Disable { $0 = SWS_DITHER_DISABLE; }
+  : Time Warp { $0 = SWS_TIMEWARP; }
   : Shutdown { $0 = SWS_SHUTDOWN; }
   ;
 &Flag <unsigned char>
   : Set %d { $0 = $2; }
-  ;
-&NPts_Online <unsigned short>
-  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
-  ;
-&NPts_Offline <unsigned short>
-  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
-  ;
-&Offline_Delta <signed short>
-  : Set %d (Enter mVolts) { $0 = $2; }
   ;
 &Drift_Limit <unsigned short>
   : Set %d (Enter mV of laser voltage) { $0 = $2; }

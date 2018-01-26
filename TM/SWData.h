@@ -5,9 +5,6 @@
 typedef struct __attribute__((__packed__)) {
   unsigned char SWStat;
   unsigned char Flag;
-  unsigned short NPts_Online;
-  unsigned short NPts_Offline;
-  signed short Offline_Delta;
   unsigned short Drift_Limit;
 } SWData_t;
 extern SWData_t SWData;
@@ -22,6 +19,9 @@ extern SWData_t SWData;
 #define SWS_CHOP_SCAN 8
 #define SWS_PEAK_ENABLE 9
 #define SWS_PEAK_DISABLE 10
+#define SWS_DITHER_ENABLE 11
+#define SWS_DITHER_DISABLE 12
+#define SWS_TIMEWARP 254
 #define SWS_SHUTDOWN 255
 
 #endif

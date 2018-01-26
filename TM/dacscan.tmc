@@ -44,10 +44,10 @@ TM 1 Hz HtrDAC_mV_t   LV_online;
 TM 1 Hz mV_offset_t   LV_offdelta;
 TM 1 Hz HtrDAC_mV_t   LV_dither;
 TM 1 Hz DS_POINTS     NPts_Online;
-TM 1 Hz DS_POINTS     NPts_Offline
+TM 1 Hz DS_POINTS     NPts_Offline;
 
 Group DACscan (LV_status, LaserV, LV_start,
-    LV_stop, LV_step, LV_online, LV_offline, LV_dither,
+    LV_stop, LV_step, LV_online, LV_offdelta, LV_dither,
     NPts_Online, NPts_Offline) {
   unsigned short data[8];
   if (DACscan_collect(data) >= 0) {

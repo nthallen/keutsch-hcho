@@ -46,6 +46,7 @@
 &NPtsOnOff <uint16_t>
   : Online { $0 = 0x88; }
   : Offline { $0 = 0x89; }
+  ;
 
 &lasercmd <uint16_t>
   : Scan Start { $0 = 1; }

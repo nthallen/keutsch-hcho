@@ -26,7 +26,7 @@ depending on (BCtr_LaserV once, BCtr_0_a once) {
       double norm_ref_cts;
       double LasV;
       double LasP;
-      LasP = convert(BCtr_LasIn_mW)
+      LasP = convert(BCtr_LasIn_mW);
       norm_ref_cts = BCtr_0_a/LasP;
       LasV = convert(BCtr_LaserV);
       ci_sendfcmd(2, "phRTG Datum Scan%d %.4lf %d\n",
