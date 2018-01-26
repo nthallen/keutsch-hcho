@@ -24,6 +24,8 @@ Calibration (FCC_DAC_t, FCC_Volts) { 0, 0, 65536, 5 }
 TM typedef double FCC_SCCM;
 TM typedef FCC_ADC_t FCC_ADC_20_SCCM { text "%5.3lf"; convert FCC_SCCM; }
 Calibration (FCC_ADC_20_SCCM,FCC_SCCM) { 0, 0, 26666.67, 20}
+TM typedef FCC_ADC_t FCC_ADC_500_SCCM { text "%5.2lf"; convert FCC_SCCM; }
+Calibration (FCC_ADC_500_SCCM,FCC_SCCM) { 0, 0, 26666.67, 500}
 TM typedef FCC_ADC_t FCC_ADC_5000_SCCM { text "%5.1lf"; convert FCC_SCCM; }
 Calibration (FCC_ADC_5000_SCCM,FCC_SCCM) { 0, 0, 26666.67, 5000}
 TM typedef FCC_ADC_t FCC_ADC_10000_SCCM { text "%5.0lf"; convert FCC_SCCM; }
@@ -31,18 +33,20 @@ Calibration (FCC_ADC_10000_SCCM,FCC_SCCM) { 0, 0, 26666.67, 10000}
 
 TM typedef FCC_DAC_t FCC_DAC_20_SCCM { text "%6.3lf"; convert FCC_SCCM; }
 Calibration (FCC_DAC_20_SCCM,FCC_SCCM) { 0, 0, 65536, 20}
+TM typedef FCC_DAC_t FCC_DAC_500_SCCM { text "%6.2lf"; convert FCC_SCCM; }
+Calibration (FCC_DAC_500_SCCM,FCC_SCCM) { 0, 0, 65536, 500}
 TM typedef FCC_DAC_t FCC_DAC_5000_SCCM { text "%5.0lf"; convert FCC_SCCM; }
 Calibration (FCC_DAC_5000_SCCM,FCC_SCCM) { 0, 0, 65536, 5000}
 TM typedef FCC_DAC_t FCC_DAC_10000_SCCM { text "%6.0lf"; convert FCC_SCCM; }
 Calibration (FCC_DAC_10000_SCCM,FCC_SCCM) { 0, 0, 65536, 10000}
 
 TM 1 Hz FCC_ADC_5000_SCCM FC0_Flow;
-TM 1 Hz FCC_ADC_20_SCCM FC1_Flow;
+TM 1 Hz FCC_ADC_500_SCCM FC1_Flow;
 TM 1 Hz FCC_ADC_10000_SCCM FC2_Flow;
 TM 1 Hz FCC_ADC_t FCC_U2_T;
 TM 1 Hz FCC_ADC_t FCC_U3_T;
 TM 1 Hz FCC_DAC_5000_SCCM FC0_Set;
-TM 1 Hz FCC_DAC_20_SCCM FC1_Set;
+TM 1 Hz FCC_DAC_500_SCCM FC1_Set;
 TM 1 Hz FCC_DAC_10000_SCCM FC2_Set;
 TM 1 Hz FCC_status_t FCC0_Status;
 
