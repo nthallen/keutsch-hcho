@@ -9,21 +9,88 @@
 
      BCTR_BIN_SIZE is the length of BCtr_Bins defined in BCtr.tmc
      TMC does not understand #defines, so it must be hard
-     coded, but this is here to remind. The +6 is for the
-     Status and NWords plus the 4 words of ancillary data
-     (IPnum, NTrigger[2] and LaserV)
+     coded, but this is here to remind. BCtr_Bins is filled by
+     the mread_subbus_nw() call, so the multi-read command string
+     must match the desired length.
 
-     The pack_mread_request() call below also needs to be
-     adjusted.
+     The multi-read command string we are using is:
+        "60,20,21|CE@22"
+      60: The PPS offset value
+      20: The Bin Counter general status word
+      21: The Bin Counter NWords register, which specifies how many words
+          can be retrieved from address 22
+      CE: The anticipated maximum value of NWords (0xCE == 206)
+      22: The FIFO location
+    
+    The contents of the FIFO consist of a fixed number of header words
+    (N_FIFO_HDR) followed by the counter bin data (if any). The number of
+    words required for the counter bin data is
+
+        NWordsCounts = N_Counters * NWordsPerBin * N_Bins
+
+    For HCHO, N_Counters is 2 and NWordsPerBin is 1. N_Bins is the sum of
+    the elements in the NB array defined below.
+    
+    For TM Version 1.4.8, N_FIFO_HDR is 4 and the FIFO header data consists of:
+      0: Report Status Word
+          D5-D0: Integration period index (0 to 9)
+          D15: Expired
+      1: NTrigger least significant word
+      2: NTrigger most significant word
+      3: LaserV
+    
+      The the BCTR_BIN_SIZE (209) includes
+        NWords_PreFIFO (3): Words read before the FIFO
+          (PPS Offset, Status, NWords)
+        NWords_FIFO (206 == 0xCE): which includes:
+          N_FIFO_HDR (4)
+          N_WordsCounts (202)
+        
+    For TM Version 1.5, N_FIFO_HDR is 6 and the FIFO header data consists of:
+      0: Report Status Word
+          D5-D0: Integration period index (0 to 9)
+          D9: Laser In Power Fresh: 1 if laser power was reported during the
+            current sample period
+          D10: Scanning: 1 if currently scanning
+          D11: Online: 1 if currently chopping at Online position
+          D12: Offline: 1 if currently chopping at Offline position
+          D13: Chopping: 1 if actively chopping
+          D14: PosOVF: 1 if scan or dither operations exceed the DAC output range
+          D15: Expired: 1 if the counter data for current sample period was
+            accessed too late. In this case, FIFO data will be truncated
+            before the counts
+      1: NTrigger least significant word
+      2: NTrigger most significant word
+      3: LaserV
+      4: LaserinP least significant word
+      5: LaserinP most significant word
+    
+      The the BCTR_BIN_SIZE (211) includes
+        NWords_Pre_FIFO (3): Words read before the FIFO
+          (PPS Offset, Status, NWords)
+        NWords_FIFO (208 == 0xD0): which includes:
+          N_FIFO_HDR (6)
+          N_WordsCounts (202)
+
+     Using these definitions, BCTR_DATA_OFFSET is then
+     
+        BCTR_DATA_OFFSET = NWords_Pre_FIFO + N_FIFO_HDR
+
+     BCTR_DATA_OFFSET and BCTR_BIN_SIZE must be updated in BCtr.tmc.
+     Note of course that if BCTR_BIN_SIZE changes, a new TM VERSION
+     is also required, since the shape of the telemetry frame must be
+     recalculated.
+     
+     If NWords_FIFO changes due to reconfiguration of the board
+     (N_FIFO_HDR) or the number of bins (N_WordsCounts), the
+     pack_mread_request() call below also needs to be adjusted
+     by making sure the hex value between '|' and '@' is equal
+     to NWords_FIFO.
 
      The pack_mread_request() call below also needs to be
      adjusted. The hex value between '|' and '@' needs to
      be BCTR_BIN_SIZE-2 (Two for the status(20) and NWords(21)
      values which are not read from address 22)
-
-     For the values listed above, we have:
-        BCTR_BIN_SIZE = 101*2 + 7 = 208
-        NWORDS_FIFO = BCTR_BIN_SIZE-3 = 206 = 0xCE
    */
   unsigned short NA[BCTR_N_BIN_SPECS] = { 1,220 };
   unsigned short NB[BCTR_N_BIN_SPECS] = { 100,1 };
@@ -43,7 +110,7 @@
         SB.BCtr->sbwr(BCtr_BASE+3+2*i, NA[i]);
         SB.BCtr->sbwr(BCtr_BASE+4+2*i, NB[i]);
       }
-      BCtr_req = SB.BCtr->pack_mread_request(BCTR_BIN_SIZE, "60,20,21|CE@22");
+      BCtr_req = SB.BCtr->pack_mread_request(BCTR_BIN_SIZE, "60,20,21|D0@22");
     } else {
       nl_error(2, "BCtr lib not found");
     }

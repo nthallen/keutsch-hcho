@@ -1,5 +1,10 @@
 BCtr {
   HBox { +-; Title: BCtr; -+ };
+  BCtr_0: (BCtr_0_a,5);
+  BCtr_1: (BCtr_1_a,5);
+  Status: (BCtr_LVstat,8);
+  LaserV: (BCtr_LaserV,5) V;
+  LasIn:  (Bctr_LasIn_mW,6) mW;
   Ready:  (BCtr_Ready,3);
   Enable: (BCtr_Enable,3);
   DRdy:   (BCtr_DRdy,3);
@@ -9,9 +14,6 @@ BCtr {
   NWords: (BCtr_NWords,5);
   IPnum:  (BCtr_IPnum,1);
   NTrig:  (BCtr_NTrigger,6);
-  BCtr_0: (BCtr_0_a,5);
-  BCtr_1: (BCtr_1_a,5);
-  LaserV: (BCtr_LaserV,5) V;
   CfgErr:;
   " Ovf:" (BCtr_CfgErrOvf,4);
   " NAB:" (BCtr_CfgErrNAB,4);

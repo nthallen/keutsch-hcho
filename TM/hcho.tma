@@ -28,7 +28,7 @@ Partition
   #define GI 1e3
   #define PPS_CLIP_LIMIT 30000
   #define PPS_INT_LIMIT (PPS_CLIP_LIMIT/GI)
-  #define PPS_SETPOINT (-47.0)
+  #define PPS_SETPOINT (3.0)
   /* UpdatePeriod = 5; */
 %}
 
@@ -111,115 +111,140 @@ State CellP_control nolog {
 }
 
 Partition
+# This partition tracks scans, locating the laser voltage
+# corresponding to the peak normalized counts from the reference cell.
+# If peak-finding is enabled, it sets the online position after the
+# scan.
+
+%{
+  #include <stdbool.h>
+  bool find_peak = true;
+%}
 
 {
   int scanning;
-  Laser_mW cur_LasIn_mW;
   double max_norm_ref_cts;
   HtrDAC_mV_t cur_peak_laser_V, peak_laser_V;
-  HtrDAC_mV_t prev_laser_V;
-  HtrDAC_mV_t cur_LV_start;
-  HtrDAC_mV_t cur_LV_stop;
-  HtrDAC_mV_t cur_LV_step;
 
-  cur_LasIn_mW = convert(LasIn_mW);
-  cur_LV_start = LV_start;
-  cur_LV_stop = LV_stop;
-  cur_LV_step = (LV_step+7)/8;
-
-  depending on (BCtr_LaserV once, BCtr_0_a once) {
+  depending on (BCtr_LaserV once, BCtr_0_a once, BCtr_LasIn_mW once, BCtr_LVstat once) {
     double norm_ref_cts;
-    norm_ref_cts = BCtr_0_a/cur_LasIn_mW;
-    if (BCtr_LaserV == cur_LV_start) {
-      scanning = 1;
-      max_norm_ref_cts = norm_ref_cts;
-      cur_peak_laser_V = BCtr_LaserV;
-    } else if (scanning == 1) {
-      if (BCtr_LaserV == prev_laser_V) {
-        scanning = 0;
+    norm_ref_cts = BCtr_0_a/convert(BCtr_LasIn_mW);
+    if (BCtr_LVstat & 1) {
+      if (scanning == 0) {
+        scanning = 1;
+        max_norm_ref_cts = norm_ref_cts;
+        cur_peak_laser_V = BCtr_LaserV;
       } else {
         if (norm_ref_cts > max_norm_ref_cts) {
           max_norm_ref_cts = norm_ref_cts;
           cur_peak_laser_V = BCtr_LaserV;
         }
-        if (BCtr_LaserV >= cur_LV_stop-cur_LV_step) {
-          scanning = 0;
-          peak_laser_V = cur_peak_laser_V;
-        }
       }
     }
-    prev_laser_V = BCtr_LaserV;
   }
 }
 
 State Laser_Scan_Watch {
-  hold until (LV_status & 1);
-  > Log Scan Start Observed
-  hold until (!(LV_status & 1) && !scanning);
-  > Log Scan Stop Observed
-  +1 { 
-       if (convert(peak_laser_V) > convert(LV_online)+Drift_Limit ||
-           convert(peak_laser_V) < convert(LV_online)-Drift_Limit) {
-         nl_error(2,
-          "Peak detected at %.1lf mV outside drift limit %d from %.1lf",
-          convert(peak_laser_V), Drift_Limit, convert(LV_online));
-       } else {
-         ci_sendfcmd(0, "Laser Set Online %.0lf\n",
-            convert(peak_laser_V));
-         ci_sendfcmd(0, "Laser Set Offline %.0lf\n",
-            convert(peak_laser_V) + Offline_Delta);
-       }
-       Validate Laser_Scan_Watch;
-     }
+  hold until (BCtr_LVstat & 1);
+  hold until (!(BCtr_LVstat & 1));
+  { if (find_peak && scanning) {
+      peak_laser_V = cur_peak_laser_V;
+      if (convert(peak_laser_V) > convert(LV_online)+Drift_Limit ||
+          convert(peak_laser_V) < convert(LV_online)-Drift_Limit) {
+        nl_error(2,
+         "Peak detected at %.1lf mV outside drift limit %d from %.1lf",
+         convert(peak_laser_V), Drift_Limit, convert(LV_online));
+      } else {
+        ci_sendfcmd(0, "Laser Set Online %.1lf\n",
+           convert(peak_laser_V));
+      }
+    }
+    scanning = 0;
+    Validate Laser_Scan_Watch;
+  }
 }
-
-State Laser_Scan_No_Watch {}
 
 Partition
-
-{
-  int cur_npts;
-  int is_online;
-  DS_POINTS cur_npts_online;
-  DS_POINTS cur_npts_offline;
-  cur_npts_online = NPts_Online;
-  cur_npts_offline = NPts_Offline;
-}
+# This partition controls chopping and scanning
 
 State Chop_Idle {}
 
-State Chop_Active {
-  { cur_npts = 0;
-    is_online = 0;
-  }
-  depending on (10 Hz) {
-    if (is_online) {
-      if (--cur_npts <= 0) {
-        ci_sendfcmd(2,"Laser Command Drive Offline\n");
-        cur_npts = cur_npts_offline-1;
-        is_online = 0;
-      }
-    } else if (--cur_npts <= 0) {
-      if (scan_requested) {
-        scan_requested = 0;
-        Validate Chop_Scan;
-      } else if (chop_exit_requested) {
-        chop_exit_requested = 0;
-        Validate Chop_Idle;
-      } else {
-        is_online = 1;
-        ci_sendfcmd(2,"Laser Command Drive Online\n");
-        cur_npts = cur_npts_online-1;
-      }
-    }
-  }
-  +1:00 { scan_requested = 1; }
+State Chop_Period_1 {
+  > Laser Command Scan Start
+  Hold Until (BCtr_LVstat & 1);
+  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  > Laser Command Chop Mode Begin
+  Hold Until (SWStat == SWS_TIME_WARP) or 1:00;
+  Validate Chop_Period_1;
 }
 
-State Chop_Scan {
-  +1 { ci_sendfcmd(0, "Laser Set Setpoint %.0lf\n", convert(LV_start)); }
-  +2 > Laser Command Scan Start
-  hold until (LV_status & 1);
-  hold until (!(LV_status & 1) && !scanning);
-  Validate Chop_Active;
+State Chop_Period_5 {
+  > Laser Command Scan Start
+  Hold Until (BCtr_LVstat & 1);
+  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  > Laser Command Chop Mode Begin
+  Hold Until (SWStat == SWS_TIME_WARP) or 5:00;
+  Validate Chop_Period_5;
+}
+
+State Chop_Period_10 {
+  > Laser Command Scan Start
+  Hold Until (BCtr_LVstat & 1);
+  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  > Laser Command Chop Mode Begin
+  Hold Until (SWStat == SWS_TIME_WARP) or 10:00;
+  Validate Chop_Period_10;
+}
+
+State Chop_Period_30 {
+  > Laser Command Scan Start
+  Hold Until (BCtr_LVstat & 1);
+  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  > Laser Command Chop Mode Begin
+  Hold Until (SWStat == SWS_TIME_WARP) or 30:00;
+  Validate Chop_Period_30;
+}
+
+Partition
+# This partition monitors chopping and adjust the online position
+# to remain on the power-normalized peak. It will also monitor
+# online and offline power and adjust THG to achieve even power
+# in both positions. (It is also possible to consider trying to
+# update THG whenever the laser voltage changes, but that is
+# probably harder.)
+
+%{
+  double pmncts; // prev_mean_normalized_online_cts;
+  double cncts;  // cur_normalized_online_cts;
+  double cmncts; // cur_mean_normalized_online_cts;
+  HtrDAC_mV_t prev_LV, cur_LV;
+  int np_online;
+  bool dither_enable = false;
+%}
+
+State Chop_Active {
+  { if (BCtr_LVstat&0x8) {
+      if (BCtr_LVstat&0x2) {
+        cur_LV = BCtr_LaserV;
+        cncts += BCtr_0_a/convert(BCtr_LasIn_mW);
+        ++np_online;
+      } else if (np_online) {
+        cmncts = cncts/np_online;
+        if (dither_enable) {
+          ci_sendfcmd(2, "Laser Command Dither Online %s\n",
+            ((cmncts > pmncts) != (cur_LV > prev_LV)) ?
+            "Up" : "Down");
+        }
+        pmncts = cmncts;
+        prev_LV = cur_LV;
+        cncts = 0;
+        np_online = 0;
+      }
+    } else {
+      prev_LV = 0;
+      np_online = 0;
+      cncts = 0;
+      pmncts = 0;
+    }
+  }
 }
