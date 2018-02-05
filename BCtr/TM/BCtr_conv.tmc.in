@@ -18,6 +18,13 @@
   }
 
   #define short2long(x,y) (x + (((unsigned long)y)<<16))
+  
+  double BCtr_power(unsigned short lsw, unsigned short msw) {
+    signed long pwr32 = (signed long)(
+            (((unsigned long)msw) << 16) |
+            ((unsigned long)lsw));
+    double pwrd = ((double)pwr32) * 1.25 / 1073741824.;
+  }
 %}
 
 BCtr_Cts_t BCtr_Status; Invalidate BCtr_Status;
@@ -29,12 +36,23 @@ BCtr_Cts_t BCtr_NWords; Invalidate BCtr_NWords;
 BCtr_NAB_t BCtr_IPnum; Invalidate BCtr_IPnum;
 { BCtr_IPnum = BCtr_Bins[3]; Validate BCtr_IPnum; }
 
+BCtr_Pfresh_t BCtr_Pfresh; Invalidate BCtr_Pfresh;
+{ BCtr_Pfresh = (BCtr_Bins[3]>>9) & 0x1; Validate BCtr_Pfresh; }
+
+LVstat_t BCtr_LVstat; Invalidate BCtr_LVstat;
+{ BCtr_LVstat = (BCtr_Bins[3] >> 10) & 0x1F; Validate BCtr_LVstat; }
+
 BCtr_Trigger_t BCtr_NTrigger; Invalidate BCtr_NTrigger;
 { BCtr_NTrigger = short2long(BCtr_Bins[4], BCtr_Bins[5]);
   Validate BCtr_NTrigger; }
 
 BCtr_DAC_t BCtr_LaserV; Invalidate BCtr_LaserV;
 { BCtr_LaserV = BCtr_Bins[6]; Validate BCtr_LaserV; }
+
+/* LaserPwr_t is defined in TS.tmc */
+LaserPwr_t BCtr_LasIn_mW; Invalidate BCtr_LasIn_mW;
+{ BCtr_LasIn_mW = BCtr_power(BCtr_Bins[7],BCtr_Bins[8]);
+  Validate BCtr_LasIn_mW; }
 
 BCtr_Yes_No BCtr_Enable; Invalidate BCtr_Enable;
 { BCtr_Enable = (BCtr_Bins[1]>>0)&1; Validate BCtr_Enable; }

@@ -1,4 +1,4 @@
-Moduledef BCtr [ NAB=2 NA=1,220 NB=100,1 NW=209 from=15 to=99 rate=1 HEXCNT=CE ] {
+Moduledef BCtr [ NAB=2 NA=1,220 NB=100,1 NW=211 from=15 to=99 rate=1 HEXCNT=D0 ] {
   BCtr Module takes the following parameters:
     NAB: The number of elements in the NA and NB arguments
     NA: A comma-separated list of bin width values

@@ -126,7 +126,7 @@
       // nl_error(0, "nw = %u", nw);
       saw_nw = nw;
     }
-    while (nw < 209) {
+    while (nw < 211) {
       Bins[nw++] = 0;
     }
   }
