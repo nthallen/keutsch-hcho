@@ -4,12 +4,13 @@ dacscan {
   LaserV:          (LaserV,7) mV;
   PwrIn:           (LasIn_mW,6) mW;
   PwrOut:          (LasOut_mW,6) mW;
-  Start:           (LV_start,6) mV;
-  Stop:            (LV_stop,6) mV;
-  Step:            (LV_step,6) mV;
-  Online:          (LV_online,6) mV;
-  "Offline Delta:" (LV_offline,6) mV;
-  Dither:          (LV_dither,6) mV;
+  Start:           (LV_start,7) mV;
+  Stop:            (LV_stop,7) mV;
+  Step:            (LV_step,7) mV;
+  Online:          (LV_online,7) mV;
+  Offline:         (LV_offline,7) mV;
+  " Delta:"        (LV_offdelta,7) mV;
+  Dither:          (LV_dither,7) mV;
   "NPts On:"       (NPts_Online,5) ds;
   "Npts Off:"      (Npts_Offline,5) ds;
 }
