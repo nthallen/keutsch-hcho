@@ -24,6 +24,7 @@
             (((unsigned long)msw) << 16) |
             ((unsigned long)lsw));
     double pwrd = ((double)pwr32) * 1.25 / 1073741824.;
+    return pwrd;
   }
 %}
 
@@ -34,7 +35,7 @@ BCtr_Cts_t BCtr_NWords; Invalidate BCtr_NWords;
 { BCtr_NWords = BCtr_Bins[2]; Validate BCtr_NWords; }
 
 BCtr_NAB_t BCtr_IPnum; Invalidate BCtr_IPnum;
-{ BCtr_IPnum = BCtr_Bins[3]; Validate BCtr_IPnum; }
+{ BCtr_IPnum = BCtr_Bins[3]&0x3F; Validate BCtr_IPnum; }
 
 BCtr_Pfresh_t BCtr_Pfresh; Invalidate BCtr_Pfresh;
 { BCtr_Pfresh = (BCtr_Bins[3]>>9) & 0x1; Validate BCtr_Pfresh; }
@@ -46,7 +47,7 @@ BCtr_Trigger_t BCtr_NTrigger; Invalidate BCtr_NTrigger;
 { BCtr_NTrigger = short2long(BCtr_Bins[4], BCtr_Bins[5]);
   Validate BCtr_NTrigger; }
 
-BCtr_DAC_t BCtr_LaserV; Invalidate BCtr_LaserV;
+HtrDAC_mV_t BCtr_LaserV; Invalidate BCtr_LaserV;
 { BCtr_LaserV = BCtr_Bins[6]; Validate BCtr_LaserV; }
 
 /* LaserPwr_t is defined in TS.tmc */

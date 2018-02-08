@@ -16,5 +16,6 @@ mode (default) {
   extbase = BCtr_conv.tmc:BCtr_conv.tmc.in
   genuibase = BCtr.genui:BCtr.genui.in
   BCtrext : BCtrext.tmc:BCtrext.tmc.in
+  - : BCtr.tbl:BCtr.tbl.in
 }
 

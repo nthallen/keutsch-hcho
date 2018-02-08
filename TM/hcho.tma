@@ -155,7 +155,7 @@ State Laser_Scan_Watch {
          "Peak detected at %.1lf mV outside drift limit %d from %.1lf",
          convert(peak_laser_V), Drift_Limit, convert(LV_online));
       } else {
-        ci_sendfcmd(0, "Laser Set Online %.1lf\n",
+        ci_sendfcmd(0, "Laser Set Online Position %.1lf\n",
            convert(peak_laser_V));
       }
     }
@@ -205,6 +205,11 @@ State Chop_Period_30 {
   Validate Chop_Period_30;
 }
 
+State Chop_Stop {
+  > Laser Command Chop Mode End
+  Validate Chop_Idle;
+}
+
 Partition
 # This partition monitors chopping and adjust the online position
 # to remain on the power-normalized peak. It will also monitor
@@ -233,7 +238,7 @@ State Chop_Active {
         if (dither_enable) {
           ci_sendfcmd(2, "Laser Command Dither Online %s\n",
             ((cmncts > pmncts) != (cur_LV > prev_LV)) ?
-            "Up" : "Down");
+            "Down" : "Up");
         }
         pmncts = cmncts;
         prev_LV = cur_LV;

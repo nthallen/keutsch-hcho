@@ -13,19 +13,27 @@
  */
  
   const char *LV_stat_text(unsigned char val) {
-    switch (val&0xF) {
-      case 0:  return "        ";
-      case 1:  return "scanning";
-      case 10: return "  online";
-      case 12: return " offline";
-      default: return "********";
+    switch (val&0x1F) {
+      case 0:    return "        ";
+      case 1:    return "scanning";
+      case 2:    return "  onlin1";
+      case 4:    return " offlin1";
+      case 0xA:  return "  online";
+      case 0xC:  return " offline";
+      case 0x10:    return "!       ";
+      case 0x11:    return "!scannin";
+      case 0x12:    return "! onlin1";
+      case 0x14:    return "!offlin1";
+      case 0x1A:    return "! online";
+      case 0x1C:    return "!offline";
+      default:      return "********";
     }
   }
 %}
 
 TM typedef double DS_mV;
 TM typedef unsigned char LVstat_t { text "%8d" LV_stat_text(); }
-TM typedef unsigned short HtrDAC_mV_t { text "%6.1lf"; convert DS_mV; }
+TM typedef unsigned short HtrDAC_mV_t { text "%7.2lf"; convert DS_mV; }
 Calibration (HtrDAC_mV_t, DS_mV) { 0, 0, 65536, 5000 }
 TM typedef signed short mV_offset_t { text "%6.1lf"; convert DS_mV; }
 Calibration (mV_offset_t, DS_mV) { 0, 0, 32768, 2500 }
@@ -49,7 +57,7 @@ TM 1 Hz DS_POINTS     NPts_Offline;
 Group DACscan (LV_status, LaserV, LV_start,
     LV_stop, LV_step, LV_online, LV_offdelta, LV_dither,
     NPts_Online, NPts_Offline) {
-  unsigned short data[8];
+  unsigned short data[10];
   if (DACscan_collect(data) >= 0) {
     LV_status = data[0];
     LaserV = data[1];

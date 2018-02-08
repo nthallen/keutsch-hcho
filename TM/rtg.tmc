@@ -19,7 +19,7 @@ ci_sendfcmd(2, "PhRTG Datum LaserLims %.3lf %.1lf %.1lf %.1lf %.1lf\n", dtime(),
 int rtg_is_scanning, rtg_was_scanning;
 int scan_index;
 rtg_is_scanning = BCtr_LVstat & 1;
-BCtr_DAC_t prev_LaserV;
+HtrDAC_mV_t prev_LaserV;
 
 depending on (BCtr_LaserV once, BCtr_0_a once, BCtr_LasIn_mW once) {
   if (rtg_is_scanning) {

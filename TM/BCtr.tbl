@@ -3,8 +3,8 @@ BCtr {
   BCtr_0: (BCtr_0_a,5);
   BCtr_1: (BCtr_1_a,5);
   Status: (BCtr_LVstat,8);
-  LaserV: (BCtr_LaserV,5) V;
-  LasIn:  (Bctr_LasIn_mW,6) mW;
+  LaserV: (BCtr_LaserV,7) mV;
+  LasIn:  (BCtr_LasIn_mW,6) mW;
   Ready:  (BCtr_Ready,3);
   Enable: (BCtr_Enable,3);
   DRdy:   (BCtr_DRdy,3);

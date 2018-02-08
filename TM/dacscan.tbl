@@ -1,7 +1,7 @@
 dacscan {
   HBox { +-; Title: "Laser Control"; -+ };
   Status:          (LV_status,8);
-  LaserV:          (LaserV,6) mV;
+  LaserV:          (LaserV,7) mV;
   PwrIn:           (LasIn_mW,6) mW;
   PwrOut:          (LasOut_mW,6) mW;
   Start:           (LV_start,6) mV;

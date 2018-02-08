@@ -1,11 +1,11 @@
  10 BCtr_0_a       BCtr Cts
  10 BCtr_1_a       BCtr Cts
  10 BCtr_NWords    BCtr NWords
- 10 BCtr_IPnum     BCtr IPnum
+ 10 BCtr_IPnum     BCtr IPnum %.0lf
  10 BCtr_NTrigger  BCtr NTrigger
  10 BCtr_LaserV    BCtr LaserV
  10 BCtr_LasIn_mW  BCtr LaserP
- 10 BCtr_Pfresh:BCtr_Pfresh:0 BCtr Status
+ 10 BCtr_Pfresh:BCtr_Pfresh:0 BCtr Status %.0lf
  10 BC_scanning:BCtr_LVstat:0 BCtr Status %.0lf
  10 BC_Online:BCtr_LVstat:1 BCtr Status %.0lf
  10 BC_Offline:BCtr_LVstat:2 BCtr Status %.0lf

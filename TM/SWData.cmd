@@ -21,10 +21,11 @@
   : PPS Sync { $0 = SWS_PPS_SYNC; }
   : Pressure Control Idle { $0 = SWS_PCTRL_IDLE; }
   : Pressure Control Activate { $0 = SWS_PCTRL_ACTIVE; }
-  : Chop Start { $0 = SWS_CHOP_START; }
+  : Chop Start 1 Minute Scan Interval  { $0 = SWS_CHOP_START_1; }
+  : Chop Start 5 Minute Scan Interval  { $0 = SWS_CHOP_START_5; }
+  : Chop Start 10 Minute Scan Interval  { $0 = SWS_CHOP_START_10; }
+  : Chop Start 30 Minute Scan Interval  { $0 = SWS_CHOP_START_30; }
   : Chop Stop { $0 = SWS_CHOP_STOP; }
-  : Chop Abort { $0 = SWS_CHOP_ABORT; }
-  : Chop Scan { $0 = SWS_CHOP_SCAN; }
   : Peak Detect Enable { $0 = SWS_PEAK_ENABLE; }
   : Peak Detect Disable { $0 = SWS_PEAK_DISABLE; }
   : Chop Dither Enable { $0 = SWS_DITHER_ENABLE; }

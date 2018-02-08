@@ -4,12 +4,12 @@
 1 TS3_T Temp_Sensors Temp
 1 TS4_T Temp_Sensors Temp
 1 TS5_T Temp_Sensors Temp
-1 TS0_cnt Temp_Sensors Count
-1 TS1_cnt Temp_Sensors Count
-1 TS2_cnt Temp_Sensors Count
-1 TS3_cnt Temp_Sensors Count
-1 TS4_cnt Temp_Sensors Count
-1 TS5_cnt Temp_Sensors Count
+1 TS0_cnt Temp_Sensors Count %.0lf
+1 TS1_cnt Temp_Sensors Count %.0lf
+1 TS2_cnt Temp_Sensors Count %.0lf
+1 TS3_cnt Temp_Sensors Count %.0lf
+1 TS4_cnt Temp_Sensors Count %.0lf
+1 TS5_cnt Temp_Sensors Count %.0lf
 1 LasIn_mW Laser Power
 1 LasOut_mW Laser Power
 
