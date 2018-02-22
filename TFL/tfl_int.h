@@ -15,14 +15,15 @@ extern int opt_echo;
 #include <vector>
 #include "SerSelector.h"
 
+enum TFL_Query_Type { QT_LN, QT_LF, QT_W, QT_SA };
+
 class TFLQuery {
   public:
     TFLQuery();
-    void format(Query_Type QT, const char *cmd,
+    int format(TFL_Query_Type QT, const char *cmd,
       uint16_t value, int valuelen, uint16_t min_resp);
     std::string query;
-    enum Query_Type { QT_LN, QT_LF, QT_W, QT_SA };
-    Query_Type type;
+    TFL_Query_Type type;
     uint16_t min_response_len;
 };
 

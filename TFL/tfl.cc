@@ -29,22 +29,21 @@ int main(int argc, char **argv) {
 }
 
 TFLQuery::TFLQuery() {
-  result = 0;
-  // scale = 1.0;
-  mask = 0;
+  type = QT_LN;
+  min_response_len = 0;
 }
 
 /**
  * @return non-zero on error
  */
-int TFLQuery::format(Query_Type QT, const char *cmd,
+int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
         uint16_t value, int valuelen, uint16_t min_resp) {
-  query.type = QT;
+  type = QT;
   query.clear();
   query.append(cmd);
   if (valuelen) {
     char vbuf[5];
-    int nvc = snprintf(vbuf, "%0*u", valuelen, value);
+    int nvc = snprintf(vbuf, 5, "%0*u", valuelen, value);
     if (nvc != valuelen) return 1;
     query.append(vbuf, valuelen);
   }
@@ -99,9 +98,9 @@ Serial Port Formats:
  */
 int TFLCmd::ProcessData(int flag) {
   nc = cp = 0;
-  int address, value, nwdigits, cmdlen, min_resp;
+  int address, value, nwdigits, min_resp;
   const char *cmd;
-  TFLQuery::Query_Type QT;
+  TFL_Query_Type QT;
   if (fillbuf()) return 1;
   if (nc == 0 || buf[0] == 'Q') return 1;
   if (not_str("W",1) ||
@@ -165,10 +164,10 @@ TFLSer::TFLSer(const char *ser_dev, tfl_tm_t *data, TFLCmd *TFL_Cmd)
   flags |= Selector::gflag(0) | Selector::gflag(1) | Selector::Sel_Timeout;
   TMdata = data;
   // Initialize TMdata to zeros?
-  TMdata->TFLS = 0;
+  TMdata->Status = 0;
   // Initialize queries 
   Qlist.resize(1);
-  Qlist[0].format(QT_SA, "SA", 2, 0, 0, 162);
+  Qlist[0].format(QT_SA, "SA", 0, 0, 162);
   CurQuery = 0;
   nq = qn = 0;
   cmdq = 0;
@@ -186,7 +185,7 @@ TFLSer::~TFLSer() {
 int TFLSer::ProcessData(int flag) {
   int nbw;
   if (flag & Selector::gflag(0)) { // TM
-    TMdata->TFLS &= ~TFL_TM_Fresh;
+    TMdata->Status &= ~(TFL_TM_Fresh | TFL_LCMD_Responded);
     nq = Qlist.size();
   }
   if (flag & Selector::gflag(1)) { // Command Received
@@ -286,7 +285,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
     }
   }
   switch (CurQuery->type) {
-    QT_LN:
+    case QT_LN:
       if (not_str("on\n",3)) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Unrecognized response to LN");
@@ -296,7 +295,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
         TMdata->Status |= TFL_Laser_On | TFL_LCMD_Responded;
       }
       break;
-    QT_LF:
+    case QT_LF:
       if (not_str("off\n",4)) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Unrecognized response to LF");
@@ -307,7 +306,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
         TMdata->Status |= TFL_LCMD_Responded;
       }
       break;
-    QT_W:
+    case QT_W:
       if (not_str("  Sending \n")) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Urecognized response");
@@ -315,7 +314,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
         return TFLP_OK;
       }
       break;
-    QT_SA:
+    case QT_SA:
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
         unsigned int CH9, CH12, CH13, CH14, CH15;
         if (not_str("CH0",3) || not_unsigned(CH0) ||
@@ -335,13 +334,13 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
           if (cp < nc) {
             consume(nc);
             return TFLP_OK;
-          } else return TFLP_WAIT;
+          } else return TFLP_Wait;
         }
         TMdata->SD_I = CH0;
         TMdata->SD_T = CH1;
         TMdata->P1D_I = CH2;
         TMdata->P1D_T = CH3;
-        TMdata->SMD_P = CH4;
+        TMdata->SDM_P = CH4;
         TMdata->P2D_I = CH8;
         TMdata->P2D_T = CH9;
         TMdata->P2DMin_P = CH12;
