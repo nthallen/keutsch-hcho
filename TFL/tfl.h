@@ -18,7 +18,8 @@ typedef struct __attribute__((__packed__)) {
 } tfl_tm_t;
 
 #define TFL_TM_Fresh 1
-#define TFL_Laser_On 2
+#define TFL_LCMD_Responded 2
+#define TFL_Laser_On 4
 
 #endif
 
