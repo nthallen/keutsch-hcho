@@ -14,11 +14,13 @@ hchosrvr.o
 hchosrvroui.c
 hchosrvroui.o
 HCHOtbl.tmc
+HCHO_Engtbl.tmc
 hchodisp.cc
 hchodispoui.c
 hchodispoui.o
 hchodisp.o
 HCHOtblnc.tmc
+HCHO_Engtblnc.tmc
 hchodispnc.cc
 hchodispncoui.c
 hchodispncoui.o
@@ -54,7 +56,9 @@ hchoengextoui.c
 hchoengextoui.o
 hchoengext.o
 HCHOtbl.tmc.dep
+HCHO_Engtbl.tmc.dep
 HCHOtblnc.tmc.dep
+HCHO_Engtblnc.tmc.dep
 *.err
 Makefile
 BCtrext

@@ -47,7 +47,7 @@ int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
     if (nvc != valuelen) return 1;
     query.append(vbuf, valuelen);
   }
-  query.append("\n",1);
+  query.append("\r",1);
   min_response_len = min_resp;
   if (opt_echo)
     min_response_len += query.length();
@@ -249,10 +249,10 @@ int TFLSer::ProcessData(int flag) {
       CurQuery->query.length(), nbw);
   }
   if (CurQuery->type == QT_SA) {
-    TO.Set(0, 70); // This probably needs to be longer
+    TO.Set(0, 500); // This probably needs to be longer
   } else {
     // nl_error(-2, "Set command timeout");
-    TO.Set(1, 0);
+    TO.Set(5, 0);
   }
   state = TFLS_WaitResp;
   cur_min = CurQuery->min_response_len;
@@ -274,8 +274,9 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
     return TFLP_OK;
   }
   cur_min = CurQuery->min_response_len - cp;
-  if (opt_echo &&
-      not_str(CurQuery->query.c_str(), CurQuery->query.length())) {
+  if (opt_echo && 
+      (not_str(CurQuery->query.c_str(), CurQuery->query.length()) ||
+       not_str("\n",1))) {
     if (cp >= nc) {
       return TFLP_Wait;
     } else {
@@ -286,7 +287,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
   }
   switch (CurQuery->type) {
     case QT_LN:
-      if (not_str("on\n",3)) {
+      if (not_str("on\r\n",3)) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Unrecognized response to LN");
         consume(nc);
@@ -296,7 +297,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       }
       break;
     case QT_LF:
-      if (not_str("off\n",4)) {
+      if (not_str("off\r\n",4)) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Unrecognized response to LF");
         consume(nc);
@@ -307,7 +308,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       }
       break;
     case QT_W:
-      if (not_str("  Sending \n")) {
+      if (not_str("  Sending \r\n")) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Urecognized response");
         consume(nc);
@@ -318,18 +319,18 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
         unsigned int CH9, CH12, CH13, CH14, CH15;
         if (not_str("CH0",3) || not_unsigned(CH0) ||
-            not_str(" mA\nCH1") || not_ufixed(CH1,1) ||
-            not_str(" C\nCH2") || not_ufixed(CH2,2) ||
-            not_str(" A\nCH3") || not_ufixed(CH3,1) ||
-            not_str(" C\nCH4") || not_ufixed(CH4,2) ||
-            not_str(" V\nCH8") || not_unsigned(CH8) ||
-            not_str(" mA\nCH9") || not_ufixed(CH9,1) ||
-            not_str(" C\nCH10 0.00 A\nCH11 >50  C\nCH12") ||
+            not_str(" mA\r\nCH1") || not_ufixed(CH1,1) ||
+            not_str(" C\r\nCH2") || not_ufixed(CH2,2) ||
+            not_str(" A\r\nCH3") || not_ufixed(CH3,1) ||
+            not_str(" C\r\nCH4") || not_ufixed(CH4,2) ||
+            not_str(" V\r\nCH8") || not_unsigned(CH8) ||
+            not_str(" mA\r\nCH9") || not_ufixed(CH9,1) ||
+            not_str(" C\r\nCH10 0.00 A\r\nCH11 >50  C\r\nCH12") ||
                                    not_ufixed(CH12,2) ||
-            not_str(" V\nCH13") || not_ufixed(CH13,2) ||
-            not_str(" V\nCH14") || not_ufixed(CH14,2) ||
-            not_str(" C\nCH15") || not_ufixed(CH15,2) ||
-            not_str(" C\n\n")
+            not_str(" V\r\nCH13") || not_ufixed(CH13,2) ||
+            not_str(" V\r\nCH14") || not_ufixed(CH14,2) ||
+            not_str(" C\r\nCH15") || not_ufixed(CH15,2) ||
+            not_str(" C\r\n\r\n")
             ) {
           if (cp < nc) {
             consume(nc);
@@ -367,11 +368,14 @@ int TFLSer::not_ufixed(unsigned int &val, int ndecimals) {
   while (cp < nc && isspace(buf[cp]))
     ++cp;
   if (cp < nc) {
-    if (!isdigit(buf[cp]) && buf[cp] != '.') {
-      report_err("Expected digit or decimal at column %d", cp);
+    if (!isdigit(buf[cp]) && buf[cp] != '.' && buf[cp] != '<') {
+      report_err("Expected digit, '.' or '<' at column %d", cp);
       return 1;
     }
   } else return 1;
+  if (buf[cp] == '<') {
+    ++cp;
+  }
   while (cp < nc && isdigit(buf[cp])) {
     val = val*10 + buf[cp++] - '0';
   }

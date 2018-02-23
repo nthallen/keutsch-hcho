@@ -12,7 +12,7 @@ MFCtr {
 { HBox {
     |+; { [PPS]; [TS] }; |+;
         { [dacscan]; [DS_SWStat] }; |+;
-        { [TFL]; [MFCtr] } |+
+        { [TFL]; [MFCtr] }; |+
   };
   -;
 }

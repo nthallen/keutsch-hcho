@@ -1,6 +1,6 @@
 @TBLNAME@ {
   HBox{ +-; Title: "TFL"; -+};
-  Laser:   >HBox{(TFL_LCmd,1); (Laser,3)} (TFL_Fresh,1);
+  Laser:   >HBox{(TFL_LCmd,1); (TFL_Laser,3)} (TFL_Fresh,1);
   SD_I:    (TFL_SD_I,4) mA;
   SD_T:    (TFL_SD_T,4) C;
   P1D_I:   (TFL_P1D_I,4) A;
@@ -10,7 +10,7 @@
   P2D_T:   (TFL_P2D_T,4) C;
   P2DMin:  (TFL_P2DMin_P,4) V;
   P2DMout: (TFL_P2DMout_P,4) V;
-  SHG:     (TFL_SHG,4) C;
-  THG:     (TFL_THG,4) C;
+  SHG:     (TFL_SHG,5) C;
+  THG:     (TFL_THG,5) C;
   Stale:   (TFL_Stale,4) mA;
 }
