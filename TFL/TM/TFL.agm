@@ -6,6 +6,7 @@ ModuleDef TFL [ TBLNAME=TFL ] {
 mode (default) {
   tmcbase = TFL.tmc
   colbase = TFL_col.tmc
+  cmdbase = TFL.cmd
   genuibase = TFL.genui
   - : TFL.tbl:TFL.tbl.in
   DISTRIB = @MODDIR@/../tfl
