@@ -34,8 +34,8 @@ group TFL (TFL_SD_I, TFL_SD_T, TFL_P1D_I, TFL_P1D_T, TFL_SDM_P,
   TFL_P2D_T = TFL.P2D_T;
   TFL_P2DMin_P = TFL.P2DMin_P;
   TFL_P2DMout_P = TFL.P2DMout_P;
-  TFL_SHG = TFL.SHG;
-  TFL_THG = TFL.THG;
+  TFL_SHG = TFL.SHG_T;
+  TFL_THG = TFL.THG_T;
   TFL_Status = TFL.Status;
   TFL_Stale = TFL_obj->stale(255);
   TFL_obj->synch();

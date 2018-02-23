@@ -1,4 +1,4 @@
-@TBLNAME@ {
+TFL {
   HBox{ +-; Title: "TFL"; -+};
   Laser:   >HBox{(TFL_LCmd,1); (Laser,3)} (TFL_Fresh,1);
   SD_I:    (TFL_SD_I,4) mA;
