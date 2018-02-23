@@ -35,6 +35,7 @@ genuibase = fcc.genui
 Module TMbase
 Module BCtr rate=10
 tmcbase = pps_time.tmc
+Module TFL
 
 SCRIPT = interact
 TGTDIR = $(TGTNODE)/home/hcho

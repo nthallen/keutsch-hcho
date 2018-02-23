@@ -1,0 +1,15 @@
+  1 TFL_SD_I TFL mA
+  1 TFL_P1D_I TFL Amps
+  1 TFL_P2D_I TFL mA
+  1 TFL_SD_T TFL Temp
+  1 TFL_P1D_T TFL Temp
+  1 TFL_P2D_T TFL Temp
+  1 TFL_SDM_P TFL Power
+  1 TFL_P2DMin_P TFL Power
+  1 TFL_P2DMout_P TFL Power
+  1 TFL_SHG TFL HGT
+  1 TFL_THG TFL HGT
+  1 Fresh:TFL_Status:0 TFL Status
+  1 LCmd:TFL_Status:1 TFL Status
+  1 Laser:TFL_Status:2 TFL Status
+  1 TFL_Stale TFL Stale

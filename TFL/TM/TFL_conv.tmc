@@ -1,0 +1,13 @@
+%{
+  #define TFL_star_text(x) ((x)?'*':' ')
+  #define TFL_on_off_text(x) ((x)?' On':'Off')
+%}
+TM typedef unsigned char TFL_star_t { text "%1d" TLF_star_text(); }
+TM typedef unsigned char TFL_on_off_t { text "%3d" TLF_on_off_text(); }
+
+TFL_star_t TFL_Fresh; invalidate TFL_Fresh;
+{ TFL_Fresh = TFL_Status & 1; Validate TFL_Fresh; }
+TFL_start_t TFL_LCmd; invalidate TFL_LCmd;
+{ TFL_LCmd = (TFL_Status >> 1) & 1; Validate TFL_LCmd; }
+TFL_on_off_t TFL_Laser; invalidate TFL_Laser;
+{ TFL_Laser = (TFL_Status >> 2) & 1; Validate TFL_Laser; }

@@ -1,0 +1,22 @@
+ModuleDef TFL [ TBLNAME=TFL ] {
+  Module TFL collects data from the Thermo Scientific
+  TFL 3000 Laser
+}
+
+mode (default) {
+  tmcbase = TFL.tmc
+  colbase = TFL_col.tmc
+  genuibase = TFL.genui
+  - : TFL.tbl:TFL.tbl.in
+  DISTRIB = @MODDIR@/../tfl
+  CPPFLAGS = -I @MODDIR@/..
+  %%
+@MODDIR@/../tfl :
+	cd @MODDIR@/.. && make
+}
+
+%%
+.PHONY : clean-TFL
+clean-dist : clean-TFL
+clean-TFL :
+	cd @MODDIR@/.. && make clean
