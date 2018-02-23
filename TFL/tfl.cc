@@ -35,6 +35,10 @@ TFLQuery::TFLQuery() {
 
 /**
  * @return non-zero on error
+ * The TFL cannot accept more than 4 characters at line speed,
+ * so we cannot output more than 4 at a time, then wait for
+ * the response. This assumes that echo is enabled, so I
+ * should disable the -e option.
  */
 int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
         uint16_t value, int valuelen, uint16_t min_resp) {
@@ -48,10 +52,43 @@ int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
     query.append(vbuf, valuelen);
   }
   query.append("\r",1);
+  request_length = query.length();
+  n_transmitted = 0;
+  n_echoed = 0;
   min_response_len = min_resp;
-  if (opt_echo)
-    min_response_len += query.length();
+  min_bytes_expected = 0; // until we write!
   return 0;
+}
+
+/**
+ * @param fd Device file handle
+ * @return true on device error
+ */
+bool TFLQuery::write(int fd) {
+  const char *s = query.c_str();
+  int n_to_write = request_length - n_transmitted;
+  if (n_to_write > 4) n_to_write = 4;
+  int nbw = write(fd, s+n_transmitted, n_to_write);
+  if (nbw == -1) {
+    nl_error(2, "Error on write to device: %s", strerror(errno));
+    return true; // terminate
+  } else if ((unsigned)nbw != n_to_write) {
+    report_err("Incomplete write: expected %d, wrote %d",
+      n_to_write, nbw);
+  }
+  n_transmitted += nbw;
+  min_bytes_expected = nbw;
+  if (n_transmitted >= request_length)
+    min_bytes_expected += min_response_len;
+  return false;
+}
+
+void TFLQuery::abort_write() {
+  n_transmitted = request_length;
+}
+
+bool TFLQuery::write_is_complete() {
+  return(n_transmitted >= request_length);
 }
 
 /**
@@ -198,6 +235,7 @@ int TFLSer::ProcessData(int flag) {
         if (TO.Expired()) {
           report_err("Timeout: Query was: '%s'",
             ascii_escape(CurQuery->query));
+          CurQuery->abort_write();
           break;
         } else {
           update_termios();
@@ -208,7 +246,14 @@ int TFLSer::ProcessData(int flag) {
       default:
         nl_error(4, "Invalid return code from parse_response()");
     }
-    if (CurQuery) {
+    // We get out here for TFLP_OK or (TFLP_Wait && Timeout),
+    // so not waiting for input.
+    // That now includes case where we have only written part of
+    // a command and have received the echo.
+    // write_is_completed() will be false, so we will hold on
+    // to the CurQuery and send more of the command. In the timeout
+    // case, above, we call abort_write() to ensure write_is_completed().
+    if (CurQuery && CurQuery->write_is_completed()) {
       if (CurQuery->type == QT_SA) {
         // These are the internal polling commands
         if (++qn == Qlist.size())
@@ -220,12 +265,15 @@ int TFLSer::ProcessData(int flag) {
       }
       CurQuery = 0;
     }
-  }
-  if (CurQuery) {
-    update_termios();
+  } else if (CurQuery) {
+    // We only get to this case if a request is outstanding
+    // and we receive a command or TM request before any
+    // chars of the response, so no update of termios should
+    // be required.
+    // update_termios();
     return 0;
   }
-  if (cmdq) {
+  if ((CurQuery == 0) && cmdq) {
     CurQuery = Cmd->query();
     cmdq = 0;
   }
@@ -239,23 +287,18 @@ int TFLSer::ProcessData(int flag) {
     update_termios();
     return 0;
   }
-  nbw = write(fd, CurQuery->query.c_str(), CurQuery->query.length());
-  nc = cp = 0; // flush input buffer
-  if (nbw == -1) {
-    nl_error(2, "Error on write to device: %s", strerror(errno));
+  
+  if (CurQuery->write(fd))
     return 1; // terminate
-  } else if ((unsigned)nbw != CurQuery->query.length()) {
-    report_err("Incomplete write: expected %d, wrote %d",
-      CurQuery->query.length(), nbw);
-  }
+  nc = cp = 0; // flush input buffer
   if (CurQuery->type == QT_SA) {
     TO.Set(0, 500); // This probably needs to be longer
   } else {
     // nl_error(-2, "Set command timeout");
-    TO.Set(5, 0);
+    TO.Set(1, 0);
   }
   state = TFLS_WaitResp;
-  cur_min = CurQuery->min_response_len;
+  cur_min = CurQuery->min_bytes_expected - nc;
   update_termios();
   return 0;
 }
@@ -273,21 +316,24 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
     consume(nc);
     return TFLP_OK;
   }
-  cur_min = CurQuery->min_response_len - cp;
-  if (opt_echo && 
-      (not_str(CurQuery->query.c_str(), CurQuery->query.length()) ||
-       not_str("\n",1))) {
-    if (cp >= nc) {
-      return TFLP_Wait;
-    } else {
-      report_err("Echo garbled");
-      consume(nc);
-      return TFLP_OK;
+  // cur_min = CurQuery->min_response_len - cp;
+  if (opt_echo) { 
+    if (not_str(CurQuery->query.c_str(), CurQuery->n_transmitted)) {
+      if (cp >= nc) {
+        return TFLP_Wait;
+      } else {
+        report_err("Echo garbled");
+        consume(nc);
+        CurQuery->abort_write();
+        return TFLP_OK;
+      }
     }
+    if (!CurQuery->write_is_complete())
+      return TFLP_OK;
   }
   switch (CurQuery->type) {
     case QT_LN:
-      if (not_str("on\r\n",3)) {
+      if (not_str("\non\r\n",5)) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Unrecognized response to LN");
         consume(nc);
@@ -297,7 +343,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       }
       break;
     case QT_LF:
-      if (not_str("off\r\n",4)) {
+      if (not_str("\noff\r\n",6)) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Unrecognized response to LF");
         consume(nc);
@@ -308,7 +354,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       }
       break;
     case QT_W:
-      if (not_str("  Sending \r\n")) {
+      if (not_str("\n  Sending \r\n")) {
         if (cp >= nc) return TFLP_Wait;
         report_err("Urecognized response");
         consume(nc);
@@ -318,7 +364,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
     case QT_SA:
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
         unsigned int CH9, CH12, CH13, CH14, CH15;
-        if (not_str("CH0",3) || not_unsigned(CH0) ||
+        if (not_str("\nCH0",4) || not_unsigned(CH0) ||
             not_str(" mA\r\nCH1") || not_ufixed(CH1,1) ||
             not_str(" C\r\nCH2") || not_ufixed(CH2,2) ||
             not_str(" A\r\nCH3") || not_ufixed(CH3,1) ||
