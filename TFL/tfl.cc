@@ -62,19 +62,20 @@ int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
 
 /**
  * @param fd Device file handle
- * @return true on device error
+ * @return -1 on device error, 0 on succes, positive on
+ * incomplete write
  */
-bool TFLQuery::write(int fd) {
+int TFLQuery::write(int fd) {
+  int rv = 0;
   const char *s = query.c_str();
   int n_to_write = request_length - n_transmitted;
   if (n_to_write > 4) n_to_write = 4;
-  int nbw = write(fd, s+n_transmitted, n_to_write);
+  int nbw = ::write(fd, s+n_transmitted, n_to_write);
   if (nbw == -1) {
     nl_error(2, "Error on write to device: %s", strerror(errno));
-    return true; // terminate
-  } else if ((unsigned)nbw != n_to_write) {
-    report_err("Incomplete write: expected %d, wrote %d",
-      n_to_write, nbw);
+    return -1; // terminate
+  } else if (nbw != n_to_write) {
+    rv = n_to_write - nbw;
   }
   n_transmitted += nbw;
   min_bytes_expected = nbw;
@@ -220,7 +221,6 @@ TFLSer::~TFLSer() {
 }
 
 int TFLSer::ProcessData(int flag) {
-  int nbw;
   if (flag & Selector::gflag(0)) { // TM
     TMdata->Status &= ~(TFL_TM_Fresh | TFL_LCMD_Responded);
     nq = Qlist.size();
@@ -250,10 +250,10 @@ int TFLSer::ProcessData(int flag) {
     // so not waiting for input.
     // That now includes case where we have only written part of
     // a command and have received the echo.
-    // write_is_completed() will be false, so we will hold on
+    // write_is_complete() will be false, so we will hold on
     // to the CurQuery and send more of the command. In the timeout
-    // case, above, we call abort_write() to ensure write_is_completed().
-    if (CurQuery && CurQuery->write_is_completed()) {
+    // case, above, we call abort_write() to ensure write_is_complete().
+    if (CurQuery && CurQuery->write_is_complete()) {
       if (CurQuery->type == QT_SA) {
         // These are the internal polling commands
         if (++qn == Qlist.size())
@@ -288,9 +288,11 @@ int TFLSer::ProcessData(int flag) {
     return 0;
   }
   
-  if (CurQuery->write(fd))
-    return 1; // terminate
-  nc = cp = 0; // flush input buffer
+  { int rv = CurQuery->write(fd);
+    if (rv < 0) return 1;
+    if (rv > 0)
+      report_err("Incomplete write: %d bytes short", rv);
+  }
   if (CurQuery->type == QT_SA) {
     TO.Set(0, 500); // This probably needs to be longer
   } else {

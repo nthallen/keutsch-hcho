@@ -22,7 +22,7 @@ class TFLQuery {
     TFLQuery();
     int format(TFL_Query_Type QT, const char *cmd,
       uint16_t value, int valuelen, uint16_t min_resp);
-    bool write(int fd); //*< @return true on device error
+    int write(int fd);
     void abort_write();
     bool write_is_complete();
     std::string query;
