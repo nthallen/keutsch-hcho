@@ -69,7 +69,7 @@ int TFLQuery::write(int fd) {
   int rv = 0;
   const char *s = query.c_str();
   int n_to_write = request_length - n_transmitted;
-  if (n_to_write > 4) n_to_write = 4;
+  if (n_to_write > 1) n_to_write = 1;
   int nbw = ::write(fd, s+n_transmitted, n_to_write);
   if (nbw == -1) {
     nl_error(2, "Error on write to device: %s", strerror(errno));
@@ -367,7 +367,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       break;
     case QT_SA:
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
-        unsigned int CH9, CH12, CH13, CH14, CH15;
+        unsigned int CH9, CH10, CH12, CH13, CH14, CH15;
         if (not_str("\nCH0",4) || not_unsigned(CH0) ||
             not_str(" mA\r\nCH1") || not_ufixed(CH1,1) ||
             not_str(" C\r\nCH2") || not_ufixed(CH2,2) ||
@@ -375,7 +375,8 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
             not_str(" C\r\nCH4") || not_ufixed(CH4,2) ||
             not_str(" V\r\nCH8") || not_unsigned(CH8) ||
             not_str(" mA\r\nCH9") || not_ufixed(CH9,1) ||
-            not_str(" C\r\nCH10 0.00 A\r\nCH11 >50  C\r\nCH12") ||
+            not_str(" C\r\nCH10") || not_ufixed(CH10,2) ||
+            not_str(" A\r\nCH11 >50  C\r\nCH12") ||
                                    not_ufixed(CH12,2) ||
             not_str(" V\r\nCH13") || not_ufixed(CH13,2) ||
             not_str(" V\r\nCH14") || not_ufixed(CH14,2) ||
