@@ -275,10 +275,12 @@ int TFLSer::ProcessData(int flag) {
   }
   if ((CurQuery == 0) && cmdq) {
     CurQuery = Cmd->query();
+    CurQuery->n_transmitted = 0;
     cmdq = 0;
   }
   if ((CurQuery == 0) && nq) {
     CurQuery = &Qlist[qn];
+    CurQuery->n_transmitted = 0;
   }
   if (CurQuery == 0) {
     state = TFLS_Idle;
