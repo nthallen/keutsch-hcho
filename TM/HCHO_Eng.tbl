@@ -4,7 +4,7 @@ Input "PPS.tbl";
 Input "TFL.tbl";
 
 MFCtr {
-  -;
+  VGlue 0+1;
   HBox { (flttime,9); HGlue 0+1 };
   { MFCtr: (MFCtr,5)}
 }
