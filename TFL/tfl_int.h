@@ -21,7 +21,8 @@ class TFLQuery {
   public:
     TFLQuery();
     int format(TFL_Query_Type QT, const char *cmd,
-      uint16_t value, int valuelen, uint16_t min_resp);
+      uint16_t value, int valuelen, uint16_t min_resp,
+      uint16_t *result);
     int write(int fd);
     void abort_write();
     bool write_is_complete();
@@ -40,17 +41,22 @@ class TFLQuery {
     //* received to set cur_min, which update_termios uses
     //* to set VMIN
     uint16_t min_bytes_expected;
+    //* If non-zero, result_value points to where cmd_value should
+    //* be copied on success.
+    uint16_t cmd_value;
+    uint16_t *result_value;
 };
 
 class TFLCmd : public Ser_Sel {
   public:
-    TFLCmd();
+    TFLCmd(tfl_tm_t *TM);
     ~TFLCmd();
     int ProcessData(int flag);
     TFLQuery *query();
     void query_complete();
   private:
     TFLQuery CmdQuery;
+    tfl_tm_t *TMdata;
 };
 
 class TFLSer : public Ser_Sel {

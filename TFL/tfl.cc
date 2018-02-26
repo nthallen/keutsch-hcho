@@ -16,8 +16,8 @@ int main(int argc, char **argv) {
   oui_init_options(argc, argv);
   nl_error( 0, "Starting V1.0" );
   { Selector S;
-    TFLCmd TFLC;
     tfl_tm_t TMdata;
+    TFLCmd TFLC(&TMdata);
     TFLSer TFL(tfl_path, &TMdata, &TFLC);
     TM_Selectee TM(tfl_name, &TMdata, sizeof(TMdata));
     S.add_child(&TFLC);
@@ -41,8 +41,11 @@ TFLQuery::TFLQuery() {
  * should disable the -e option.
  */
 int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
-        uint16_t value, int valuelen, uint16_t min_resp) {
+        uint16_t value, int valuelen, uint16_t min_resp,
+        uint16_t *result) {
   type = QT;
+  cmd_value = value;
+  result_value = result;
   query.clear();
   query.append(cmd);
   if (valuelen) {
@@ -61,6 +64,13 @@ int TFLQuery::format(TFL_Query_Type QT, const char *cmd,
 }
 
 /**
+ * The TFL controller cannot handle multiple characters
+ * at line speed, always permanently locking up serial
+ * communication if more than 4 characters are sent at
+ * once, and sometimes locking up with only 3 characters.
+ * So we will transmit one character at a time, waiting
+ * for the echo before proceeding. This appears to result
+ * in stable operation.
  * @param fd Device file handle
  * @return -1 on device error, 0 on succes, positive on
  * incomplete write
@@ -97,7 +107,8 @@ bool TFLQuery::write_is_complete() {
  * just want access to all the parsing and error reporting functions.
  * I won't call setup(), which is the only device-specific function.
  */
-TFLCmd::TFLCmd() : Ser_Sel() {
+TFLCmd::TFLCmd(tfl_tm_t *TM) : Ser_Sel() {
+  TMdata = TM;
   char shortname[40];
   int nc;
   nc = snprintf(shortname, 40, "cmd/%s", tfl_name);
@@ -137,6 +148,7 @@ Serial Port Formats:
 int TFLCmd::ProcessData(int flag) {
   nc = cp = 0;
   int address, value, nwdigits, min_resp;
+  uint16_t *resp = 0;
   const char *cmd;
   TFL_Query_Type QT;
   if (fillbuf()) return 1;
@@ -153,11 +165,11 @@ int TFLCmd::ProcessData(int flag) {
   QT = QT_W;
   min_resp = 11; // default for QT_W
   switch (address) {
-    case 0: cmd = "WS1T"; nwdigits = 3; break;
-    case 1: cmd = "WS1L"; nwdigits = 3; break;
-    case 2: cmd = "WP2L"; nwdigits = 3; break;
-    case 3: cmd = "WSHG"; nwdigits = 4; break;
-    case 4: cmd = "WTHG"; nwdigits = 4; break;
+    case 0: cmd = "WS1T"; nwdigits = 3; resp = &TMdata->SD_T_SP; break;
+    case 1: cmd = "WS1L"; nwdigits = 3; resp = &TMdata->SD_I_SP; break;
+    case 2: cmd = "WP2L"; nwdigits = 3; resp = &TMdata->P1D_I_SP; break;
+    case 3: cmd = "WSHG"; nwdigits = 4; resp = &TMdata->SHG_T_SP; break;
+    case 4: cmd = "WTHG"; nwdigits = 4; resp = &TMdata->THG_T_SP; break;
     case 5:
       cmd = value ? "LN" : "LF";
       QT = value ? QT_LN : QT_LF;
@@ -169,7 +181,7 @@ int TFLCmd::ProcessData(int flag) {
       consume(nc);
       return 0;
   }
-  if (CmdQuery.format(QT, cmd, value, nwdigits, min_resp)) {
+  if (CmdQuery.format(QT, cmd, value, nwdigits, min_resp, resp)) {
     report_err("nwdigits fail: %d %d", nwdigits, value);
     consume(nc);
     return 0;
@@ -205,7 +217,7 @@ TFLSer::TFLSer(const char *ser_dev, tfl_tm_t *data, TFLCmd *TFL_Cmd)
   TMdata->Status = 0;
   // Initialize queries 
   Qlist.resize(1);
-  Qlist[0].format(QT_SA, "SA", 0, 0, 162);
+  Qlist[0].format(QT_SA, "SA", 0, 0, 162, 0);
   CurQuery = 0;
   nq = qn = 0;
   cmdq = 0;
@@ -364,6 +376,10 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
         consume(nc);
         return TFLP_OK;
       }
+      TMdata->Status |= TFL_LCMD_Responded;
+      if (CurQuery->result_value) {
+        *CurQuery->result_value = CurQuery->cmd_value;
+      }
       break;
     case QT_SA:
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
@@ -396,7 +412,7 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
         TMdata->P2D_I = CH8;
         TMdata->P2D_T = CH9;
         TMdata->P2DMin_P = CH12;
-        TMdata->P2DMout_P = CH12;
+        TMdata->P2DMout_P = CH13;
         TMdata->SHG_T = CH14;
         TMdata->THG_T = CH15;
         TMdata->Status |= TFL_TM_Fresh;

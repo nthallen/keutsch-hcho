@@ -1,5 +1,5 @@
 %{
-  #define TFL_star_text(x) ((x)?"*":" ")
+  #define TFL_star_text(x) ((x)?" ":"*")
   #define TFL_on_off_text(x) ((x)?" On":"Off")
 %}
 TM typedef unsigned char TFL_star_t { text "%1d" TFL_star_text(); }

@@ -28,14 +28,14 @@
       $0.value = $4;
       $0.scale = 100;
     }
-  : SHG Temperature Temperature %lf (Enter Celcius) C {
+  : SHG Temperature %lf (Enter Celcius) C {
       $0.address = 3;
-      $0.value = $4;
+      $0.value = $3;
       $0.scale = 100;
     }
-  : THG Temperature Temperature %lf (Enter Celcius) C {
+  : THG Temperature %lf (Enter Celcius) C {
       $0.address = 4;
-      $0.value = $4;
+      $0.value = $3;
       $0.scale = 100;
     }
   ;
