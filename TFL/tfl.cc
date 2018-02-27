@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
   nl_error( 0, "Starting V1.0" );
   { Selector S;
     tfl_tm_t TMdata;
+    memset(&TMdata, 0, sizeof(tfl_tm_t));
     TFLCmd TFLC(&TMdata);
     TFLSer TFL(tfl_path, &TMdata, &TFLC);
     TM_Selectee TM(tfl_name, &TMdata, sizeof(TMdata));
