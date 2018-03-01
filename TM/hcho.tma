@@ -1,8 +1,3 @@
-%{
-  int scan_requested = 0;
-  int chop_exit_requested = 0;
-%}
-
 State Init {
       > Telemetry Start
    +1 > Laser Set Scan Start 195
@@ -254,6 +249,87 @@ State Chop_Active {
       np_online = 0;
       cncts = 0;
       pmncts = 0;
+    }
+  }
+}
+
+# Partition
+# This pseudo partition monitors chopping and manipulation of the THG
+# temperature to keep the peak power positioned optimally between
+# the online ((BCtr_LVstat&0xF) == 0xA)
+# and offline ((BCtr_LVstat&0xF) == 0xC) positions.
+# The idea is to average the online and offline power readings,
+# and adjust the THG temperature to move the peak toward the lower
+# power position.
+#
+# This algo needs to be aware of the latencies in the BCtr_LasIn_mW
+# data (currently somewhere between one and 3 samples.) This means:
+#   -We should only consider 'fresh' power values: those reported when
+#    BCtr_Pfresh is true.
+#   -Power reported with the first sample in either online or offline
+#    belongs to the previous mode's average (minimum 1 sample latency).
+#   -Power reported with the second sample in either online or offline
+#    should be discarded, as it frequently shows signs of transitional
+#    values which are likely not representative of the actual laser
+#    power.
+%{
+  int thg_prev_chop_mode = 0; // 0xA == online, 0xC == offline
+  int thg_chop_mode_idx = 2; // 0==online, 1==offline, 2==other
+  double thg_power[2];
+  int thg_n_pwr;
+  bool thg_not_first;
+  bool thg_peakup_enable = true;
+%}
+
+{
+  mV_offset_t curr_offline_delta;
+  curr_offline_delta = LV_offdelta;
+  TFL_uint4_2_t curr_TFL_THG;
+  curr_TFL_THG = TFL_THG;
+  
+  {
+    int crnt_chop_mode;
+    crnt_chop_mode = BCtr_LVstat&0xF;
+    if (thg_chop_mode_idx < 2 && thg_not_first && BCtr_Pfresh) {
+      thg_power[thg_chop_mode_idx] += convert(BCtr_LasIn_mW);
+      ++thg_n_pwr;
+    }
+    thg_not_first = true;
+    if (crnt_chop_mode != thg_prev_chop_mode) {
+      switch (thg_chop_mode_idx) {
+        case 2:
+          if (crnt_chop_mode == 0xA) {
+            thg_n_pwr = 0;
+            thg_power[0] = 0.;
+            thg_power[1] = 0.;
+            thg_chop_mode_idx = 0;
+            thg_not_first = false;
+          }
+          break;
+        case 0:
+          if (crnt_chop_mode == 0xC && thg_n_pwr > 0) {
+            thg_power[0] /= thg_n_pwr;
+            thg_n_pwr = 0;
+            thg_chop_mode_idx = 1;
+            thg_not_first = false;
+          } else {
+            thg_chop_mode_idx = 2;
+          }
+          break;
+        case 1:
+          if (thg_n_pwr > 0 && thg_peakup_enable) {
+            thg_power[1] /= thg_n_pwr;
+            ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
+              convert(curr_TFL_THG) +
+              ((thg_power[0] > thg_power[1]) != (curr_offline_delta > 0)) ?
+                -0.01 : 0.01);
+          }
+          thg_chop_mode_idx = 2;
+          break;
+        default:
+          thg_chop_mode_idx = 2;
+          break;
+      }
     }
   }
 }

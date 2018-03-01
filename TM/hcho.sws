@@ -17,6 +17,8 @@ SWS_PEAK_ENABLE  10   Peak Detect Enable: find_peak = true; break;
 SWS_PEAK_DISABLE 11  Peak Detect Disable: find_peak = false; break;
 SWS_DITHER_ENABLE 12  Chop Dither Enable: dither_enable = true; break;
 SWS_DITHER_DISABLE 13 Chop Dither Disable: dither_enable = false; break;
+SWS_THG_PEAKUP_ENABLE 14 THG Peakup Enable: thg_peakup_enable = true; break;
+SWS_THG_PEAKUP_DISBLE 15 THG Peakup Disable: thg_peakup_enable = false; break;
 
 SWS_TIMEWARP   254   Time Warp: break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
