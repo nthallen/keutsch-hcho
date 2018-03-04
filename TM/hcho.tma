@@ -333,3 +333,70 @@ State Chop_Active {
     }
   }
 }
+
+Partition
+# This partition controls calibration sequences
+
+State Cal_Idle {}
+
+State Cal_Zero_60min{
+        > Valve 1 On
+        > Flow Zero Set SCCM 2500
+		> Flag Set 99
+ +20:00	> Flag Set 1
+ +60:00 > Flow Zero Set SCCM 0
+		> Flag Set 0
+        > Valve 1 Off
+		Validate Cal_Idle;
+}
+
+State Cal_Zero_15min{
+        > Valve 1 On
+        > Flow Zero Set SCCM 2500
+		> Flag Set 99
+ +20:00	> Flag Set 1
+ +15:00 > Flow Zero Set SCCM 0
+		> Flag Set 0
+        > Valve 1 Off
+		Validate Cal_Idle;
+}
+
+State Cal_Span_SingleConc{
+        > Valve 1 On
+		> Valve 2 On
+        > Flow Zero Set SCCM 4000
+		> Flag Set 99
+ +20:00	> Flag Set 1
+ +10:00	> Flow Span Set SCCM 100
+		> Flag Set 99
++120:00	> Flag Set 2
++180:00 > Flow Span Set SCCM 0
+		> Valve 2 Off
+		> Flag Set 1
+ +30:00 > Flow Zero Set SCCM 0
+		> Flag Set 0
+        > Valve 1 Off
+		Validate Cal_Idle;
+}
+
+State Cal_Span_StepConc{
+        > Valve 1 On
+		> Valve 2 On
+        > Flow Zero Set SCCM 4000
+		> Flag Set 99
+ +20:00	> Flag Set 1
+ +30:00	> Flow Span Set SCCM 100
+		> Flag Set 99
++120:00	> Flag Set 2
++180:00	> Flow Zero Set SCCM 1500
+		> Flag Set 3
++180:00	> Flow Zero Set SCCM 2250
+		> Flag Set 4
++180:00 > Flow Span Set SCCM 0
+		> Valve 2 Off
+		> Flag Set 1
++180:00	> Flow Zero Set SCCM 0
+		> Flag Set 0
+        > Valve 1 Off
+		Validate Cal_Idle;
+}
