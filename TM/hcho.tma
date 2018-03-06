@@ -321,8 +321,8 @@ State Chop_Active {
             thg_power[1] /= thg_n_pwr;
             ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
               convert(curr_TFL_THG) +
-              ((thg_power[0] > thg_power[1]) != (curr_offline_delta > 0)) ?
-                -0.01 : 0.01);
+              (((thg_power[0] > thg_power[1]) != (curr_offline_delta > 0)) ?
+                -0.01 : 0.01));
           }
           thg_chop_mode_idx = 2;
           break;
@@ -330,6 +330,7 @@ State Chop_Active {
           thg_chop_mode_idx = 2;
           break;
       }
+      thg_prev_chop_mode = crnt_chop_mode;
     }
   }
 }
@@ -400,3 +401,4 @@ State Cal_Span_StepConc{
         > Valve 1 Off
 		Validate Cal_Idle;
 }
+
