@@ -8,6 +8,11 @@ State Init {
       > Laser Chop NPts Online 50
       > Laser Chop NPts Offline 50
       > Laser Drift Limit Set 30
+      > TFL Set Pump Diode Current 3 A
+      > TFL Set Seed Diode 1 Current 109 mA
+      > TFL Set Seed Diode 1 Temperature 4.6 C
+      > TFL Set SHG Temperature 27.94 C
+      > TFL Set THG Temperature 33.07 C
       > SWStat Chop Dither Enable
   +10 > Log Initiating PPS Synchronization
       Validate PPS_synch;
@@ -284,8 +289,8 @@ State Chop_Active {
 {
   mV_offset_t curr_offline_delta;
   curr_offline_delta = LV_offdelta;
-  TFL_uint4_2_t curr_TFL_THG;
-  curr_TFL_THG = TFL_THG;
+  TFL_uint4_2_t curr_TFL_THG_SP;
+  curr_TFL_THG_SP = TFL_THG_SP;
   
   {
     int crnt_chop_mode;
@@ -320,7 +325,7 @@ State Chop_Active {
           if (thg_n_pwr > 0 && thg_peakup_enable) {
             thg_power[1] /= thg_n_pwr;
             ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
-              convert(curr_TFL_THG) +
+              convert(curr_TFL_THG_SP) +
               (((thg_power[0] > thg_power[1]) != (curr_offline_delta > 0)) ?
                 -0.01 : 0.01));
           }
