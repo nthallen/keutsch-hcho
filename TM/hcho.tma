@@ -284,6 +284,7 @@ State Chop_Active {
   int thg_n_pwr;
   bool thg_not_first;
   bool thg_peakup_enable = true;
+  #define THG_DEADBAND 0.2
 %}
 
 {
@@ -323,11 +324,15 @@ State Chop_Active {
           break;
         case 1:
           if (thg_n_pwr > 0 && thg_peakup_enable) {
+            double ratio;
             thg_power[1] /= thg_n_pwr;
-            ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
-              convert(curr_TFL_THG_SP) +
-              (((thg_power[0] > thg_power[1]) != (curr_offline_delta > 0)) ?
-                -0.01 : 0.01));
+            ratio = (thg_power[0]-thg_power[1])/(thg_power[0]+thg_power[1]);
+            if (fabs(ratio) > THG_DEADBAND) {
+              ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
+                convert(curr_TFL_THG_SP) +
+                (((ratio > 0) != (curr_offline_delta > 0)) ?
+                  -0.01 : 0.01));
+            }
           }
           thg_chop_mode_idx = 2;
           break;
