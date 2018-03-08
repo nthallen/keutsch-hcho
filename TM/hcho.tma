@@ -284,7 +284,7 @@ State Chop_Active {
   int thg_n_pwr;
   bool thg_not_first;
   bool thg_peakup_enable = true;
-  #define THG_DEADBAND 0.05
+  #define THG_DEADBAND 0.015
 %}
 
 {
