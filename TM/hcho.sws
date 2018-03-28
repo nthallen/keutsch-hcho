@@ -24,6 +24,9 @@ SWS_CAL_ZERO_60MIN    17  Cal Zero 60min: Validate Cal_Zero_60min; break;
 SWS_CAL_ZERO_15MIN    18  Cal Zero 15min: Validate Cal_Zero_15min; break;
 SWS_CAL_SPAN_SINGLE   19  Cal Span SingleConc: Validate Cal_Span_SingleConc; break;
 SWS_CAL_SPAN_STEPPED  20  Cal Span StepConc: Validate Cal_Span_StepConc; break;
+SWS_PUMPPURGE_ENABLE  21  PumpPurge Enable: Validate PumpPurge_Enable; break;
+SWS_PUMPPURGE_DISABLE 22  PumpPurge Disable: Validate PumpPurge_Disable; break;
+SWS_PUMPPURGE_IDLE    23  PumpPurge Idle: Validate PumpPurge_Idle; break;
 
 SWS_TIMEWARP   254   Time Warp: break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
