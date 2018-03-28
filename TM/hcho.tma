@@ -412,3 +412,24 @@ State Cal_Span_StepConc{
 		Validate Cal_Idle;
 }
 
+Partition
+# This partition enables or disables pump-purge cycles
+
+State PumpPurge_Idle{}
+
+State PumpPurge_Disable {
+		> Flow Zero Set SCCM 0
+        > Valve 1 Off
+		Validate PumpPurge_Idle;
+}
+
+State PumpPurge_Enable{
+        > Valve 1 On
+        > Flow Zero Set SCCM 3500
+		> Flag Set 98
+  +5:00	> Flow Zero Set SCCM 0
+		> Valve 1 Off
+		> Flag Set 97
+  +5:00 > Flag Set 0
+		Validate PumpPurge_Enable;
+}
