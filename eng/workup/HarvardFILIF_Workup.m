@@ -5,7 +5,7 @@
 % Change variables in INITIALIZATION section before each experimental run
 
 % 06FEB2018: Creation Date (JDS)
-% 17FEB2018: v1.00 Release (JDS)
+% 17APR2018: v1.00 Release (JDS)
 
 %% INITIALIZATION
 % When working up Harvard FILIF data, the user should only have to change
