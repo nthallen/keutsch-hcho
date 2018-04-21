@@ -13,7 +13,7 @@
 
 run_date = '180411.1';          % Specify run date for loadFILIF.m 
 powercal_date = '10APR2018';    % Specify which power meter calibration to use for powercal.m
-cal_factor = 23;                % counts/s/ppbv/mW; Determined from calibration runs
+cal_factor = 47.2747;           % counts/s/ppbv/mW; Determined from calibration runs
 DitherEnabled = true;           % Specify true if dithering was enabled during data collection
 MaxLaserVoltage = 225;          % Specify average max laser voltage seen during experiment
 mVwindow = 15;                  % Specify allowed range for possible max laser voltages in refcellcorrect.m
@@ -24,7 +24,7 @@ start_cut = ["09:30:00","10:56:30","11:52:25","12:43:00","18:34:00","19:38:00","
 end_cut   = ["09:45:00","10:59:00","11:52:35","12:49:00","18:39:30","19:38:35","21:13:24","21:48:04"];
 
 %% LOAD RAW MAT FILES
-disp('Retrieving data')
+disp('Loading MAT files')
 [BCtr,Data1Hz,Data10Hz] = loadFILIF(run_date); % Load MAT raw data files
 
 %% CONVERT TO CPS
@@ -40,6 +40,8 @@ disp('Retrieving data')
 
 % BCtr_0: Ref cell
 % BCtr_1: Sample cell
+
+disp('Converting raw counts to CPS')
 Data10Hz.ref_rawcps = (10.)*Data10Hz.BCtr_0_a;
 Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
 
@@ -48,6 +50,7 @@ Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
 % Discard points where the pressure was either above 115.3 Torr or less
 % than 114.7 Torr
 
+disp('Pressure check data')
 Data10Hz.OmegaP_interpolated = interp1(Data1Hz.Thchoeng_1,Data1Hz.OmegaP,Data10Hz.Thchoeng_10);
 
 for i = 1:length(Data10Hz.Thchoeng_10)
@@ -61,10 +64,11 @@ end
 % Since each 10 Hz data point (100 ms) should ideally have 30,000 triggers 
 % (the rep rate of the laser is 300 kHz), the raw counts are normalized
 % such that no particular point had more or less triggers than any other point.
-disp('Normalizing to number of triggers')
 
 % First we need to correct the number of triggers due to some being a
 % multiple of 2^13 away from the true value
+
+disp('Normalizing to trigger count')
 corrected_Ntrigger = trigcorrect(Data10Hz.BCtr_NTrigger);
 
 % Then normalize to 30,000 triggers
@@ -75,6 +79,7 @@ Data10Hz.trignorm_sample = 30000*(Data10Hz.sample_rawcps./corrected_Ntrigger);
 %% POWER-NORMALIZING RAW COUNTS
 % Power-normalize the counts using the LasPwrIn
 
+disp('Normalizing counts to laser power')
 power = powercal(Data10Hz.BCtr_LasIn_mW,powercal_date,MakePlots);
 
 Data10Hz.powernorm_ref = Data10Hz.trignorm_ref./power;
@@ -99,33 +104,34 @@ index.scan = scancorrect(index.scan);
 % If online dithering was enabled by the user during data collection, we 
 % have to correct for this here
 
+disp('Dither Correction')
 if DitherEnabled
     [Data10Hz.powernorm_sample, Data10Hz.powernorm_ref] = dithercorrect(Data10Hz);
 end
 
 %% COUNTS TO MIXING RATIO CONVERSION
 
-disp('Calculating concentrations')
-
 % Find the signal for the concentration by determining difference counts
 % between the ONLINE and interpolated OFFLINE positions
 Data10Hz.diffcounts = diffcounts(Data10Hz,index);
-abc = Data10Hz.diffcounts;
+
 % Correct for the fact that the laser voltage reported by QNX doesn't
 % always track with the actual laser voltage of the laser
+disp('Ref Cell Correct Algorithm')
 Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,MaxLaserVoltage,'linearfit',MakeRefCellCorrectPlot,mVwindow,SWScode);
 
 %Find indices not equal to the online indices and assign NaN
 Data10Hz.diffcounts([index.offline;index.scan;index.rm_online;index.rm_offline]) = NaN;
-abc([index.offline;index.scan;index.rm_online;index.rm_offline]) = NaN;
 
 % Apply cal factor to difference counts to obtain the HCHO mixing ratio (10 Hz)
+disp('Calculating HCHO mixing ratios using specified cal factor')
 Data10Hz.hcho = Data10Hz.diffcounts./cal_factor;
 
 %% TIME CONVERSION
 % Convert the time in the Data10Hz structure to something more useful
 % Data10Hz.Thchoeng_10 is useful when averaging over longer integration times
 
+disp('Converting instrument posixtime to Matlab datetime object')
 Data10Hz.datetime = datetime(Data10Hz.Thchoeng_10,'ConvertFrom','posixtime');
 
 % Convert from Greenwich to Eastern Time
@@ -162,6 +168,7 @@ end
 % movmean (remove outliers more than three local standard deviations from 
 % the local mean) is too strongly affected by outliers
 
+disp('Removing outliers')
 figure,plot(Data10Hz.datetime,Data10Hz.hcho)
 hold on
 outlier_logical_array = isoutlier(Data10Hz.hcho,'movmedian',50);
@@ -176,7 +183,8 @@ plot(Data10Hz.datetime,Data10Hz.hcho)
 % Raw data from Harvard FILIF is reported at 10 Hz. Let's also calculate
 % the 1 sec averaged data as well
 
-[Data1Hz.posixtime, Data1Hz.hcho] = binavgmod_nort(Data10Hz.Thchoeng_10, Data10Hz.hcho, 1);
+disp('Calculating 1 Hz data from the original 10 Hz data')
+[Data1Hz.posixtime, Data1Hz.hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 1);
 
 % Convert from posixtime to datetime object and from Greenwich to Eastern time
 Data1Hz.datetime = datetime(Data1Hz.posixtime,'ConvertFrom','posixtime');
@@ -185,6 +193,7 @@ Data1Hz.datetime = Data1Hz.datetime - hours(4);
 %% PLOT OF HCHO MIXING RATIO
 % Generates plot of 10 Hz data with 1 Hz HCHO mixing ratio superimposed on top
 
+disp('Plotting 10 and 1 Hz data')
 if MakePlots
     figure,plot(Data10Hz.datetime,Data10Hz.hcho)
     hold on
