@@ -28,16 +28,20 @@ disp('Retrieving data')
 [BCtr,Data1Hz,Data10Hz] = loadFILIF(run_date); % Load MAT raw data files
 
 %% CONVERT TO CPS
-% QNX counts the rising and falling edges of a PMT pulse as 2 counts even though
-% the pulse is caused by a single photon. It also reports counts per 100
-% milliseconds rather than per second. This section converts both ref and
-% sample cell counts to counts per second by multiplying these raw counts 
-% by 10 and then dividing by 2 (in short, multiply by 5).
+% Unlike most other PMTs, our Sens-Tech PMTs output a TTL signal where a
+% rising and falling edge of the signal correspond to two photons rather
+% than just to a single photon. (Note: If one were to count photons with an
+% oscilloscope, it would count half the photons since the scope would only
+% count the rising OR falling edge and not both.
+
+% QNX reports counts per 100 milliseconds rather than per second. Thus,
+% this section converts both ref and sample cell counts to counts per 
+% second by multiplying these raw counts by 10.
 
 % BCtr_0: Ref cell
 % BCtr_1: Sample cell
-Data10Hz.ref_rawcps = (10./2)*Data10Hz.BCtr_0_a;
-Data10Hz.sample_rawcps = (10./2)*Data10Hz.BCtr_1_a;
+Data10Hz.ref_rawcps = (10.)*Data10Hz.BCtr_0_a;
+Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
 
 
 %% PRESSURE CHECK
