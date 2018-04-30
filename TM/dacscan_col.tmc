@@ -7,7 +7,7 @@
   }
   static void DACscan_init() {
     DACscanReq = SB.BCtr ?
-      SB.BCtr->pack_mread_request(8,"80:1:87") :
+      SB.BCtr->pack_mread_request(10,"80:1:89") :
       0;
   }
 %}

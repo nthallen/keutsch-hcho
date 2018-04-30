@@ -1,0 +1,28 @@
+<package> TFL
+<include> <stdlib.h>
+<include> "tfl_int.h"
+<include> msg
+<follow> msg
+
+<opts> "d:e"
+<sort>
+	-d <serial device>
+	-e Device does not echo
+<unsort>
+The '-h' message header option will also change the name
+used for command and telemetry communications.
+
+<switch>
+  case 'd':
+    tfl_path = optarg;
+    break;
+  case 'e':
+    opt_echo = 0;
+    break;
+  case 'h': // use msg header value for name
+    tfl_name = optarg;
+    break;
+
+<package> msghdr_default
+<var>
+  char *msg_hdr_default = "TFL";

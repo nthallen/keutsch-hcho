@@ -3,7 +3,7 @@
   #include "SB.h"
   /* fcc.cmd */
   #ifdef SERVER
-    int SCCM_Span[3] = { 5000, 20, 10000};
+    int SCCM_Span[3] = { 5000, 500, 10000};
   #endif
 %}
 

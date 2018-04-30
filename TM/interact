@@ -18,4 +18,5 @@
   Launch cmd/server hchosrvr
   Launch - lgr -N `mlf_find LOG`
   Launch - tmdf
+  Launch - tfl -d /dev/ser1
   Launch - hchoalgo -v

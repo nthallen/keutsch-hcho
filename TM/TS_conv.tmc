@@ -1,5 +1,12 @@
 %{
-
+  /*
+   * The temp sensor board is based on the LTC2485 ADC. The raw output
+   * ranges from [-2^30, 2^30) for a voltage range of [-1.25,1.25)
+   * The FPGA circuit we use averages multiple readings, reporting
+   * the count and the sum divided by 4. Hence the conversion to
+   * volts is:
+   *    V = rawsum * 1.25 / (2^28)
+   */
   #define to_double(x) (double)x
   #define TS_FS_CNT 268435456.
 %}
@@ -17,7 +24,7 @@ TS_V_t TS0_T; Invalidate TS0_T;
 TS_V_t TS1_T; Invalidate TS1_T;
 LaserPwr_t LasIn_mW; Invalidate LasIn_mW;
 {
-  if (TS1_cnt > 1) {
+  if (TS1_cnt > 0) {
     LasIn_mW = (to_double(TS1_raw))/TS1_cnt;
     LasIn_mW = 1.25 * LasIn_mW/TS_FS_CNT;
   } else {

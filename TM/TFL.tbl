@@ -1,0 +1,39 @@
+TFL_Summary {
+  HBox{ +-; Title: "TFL"; -+};
+  HBox{
+    {Laser: HBox{(TFL_LCmd,1); (TFL_Laser,3)}};
+    HGlue 0+1;
+    {Stale: HBox{ (TFL_Stale,4); (TFL_Fresh,1)} }
+  }
+}
+
+TFL_SetPoints {
+  ""        SD_I            SD_T             P1D_I           SHG            THG;
+  Set: (TFL_SD_I_SP,4) (TFL_SD_T_SP,4) (TFL_P1D_I_SP,4) (TFL_SHG_SP,5) (TFL_THG_SP,5);
+  Read: (TFL_SD_I,4)    (TFL_SD_T,4)    (TFL_P1D_I,4)    (TFL_SHG,5)    (TFL_THG,5);
+  ""        >mA<              >C<               >A<            >C<              >C<;
+}
+
+TFL_Monitors {
+  HBox {
+    { P1D_T:   (TFL_P1D_T,4) C;
+      P2D_T:   (TFL_P2D_T,4) C;
+      P2D_I:   (TFL_P2D_I,4) mA
+    }; |; {
+      SDM_P:   (TFL_SDM_P,4) V;
+      P2DMin:  (TFL_P2DMin_P,4) V;
+      P2DMout: (TFL_P2DMout_P,4) V
+    }
+  };
+  +-+;
+  VGlue 0+1;
+}
+
+TFL {
+  [TFL_Summary];
+  -;
+  [TFL_SetPoints];
+  -;
+  [TFL_Monitors];
+  VGlue 0+1;
+}

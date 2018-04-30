@@ -1,22 +1,13 @@
 Input "TMbase.tbl";
 Input "BCtr.tbl";
 Input "HtrCtrl.tbl";
-Input "TS.tbl";
-Input "dacscan.tbl";
+#Input "TS.tbl";
+#Input "dacscan.tbl";
 Input "fcc.tbl";
-
-PPS {
-  HBox{ +-; Title: "PPS"; -+ };
-  PPS_drift:  (PPS_drift,7) ms;
-  PPS_min:  (PPS_min_drift,7) ms;
-  PPS_fine: (PPS_fine,6);
-  IPS_fine: (IPS_fine,6);
-  IPS_err:  (IPS_err,6);
-  IPS_stat: (IPS_status,3);
-}
+#Input "PPS.tbl";
 
 Cell {
-  HBox{ +-; Title: "PPS"; -+ };
+  HBox{ +-; Title: "Cell"; -+ };
   CellT: (CellT,7) C;
   CellP: (OmegaP,6) Torr;
 }
@@ -30,8 +21,12 @@ System {
 { HBox {
     |+; [BCtr]; |+;
     { [FCC];
-      HBox { {[Cell]; [FCC2]; [TS]} ; |+;
-             {[dacscan]; [DS_SWStat] } } }; |+;
-    { [HtrCtrl]; [PPS]; [System] }; |+ };
+      HBox { {[Cell]; [FCC2] } ; |+;
+             { [HtrCtrl]; VGlue 0+1; [System] }
+      }
+    }; |+;
+  };
   -;
 }
+#             {[dacscan]; [DS_SWStat] } } }; |+;
+#    { [HtrCtrl]; [PPS]; [System] }; |+ };

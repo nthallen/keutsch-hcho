@@ -1,31 +1,43 @@
 %{
 /* dacscan.tmc. This definition must follow HtrCtrl.tmc
- * 0x80 Status online/offline/scanning
+ * 0x80 Status online/offline/scanning/chopping/PosOVF
  * 0x81 Current Setpoint
  * 0x82 Scan Start
  * 0x83 Scan End
  * 0x84 Scan Step * 8
  * 0x85 Online Position
- * 0x86 Offline Position
+ * 0x86 Offline Delta (signed)
  * 0x87 Dither amount (unsigned)
+ * 0x88 NPtsOnline
+ * 0x89 NPtsOffline
  */
  
   const char *LV_stat_text(unsigned char val) {
-    switch (val) {
-      case 0: return "        ";
-      case 1: return "scanning";
-      case 2: return "  online";
-      case 4: return " offline";
-      default: return "********";
+    switch (val&0x1F) {
+      case 0:    return "        ";
+      case 1:    return "scanning";
+      case 2:    return "  onlin1";
+      case 4:    return " offlin1";
+      case 0xA:  return "  online";
+      case 0xC:  return " offline";
+      case 0x10:    return "!       ";
+      case 0x11:    return "!scannin";
+      case 0x12:    return "! onlin1";
+      case 0x14:    return "!offlin1";
+      case 0x1A:    return "! online";
+      case 0x1C:    return "!offline";
+      default:      return "********";
     }
   }
 %}
 
 TM typedef double DS_mV;
 TM typedef unsigned char LVstat_t { text "%8d" LV_stat_text(); }
-TM typedef unsigned short HtrDAC_mV_t { text "%6.1lf"; convert DS_mV; }
+TM typedef unsigned short HtrDAC_mV_t { text "%7.2lf"; convert DS_mV; }
 Calibration (HtrDAC_mV_t, DS_mV) { 0, 0, 65536, 5000 }
-TM typedef unsigned short LasVStep_t { text "%6.1lf"; convert DS_mV; }
+TM typedef signed short mV_offset_t { text "%7.2lf"; convert DS_mV; }
+Calibration (mV_offset_t, DS_mV) { 0, 0, 32768, 2500 }
+TM typedef unsigned short LasVStep_t { text "%7.2lf"; convert DS_mV; }
 Calibration (LasVStep_t, DS_mV) {
    0, 0,
    104.8576, 1
@@ -37,12 +49,15 @@ TM 1 Hz HtrDAC_mV_t   LV_start;
 TM 1 Hz HtrDAC_mV_t   LV_stop;
 TM 1 Hz LasVStep_t    LV_step;
 TM 1 Hz HtrDAC_mV_t   LV_online;
-TM 1 Hz HtrDAC_mV_t   LV_offline;
+TM 1 Hz mV_offset_t   LV_offdelta;
 TM 1 Hz HtrDAC_mV_t   LV_dither;
+TM 1 Hz DS_POINTS     NPts_Online;
+TM 1 Hz DS_POINTS     NPts_Offline;
 
 Group DACscan (LV_status, LaserV, LV_start,
-    LV_stop, LV_step, LV_online, LV_offline, LV_dither) {
-  unsigned short data[8];
+    LV_stop, LV_step, LV_online, LV_offdelta, LV_dither,
+    NPts_Online, NPts_Offline) {
+  unsigned short data[10];
   if (DACscan_collect(data) >= 0) {
     LV_status = data[0];
     LaserV = data[1];
@@ -50,9 +65,15 @@ Group DACscan (LV_status, LaserV, LV_start,
     LV_stop = data[3];
     LV_step = data[4];
     LV_online = data[5];
-    LV_offline = data[6];
+    LV_offdelta = data[6];
     LV_dither = data[7];
+    NPts_Online = data[8];
+    NPts_Offline = data[9];
   } else {
     LV_status = 8;
   }
 }
+
+HtrDAC_mV_t LV_offline; Invalidate LV_offline;
+{ LV_offline = LV_online + LV_offdelta; Validate LV_offline; }
+

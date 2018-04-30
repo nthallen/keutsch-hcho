@@ -1,0 +1,49 @@
+%{
+  /* TFL.tmc */
+%}
+TM typedef unsigned short TFL_mAmp_t { text "%3d"; }
+TM typedef unsigned short TFL_uint3_1_t { text "%4.1lf"; }
+TM typedef unsigned short TFL_uint3_2_t { text "%4.2lf"; }
+TM typedef unsigned short TFL_uint4_2_t { text "%5.2lf"; }
+TM typedef unsigned char TFL_Stat_t { text "%3u"; }
+TM "Receive" TFL 1;
+
+TM 1 Hz TFL_mAmp_t TFL_SD_I, TFL_SD_I_SP;
+TM 1 Hz TFL_uint3_1_t TFL_SD_T, TFL_SD_T_SP;
+TM 1 Hz TFL_uint3_2_t TFL_P1D_I, TFL_P1D_I_SP;
+TM 1 Hz TFL_uint3_1_t TFL_P1D_T;
+TM 1 Hz TFL_uint3_2_t TFL_SDM_P;
+TM 1 Hz TFL_mAmp_t TFL_P2D_I;
+TM 1 Hz TFL_uint3_1_t TFL_P2D_T;
+TM 1 Hz TFL_uint3_2_t TFL_P2DMin_P;
+TM 1 Hz TFL_uint3_2_t TFL_P2DMout_P;
+TM 1 Hz TFL_uint4_2_t TFL_SHG, TFL_SHG_SP;
+TM 1 Hz TFL_uint4_2_t TFL_THG, TFL_THG_SP;
+TM 1 Hz TFL_Stat_t TFL_Status;
+TM 1 Hz TFL_Stat_t TFL_Stale;
+
+group TFL (TFL_SD_I, TFL_SD_I_SP, TFL_SD_T, TFL_SD_T_SP,
+           TFL_P1D_I, TFL_P1D_I_SP, TFL_P1D_T, TFL_SDM_P,
+           TFL_P2D_I, TFL_P2D_T, TFL_P2DMin_P, TFL_P2DMout_P,
+           TFL_SHG, TFL_SHG_SP, TFL_THG, TFL_THG_SP,
+           TFL_Status, TFL_Stale) {
+  TFL_SD_I = TFL.SD_I;
+  TFL_SD_I_SP = TFL.SD_I_SP;
+  TFL_SD_T = TFL.SD_T;
+  TFL_SD_T_SP = TFL.SD_T_SP;
+  TFL_P1D_I = TFL.P1D_I;
+  TFL_P1D_I_SP = TFL.P1D_I_SP;
+  TFL_P1D_T = TFL.P1D_T;
+  TFL_SDM_P = TFL.SDM_P;
+  TFL_P2D_I = TFL.P2D_I;
+  TFL_P2D_T = TFL.P2D_T;
+  TFL_P2DMin_P = TFL.P2DMin_P;
+  TFL_P2DMout_P = TFL.P2DMout_P;
+  TFL_SHG = TFL.SHG_T;
+  TFL_SHG_SP = TFL.SHG_T_SP;
+  TFL_THG = TFL.THG_T;
+  TFL_THG_SP = TFL.THG_T_SP;
+  TFL_Status = TFL.Status;
+  TFL_Stale = TFL_obj->stale(255);
+  TFL_obj->synch();
+}

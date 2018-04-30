@@ -4,25 +4,41 @@ SWS_PPS_SYNC     2   PPS Sync: Validate PPS_synch; break;
 SWS_PCTRL_IDLE   3   Pressure Control Idle: Validate CellP_idle; break;
 SWS_PCTRL_ACTIVE 4   Pressure Control Activate:
   Validate CellP_control; break;
-SWS_CHOP_START   5   Chop Start: Validate Chop_Active; break;
-SWS_CHOP_STOP    6   Chop Stop: chop_exit_requested = 1; break;
-SWS_CHOP_ABORT   7   Chop Abort: Validate Chop_Idle; break;
-SWS_CHOP_SCAN    8   Chop Scan: scan_requested = 1; break;
-SWS_PEAK_ENABLE  9   Peak Detect Enable:
-  Validate Laser_Scan_Watch; break;
-SWS_PEAK_DISABLE 10  Peak Detect Disable:
-  Validate Laser_Scan_No_Watch; break;
+SWS_CHOP_START_1 5   Chop Start 1 Minute Scan Interval :
+  Validate Chop_Period_1; break;
+SWS_CHOP_START_5 6   Chop Start 5 Minute Scan Interval :
+  Validate Chop_Period_5; break;
+SWS_CHOP_START_10 7   Chop Start 10 Minute Scan Interval :
+  Validate Chop_Period_10; break;
+SWS_CHOP_START_30 8   Chop Start 30 Minute Scan Interval :
+  Validate Chop_Period_30; break;
+SWS_CHOP_STOP    9   Chop Stop: Validate Chop_Stop; break;
+SWS_PEAK_ENABLE  10   Peak Detect Enable: find_peak = true; break;
+SWS_PEAK_DISABLE 11  Peak Detect Disable: find_peak = false; break;
+SWS_DITHER_ENABLE 12  Chop Dither Enable: dither_enable = true; break;
+SWS_DITHER_DISABLE 13 Chop Dither Disable: dither_enable = false; break;
+SWS_THG_PEAKUP_ENABLE 14 THG Peakup Enable: thg_peakup_enable = true; break;
+SWS_THG_PEAKUP_DISABLE 15 THG Peakup Disable: thg_peakup_enable = false; break;
+SWS_CAL_IDLE          16  Cal Idle: Validate Cal_Idle; break;
+SWS_CAL_ZERO_60MIN    17  Cal Zero 60min: Validate Cal_Zero_60min; break;
+SWS_CAL_ZERO_15MIN    18  Cal Zero 15min: Validate Cal_Zero_15min; break;
+SWS_CAL_SPAN_SINGLE   19  Cal Span SingleConc: Validate Cal_Span_SingleConc; break;
+SWS_CAL_SPAN_STEPPED  20  Cal Span StepConc: Validate Cal_Span_StepConc; break;
+SWS_PUMPPURGE_ENABLE  21  PumpPurge Enable: Validate PumpPurge_Enable; break;
+SWS_PUMPPURGE_DISABLE 22  PumpPurge Disable: Validate PumpPurge_Disable; break;
+SWS_PUMPPURGE_IDLE    23  PumpPurge Idle: Validate PumpPurge_Idle; break;
 
+SWS_TIMEWARP   254   Time Warp: break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
 
 SW_Variable: Flag
   : Set %d { $0 = $2; }
 
-SW_Variable: <unsigned short,DS_POINTS> NPts_Online Laser NPoints Online
-  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
-SW_Variable: <unsigned short,DS_POINTS> NPts_Offline Laser NPoints Offline
-  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
-SW_Variable: <signed short,DS_DELTA_t> Offline_Delta Laser Offline Delta
-  : Set %d (Enter mVolts) { $0 = $2; }
+#SW_Variable: <unsigned short,DS_POINTS> NPts_Online Laser NPoints Online
+#  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
+#SW_Variable: <unsigned short,DS_POINTS> NPts_Offline Laser NPoints Offline
+#  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
+#SW_Variable: <signed short,DS_DELTA_t> Offline_Delta Laser Offline Delta
+#  : Set %d (Enter mVolts) { $0 = $2; }
 SW_Variable: <unsigned short,DS_DRIFT_t> Drift_Limit Laser Drift Limit
   : Set %d (Enter mV of laser voltage) { $0 = $2; }

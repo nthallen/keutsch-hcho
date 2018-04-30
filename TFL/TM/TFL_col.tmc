@@ -1,0 +1,4 @@
+%{
+  #include "tfl.h"
+  tfl_tm_t TFL;
+%}

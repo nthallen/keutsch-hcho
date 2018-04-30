@@ -1,9 +1,16 @@
  @rate@ BCtr_0_a       BCtr Cts
  @rate@ BCtr_1_a       BCtr Cts
  @rate@ BCtr_NWords    BCtr NWords
- @rate@ BCtr_IPnum     BCtr IPnum
+ @rate@ BCtr_IPnum     BCtr IPnum %.0lf
  @rate@ BCtr_NTrigger  BCtr NTrigger
  @rate@ BCtr_LaserV    BCtr LaserV
+ @rate@ BCtr_LasIn_mW  BCtr LaserP
+ @rate@ BCtr_Pfresh:BCtr_Pfresh:0 BCtr Status %.0lf
+ @rate@ BC_scanning:BCtr_LVstat:0 BCtr Status %.0lf
+ @rate@ BC_Online:BCtr_LVstat:1 BCtr Status %.0lf
+ @rate@ BC_Offline:BCtr_LVstat:2 BCtr Status %.0lf
+ @rate@ BC_Chopping:BCtr_LVstat:3 BCtr Status %.0lf
+ @rate@ BC_PosOVF:BCtr_LVstat:4 BCtr Status %.0lf
 
  @rate@ BCtr_NAB    BCtr NAB
 
