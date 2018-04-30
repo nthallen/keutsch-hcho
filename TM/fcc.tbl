@@ -2,7 +2,7 @@ FCC {
   HBox { +-; Title: "Flow Control"; -+ };
   ""      Bypass        Zero         Span;
   Set:    (FC2_Set,6)  (FC0_Set,5)  (FC1_Set,6)   V;
-  Flow:   (FC2_Flow,5) (FC0_Flow,5) (FC1_Flow,5) V;
+  Flow:   (FC2_Flow,5) (FC0_Flow,6) (FC1_Flow,6) V;
   Status: (FC2_Stat,7) (FC0_Stat,7) (FC1_Stat,7);
   Valve1: (Vlv1_Stat,7) Valve2:     (Vlv2_Stat,7);
 }
