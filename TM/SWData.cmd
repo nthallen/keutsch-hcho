@@ -37,6 +37,9 @@
   : Cal Zero 15min { $0 = SWS_CAL_ZERO_15MIN; }
   : Cal Span SingleConc { $0 = SWS_CAL_SPAN_SINGLE; }
   : Cal Span StepConc { $0 = SWS_CAL_SPAN_STEPPED; }
+  : PumpPurge Enable { $0 = SWS_PUMPPURGE_ENABLE; }
+  : PumpPurge Disable { $0 = SWS_PUMPPURGE_DISABLE; }
+  : PumpPurge Idle { $0 = SWS_PUMPPURGE_IDLE; }
   : Time Warp { $0 = SWS_TIMEWARP; }
   : Shutdown { $0 = SWS_SHUTDOWN; }
   ;
