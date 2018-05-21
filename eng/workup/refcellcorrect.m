@@ -63,18 +63,24 @@ refcellcorrect.scan_max_value(any(isnan(refcellcorrect.scan_max_value),2),:) = [
 switch method
     case 'interpolate' 
         
+        % Generate a moving mean to minimize the effect of noise in each
+        % of the max peak heights
+        refcellcorrect.scan_max_value_movmean = movmean(refcellcorrect.scan_max_value,8);
+        
         % Interpolate the max peak heights
-        refcellcorrect.scan_max_interp = interp1(refcellcorrect.time_max,refcellcorrect.scan_max_value,Data10Hz.Thchoeng_10);
+        refcellcorrect.scan_max_interp = interp1(refcellcorrect.time_max,refcellcorrect.scan_max_value_movmean,Data10Hz.Thchoeng_10);
         
         if plotme
             figure,plot(Data10Hz.Thchoeng_10,refcellcorrect.scan_max_interp)
+            hold on
+            plot(refcellcorrect.time_max,refcellcorrect.scan_max_value,'.')
         end
         
         % Find correction ratio by dividing the interpolated heights by the power
         % and trigger-normalized ref counts
         ratio=refcellcorrect.scan_max_interp./Data10Hz.powernorm_ref;
         
-    case 'linearfit' 
+    case 'polyfit' 
         
         f = fit(refcellcorrect.time_max,refcellcorrect.scan_max_value,'poly1');
         
