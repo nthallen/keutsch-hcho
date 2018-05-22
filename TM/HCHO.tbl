@@ -19,7 +19,7 @@ System {
 }
 
 { HBox {
-    |+; [BCtr]; |+;
+    |+; { [BCtr]; { NT_1Hz: (sample_1Hz,8) }}; |+;
     { [FCC];
       HBox { {[Cell]; [FCC2] } ; |+;
              { [HtrCtrl]; VGlue 0+1; [System] }

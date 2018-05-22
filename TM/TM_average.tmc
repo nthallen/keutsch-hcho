@@ -1,0 +1,16 @@
+%{
+  #include "TM_average.h"
+  TM_average<BCtr_Trigger_t> sample_avg;
+  #define sample_avg_sample(x) sample_avg.sample(x)
+  #define sample_avg_mean() sample_avg.mean()
+%}
+
+TM typedef double sample_1Hz_t { text "%8.1lf"; }
+sample_avg_sample(BCtr_NTrigger);
+
+sample_1Hz_t sample_1Hz; Invalidate sample_1Hz;
+depending on (1 Hz, BCtr_NTrigger) {
+  sample_1Hz = sample_avg_mean();
+  Validate sample_1Hz;
+}
+
