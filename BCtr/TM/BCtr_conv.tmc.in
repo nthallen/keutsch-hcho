@@ -3,8 +3,8 @@
   #define BCtr_Yes_No_txt(x) ((x)?"Yes":" No")
   #define BCtr_OK_FAIL_txt(x) ((x)?"FAIL":"  OK")
 
-  unsigned short BCtr_sum(BCtr_Cts_t *Cts, int chan, int from, int to) {
-    unsigned short sum = 0;
+  BCtr_Trigger_t BCtr_sum(BCtr_Cts_t *Cts, int chan, int from, int to) {
+    BCtr_Trigger_t sum = 0;
     int i, last = BCTR_DATA_OFFSET + to*BCTR_N_CHANNELS + chan;
     nl_assert(chan < BCTR_N_CHANNELS);
     nl_assert(last < BCTR_BIN_SIZE);
@@ -82,8 +82,8 @@ BCtr_OK_FAIL BCtr_Expired; Invalidate BCtr_Expired;
 BCtr_NAB_t BCtr_NAB; Invalidate BCtr_NAB;
 { BCtr_NAB = (BCtr_Bins[1]>>6)&7; Validate BCtr_NAB; }
 
-BCtr_Cts_t BCtr_0_a; Invalidate BCtr_0_a;
+BCtr_Trigger_t BCtr_0_a; Invalidate BCtr_0_a;
 { BCtr_0_a = BCtr_sum(BCtr_Bins, 0, @from@, @to@); Validate BCtr_0_a; }
 
-BCtr_Cts_t BCtr_1_a; Invalidate BCtr_1_a;
+BCtr_Trigger_t BCtr_1_a; Invalidate BCtr_1_a;
 { BCtr_1_a = BCtr_sum(BCtr_Bins, 1, @from@, @to@); Validate BCtr_1_a; }
