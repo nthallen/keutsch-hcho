@@ -49,3 +49,4 @@ hchortgext : BCtr_conv.tmc TS_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 TSrawext : TSraw.cdf
 doit : hcho.doit
 hchoalgo : BCtr_conv.tmc TS_conv.tmc hcho.tma hcho.sws
+normctsext : BCtr_conv.tmc normcts.cdf
