@@ -1,4 +1,5 @@
 %{
+  #include <deque>
   #include "nl_assert.h"
   #include "TM_delay.h"
   #include "TM_average.h"
@@ -34,7 +35,7 @@
       LVstat_t stat_z1;
       bool stat_chg_z1;
       bool PwrValid;
-      deque<double> pwr_q;
+      std::deque<double> pwr_q;
   };
 
   PwrDelay::PwrDelay() {
@@ -69,11 +70,19 @@
     return LasIn_mW_z3;
   }
 
+%}
+
+TM typedef double dtime_t { text "%14.3lf"; }
+TM typedef double mean_cts_t { text "%8.1lf"; }
+TM typedef double ppb_t { text "%8.3lf"; }
+
+%{
   PwrDelay Las_mW_delay;
   TM_delay<double,4> t_delay4;
   TM_delay<BCtr_Trigger_t,4> BCtr_0_delay4;
   TM_delay<BCtr_Trigger_t,4> BCtr_1_delay4;
   TM_delay<LVstat_t,4> LVstat_delay4;
+  TM_delay<HtrDAC_mV_t,4> LaserV_delay4;
   TM_average<mean_cts_t> mnrcts;
   TM_average<mean_cts_t> mnscts;
   /* HCHO_CAL_CONSTANT units are something like:
@@ -94,9 +103,6 @@
     mean_offline_norm_sample_cts_z4
   */
 %}
-TM typedef double dtime_t;
-TM typedef double mean_cts_t;
-TM typedef double ppb_t;
 
 BCtr_Cts_t BCtr_Status; Invalidate BCtr_Status;
 BCtr_Cts_t BCtr_NWords; Invalidate BCtr_NWords;
@@ -153,8 +159,11 @@ ppb_t hcho_mr; Invalidate hcho_mr;
   BCtr_0_z4 = BCtr_0_delay4(BCtr_0_a);
   BCtr_1_z4 = BCtr_1_delay4(BCtr_1_a);
   LVstat_z4 = LVstat_delay4(BCtr_LVstat);
-  norm_ref_cts_z4 = LasIn_mW_z3 == 0. ? 0. : BCtr_0_z4/convert(LasIn_mW_z3);
-  norm_sample_cts_z4 = LasIn_mW_z3 == 0. ? 0. : BCtr_1_z4/convert(LasIn_mW_z3);
+  LaserV_z4 = LaserV_delay4(BCtr_LaserV);
+  norm_ref_cts_z4 = (LasIn_mW_z3 == 0.) ? 0.
+    : (BCtr_0_z4/convert(LasIn_mW_z3));
+  norm_sample_cts_z4 = (LasIn_mW_z3 == 0.) ? 0.
+    : (BCtr_1_z4/convert(LasIn_mW_z3));
 
   Validate BCtr_Status;
   Validate BCtr_NWords;
@@ -180,6 +189,7 @@ ppb_t hcho_mr; Invalidate hcho_mr;
   Validate BCtr_0_z4;
   Validate BCtr_1_z4;
   Validate LVstat_z4;
+  Validate LaserV_z4;
   Validate norm_ref_cts_z4;
   Validate norm_sample_cts_z4;
 }
@@ -205,7 +215,7 @@ depending on (LVstat_z4 once, norm_ref_cts_z4 once, norm_sample_cts_z4 once)
       mnrcts();
       mfnsctsz4 = mnscts();
       mean_offline_norm_sample_cts_z4 = mfnsctsz4;
-      hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 * CAL_CONSTANT * 1e9;
+      hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 * HCHO_CAL_CONSTANT;
       Validate mean_offline_norm_sample_cts_z4;
       Validate hcho_mr;
     } else {

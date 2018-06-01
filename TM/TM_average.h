@@ -2,7 +2,7 @@
 #define TM_AVERAGE_INCLUDED
 
 template <typename T>
-class TM_delay {
+class TM_average {
   public:
     TM_average();
     void operator()(T sample);

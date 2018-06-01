@@ -18,12 +18,7 @@ ci_sendfcmd(2, "PhRTG Datum THG %.3lf %.2lf %.2lf\n", dtime(),
 int rtg_is_scanning, rtg_was_scanning;
 int scan_index;
 rtg_is_scanning = LVstat_z4 & 1;
-%{
-  #include "TM_delay.h"
-  TM_delay<HtrDAC_mV_t,4> LaserV_delay4;
-%}
-HtrDAC_mV_t LaserV_z4, LaserV_z5;
-LaserV_z4 = LaserV_delay4(BCtr_LaserV);
+HtrDAC_mV_t LaserV_z5;
 
 /* Could use mean_online_time, mean_offline_time, mean_mr_time */
 ci_sendfcmd(2, "PhRTG Datum BCtr_0 %.3lf %s\n", dtime(), text(BCtr_0_a));

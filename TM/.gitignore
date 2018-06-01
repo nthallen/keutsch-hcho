@@ -42,6 +42,12 @@ hchoalgo.cc
 hchoalgooui.c
 hchoalgooui.o
 hchoalgo.o
+normctsextcdf.oui
+normctscdf.tmc
+normctsext.cc
+normctsextoui.c
+normctsextoui.o
+normctsext.o
 hchoclt.o
 hchocltoui.c
 hchocltoui.o
@@ -70,6 +76,7 @@ hchortgext
 TSrawext
 doit
 hchoalgo
+normctsext
 hchoclt
 hchocltnc
 hchoengext
