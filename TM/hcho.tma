@@ -134,7 +134,7 @@ Partition
     if (LVstat_z4 & 1) {
       if (scanning == 0) {
         scanning = 1;
-        max_norm_ref_cts = norm_ref_cts;
+        max_norm_ref_cts = norm_ref_cts_z4;
         cur_peak_laser_V = LaserV_z4;
       } else {
         if (norm_ref_cts_z4 > max_norm_ref_cts) {
@@ -238,7 +238,7 @@ Partition
 
 State Chop_Active {
   depending on (mean_online_norm_ref_cts_z4 once) {
-    if (LVstat_z4 & 0x8) { // Chopping
+    if (LVstat_z4 & 0x8) { /* Chopping */
       if (dither_enable) {
         ci_sendfcmd(2, "Laser Command Dither Online %s\n",
           ((mean_online_norm_ref_cts_z4 > pmncts) != (cur_LV > prev_LV)) ?
@@ -297,20 +297,20 @@ State Chop_Active {
       double avg_pwr;
       avg_pwr = LasPwrAvg();
       switch (thg_chop_mode_idx) {
-        case 2: // Not monitoring
-          if (crnt_chop_mode == 0xA) { // online
+        case 2: /* Not monitoring */
+          if (crnt_chop_mode == 0xA) { /* online */
             thg_chop_mode_idx = 0;
           }
           break;
-        case 0: // Online
-          if (crnt_chop_mode == 0xC && avg_pwr >= 0) { // offline
+        case 0: /* Online */
+          if (crnt_chop_mode == 0xC && avg_pwr >= 0) { /* offline */
             thg_power[0] = avg_pwr;;
             thg_chop_mode_idx = 1;
           } else {
             thg_chop_mode_idx = 2;
           }
           break;
-        case 1: // Offline
+        case 1: /* Offline */
           if (avg_pwr >= 0 && thg_peakup_enable) {
             double ratio;
             thg_power[1] = avg_pwr;
@@ -322,7 +322,7 @@ State Chop_Active {
                   -0.01 : 0.01));
             }
           }
-          thg_chop_mode_idx = 2; // skip the next cycle
+          thg_chop_mode_idx = 2; /* skip the next cycle */
           break;
         default:
           thg_chop_mode_idx = 2;

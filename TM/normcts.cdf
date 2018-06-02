@@ -1,4 +1,5 @@
 csv normcts 12 separate
+    condition depending on (t_z4)
   0 Tnormcts %.3lf
   1 t_z4 %.3lf
   2 BCtr_0_z4

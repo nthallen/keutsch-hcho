@@ -18,10 +18,15 @@ System {
   [TMbase];
 }
 
+MR {
+  HBox{ +-; Title: "Analysis"; -+ };
+  HCHO: (hcho_mr,9) ppb;
+}
+
 { HBox {
     |+; [BCtr]; |+;
     { [FCC];
-      HBox { {[Cell]; [FCC2] } ; |+;
+      HBox { {[Cell]; [FCC2]; [MR] } ; |+;
              { [HtrCtrl]; VGlue 0+1; [System] }
       }
     }; |+;

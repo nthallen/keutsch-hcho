@@ -74,7 +74,7 @@
 
 TM typedef double dtime_t { text "%14.3lf"; }
 TM typedef double mean_cts_t { text "%8.1lf"; }
-TM typedef double ppb_t { text "%8.3lf"; }
+TM typedef double ppb_t { text "%9.2lf"; }
 
 %{
   PwrDelay Las_mW_delay;
@@ -88,7 +88,7 @@ TM typedef double ppb_t { text "%8.3lf"; }
   /* HCHO_CAL_CONSTANT units are something like:
       ppb hcho / (counts/(sec*mW))
   */
-  #define HCHO_CAL_CONSTANT 1.0
+  #define HCHO_CAL_CONSTANT 5.0
   /*
     t_z4
     BCtr_0_z4
@@ -126,12 +126,12 @@ BCtr_Trigger_t BCtr_0_a; Invalidate BCtr_0_a;
 BCtr_Trigger_t BCtr_1_a; Invalidate BCtr_1_a;
 LaserPwr_t LasIn_mW_z3; Invalidate LasIn_mW_z3;
 dtime_t t_z4; Invalidate t_z4;
-BCtr_Trigger_t BCtr_0_z4; Invalidate BCtr_0_z4;
-BCtr_Trigger_t BCtr_1_z4; Invalidate BCtr_1_z4;
-LVstat_t LVstat_z4; Invalidate LVstat_z4;
-HtrDAC_mV_t LaserV_z4; Invalidate LaserV_z4;
-mean_cts_t norm_ref_cts_z4; Invalidate norm_ref_cts_z4;
-mean_cts_t norm_sample_cts_z4; Invalidate norm_sample_cts_z4;
+BCtr_Trigger_t BCtr_0_z4;
+BCtr_Trigger_t BCtr_1_z4;
+LVstat_t LVstat_z4;
+HtrDAC_mV_t LaserV_z4;
+mean_cts_t norm_ref_cts_z4;
+mean_cts_t norm_sample_cts_z4;
 ppb_t hcho_mr; Invalidate hcho_mr;
 
 {
@@ -186,12 +186,14 @@ ppb_t hcho_mr; Invalidate hcho_mr;
   Validate BCtr_1_a;
   Validate LasIn_mW_z3;
   Validate t_z4;
+  /*
   Validate BCtr_0_z4;
   Validate BCtr_1_z4;
   Validate LVstat_z4;
   Validate LaserV_z4;
   Validate norm_ref_cts_z4;
   Validate norm_sample_cts_z4;
+  */
 }
 
 mean_cts_t mean_online_norm_ref_cts_z4; Invalidate mean_online_norm_ref_cts_z4;
@@ -202,22 +204,28 @@ LVstat_t LVstat_z5;
 double mnnsctsz4;
 
 /* Could move this inside the block above */
-depending on (LVstat_z4 once, norm_ref_cts_z4 once, norm_sample_cts_z4 once)
+depending on (t_z4)
 { if (LVstat_z4 != LVstat_z5) {
     if (LVstat_z5 & 2) {
       mean_online_norm_ref_cts_z4 = mnrcts();
       mnnsctsz4 = mnscts();
       mean_online_norm_sample_cts_z4 = mnnsctsz4;
-      Validate mean_online_norm_ref_cts_z4;
-      Validate mean_online_norm_sample_cts_z4;
+      if (mean_online_norm_ref_cts_z4 >= 0) {
+        Validate mean_online_norm_ref_cts_z4;
+      }
+      if (mean_online_norm_sample_cts_z4 >= 0) {
+        Validate mean_online_norm_sample_cts_z4;
+      }
     } else if (LVstat_z5 & 4) {
       double mfnsctsz4;
       mnrcts();
       mfnsctsz4 = mnscts();
-      mean_offline_norm_sample_cts_z4 = mfnsctsz4;
-      hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 * HCHO_CAL_CONSTANT;
-      Validate mean_offline_norm_sample_cts_z4;
-      Validate hcho_mr;
+      if (mfnsctsz4 >= 0) {
+        mean_offline_norm_sample_cts_z4 = mfnsctsz4;
+        hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 * HCHO_CAL_CONSTANT;
+        Validate mean_offline_norm_sample_cts_z4;
+        Validate hcho_mr;
+      }
     } else {
       mnscts();
       mnrcts();
