@@ -47,6 +47,7 @@ end
 
 % Only consider data after we started our five-minute chopping cycle
 start_time = Data1Hz.Thchoeng_1(Data1Hz.SWStat == SWScode);
+start_time = start_time(1);
 
 for i=1:length(refcellcorrect.time_max)
     if (refcellcorrect.time_max(i) - start_time < 0 || isnan(refcellcorrect.time_max(i)))
@@ -54,6 +55,16 @@ for i=1:length(refcellcorrect.time_max)
         refcellcorrect.time_max(i) = NaN;
     end
 end
+
+% Makes sure that if there was a NaN in scan_max_value that a NaN also
+% appears for the corresponding time so that both are removed in the next
+% bit of code
+for i=1:length(refcellcorrect.time_max)
+    if isnan(refcellcorrect.scan_max_value(i))
+        refcellcorrect.time_max(i) = NaN;
+    end
+end
+
 
 % Remove NaNs from dataset before fitting
 refcellcorrect.time_max(any(isnan(refcellcorrect.time_max),2),:) = [];
