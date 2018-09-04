@@ -385,20 +385,35 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
     case QT_SA:
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
         unsigned int CH9, CH10, CH11, CH12, CH13, CH14, CH15;
-        if (not_str("\nCH0",4) || not_unsigned(CH0) ||
-            not_str("mA\r\nCH1") || not_ufixed(CH1,1) ||
-            not_str("C\r\nCH2") || not_ufixed(CH2,2) ||
-            not_str("A\r\nCH3") || not_ufixed(CH3,1) ||
-            not_str("C\r\nCH4") || not_ufixed(CH4,2) ||
-            not_str("V\r\nCH8") || not_unsigned(CH8) ||
-            not_str("mA\r\nCH9") || not_ufixed(CH9,1) ||
-            not_str("C\r\nCH10") || not_ufixed(CH10,2) ||
-            not_str("A\r\nCH11") || not_ufixed(CH11,1) ||
-            not_str("C\r\nCH12") || not_ufixed(CH12,2) ||
-            not_str("V\r\nCH13") || not_ufixed(CH13,2) ||
-            not_str("V\r\nCH14") || not_ufixed(CH14,2) ||
-            not_str("C\r\nCH15") || not_ufixed(CH15,2) ||
-            not_str("C\r\n\r\n")
+        if (not_str("\n") ||
+            not_channel("CH0", CH0, 0, "mA") ||
+            not_channel("CH1", CH1, 1, "C") ||
+            not_channel("CH2", CH2, 2, "A") ||
+            not_channel("CH3", CH3, 1, "C") ||
+            not_channel("CH4", CH4, 2, "V") ||
+            not_channel("CH8", CH8, 0, "mA") ||
+            not_channel("CH9", CH9, 1, "C") ||
+            not_channel("CH10", CH10, 2, "A") ||
+            not_channel("CH11", CH11, 1, "C") ||
+            not_channel("CH12", CH12, 2, "V") ||
+            not_channel("CH13", CH13, 2, "V") ||
+            not_channel("CH14", CH14, 2, "C") ||
+            not_channel("CH15", CH15, 2, "C") ||
+            not_str("\r\n")
+        // if (not_str("\nCH0",4) || not_unsigned(CH0) ||
+            // not_str("mA\r\nCH1") || not_ufixed(CH1,1) ||
+            // not_str("C\r\nCH2") || not_ufixed(CH2,2) ||
+            // not_str("A\r\nCH3") || not_ufixed(CH3,1) ||
+            // not_str("C\r\nCH4") || not_ufixed(CH4,2) ||
+            // not_str("V\r\nCH8") || not_unsigned(CH8) ||
+            // not_str("mA\r\nCH9") || not_ufixed(CH9,1) ||
+            // not_str("C\r\nCH10") || not_ufixed(CH10,2) ||
+            // not_str("A\r\nCH11") || not_ufixed(CH11,1) ||
+            // not_str("C\r\nCH12") || not_ufixed(CH12,2) ||
+            // not_str("V\r\nCH13") || not_ufixed(CH13,2) ||
+            // not_str("V\r\nCH14") || not_ufixed(CH14,2) ||
+            // not_str("C\r\nCH15") || not_ufixed(CH15,2) ||
+            // not_str("C\r\n\r\n")
             ) {
           if (cp < nc) {
             consume(nc);
@@ -427,6 +442,37 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
   consume(nc);
   report_ok();
   return TFLP_OK;
+}
+
+/**
+ * Encapsulates parsing for a line of output from the multi-line 'SA' request.
+ * This is motivated by the many variations in output format, and should
+ * handle:
+ *   {label}\s*[<>]?{number}\s*{unit} {{number}\s*{unit}}
+ * e.g.:
+ *    CH1   >50 C\r\n
+ *    CH9  23.8 C\r\n
+ *    CH11  >40 C45.7 C\r\n
+ * Channels values can be prefixed with '<' or '>' when nominally out of range,
+ * although in at least one case, the range limit value is followed by what is
+ * presumably an actual reading beyond that limit. If both are provided, we
+ * will report the latter.
+ *
+ * Currently there is no provision to record the limit value, assuming that
+ * a channel that cannot report above 50 will obviously be at a limit when
+ * reporting 50 with or without an explicit indication.
+ */
+int TFLSer::not_channel(const char *name, unsigned int &val, int ndecimals, const char *unit) {
+  if (not_str(name) ||
+      (ndecimals ? not_ufixed(val, ndecimals) : not_unsigned(val)) ||
+      not_str(unit) ||
+      (cp < nc && buf[cp] != '\r' &&
+       ((ndecimals ? not_ufixed(val, ndecimals) : not_unsigned(val)) ||
+         not_str(unit)) ) ||
+      not_str("\r\n")) {
+    return 1;
+  }
+  return 0;
 }
 
 // Looking for int "." int and converting to a fixed float stored as 1 int

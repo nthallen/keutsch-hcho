@@ -70,6 +70,7 @@ class TFLSer : public Ser_Sel {
     void update_termios();
     enum TFL_Parse_Resp { TFLP_Die, TFLP_Wait, TFLP_OK };
     TFL_Parse_Resp parse_response();
+    int not_channel(const char *name, unsigned int &val, int ndecimals, const char *unit);
     int not_ufixed(unsigned int &val, int ndecimals);
     int not_unsigned(unsigned int &val);
     TFLCmd *Cmd;
