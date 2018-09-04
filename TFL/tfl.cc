@@ -384,21 +384,21 @@ TFLSer::TFL_Parse_Resp TFLSer::parse_response() {
       break;
     case QT_SA:
       { unsigned int CH0, CH1, CH2, CH3, CH4, CH8;
-        unsigned int CH9, CH10, CH12, CH13, CH14, CH15;
+        unsigned int CH9, CH10, CH11, CH12, CH13, CH14, CH15;
         if (not_str("\nCH0",4) || not_unsigned(CH0) ||
-            not_str(" mA\r\nCH1") || not_ufixed(CH1,1) ||
-            not_str(" C\r\nCH2") || not_ufixed(CH2,2) ||
-            not_str(" A\r\nCH3") || not_ufixed(CH3,1) ||
-            not_str(" C\r\nCH4") || not_ufixed(CH4,2) ||
-            not_str(" V\r\nCH8") || not_unsigned(CH8) ||
-            not_str(" mA\r\nCH9") || not_ufixed(CH9,1) ||
-            not_str(" C\r\nCH10") || not_ufixed(CH10,2) ||
-            not_str(" A\r\nCH11 >50  C\r\nCH12") ||
-                                   not_ufixed(CH12,2) ||
-            not_str(" V\r\nCH13") || not_ufixed(CH13,2) ||
-            not_str(" V\r\nCH14") || not_ufixed(CH14,2) ||
-            not_str(" C\r\nCH15") || not_ufixed(CH15,2) ||
-            not_str(" C\r\n\r\n")
+            not_str("mA\r\nCH1") || not_ufixed(CH1,1) ||
+            not_str("C\r\nCH2") || not_ufixed(CH2,2) ||
+            not_str("A\r\nCH3") || not_ufixed(CH3,1) ||
+            not_str("C\r\nCH4") || not_ufixed(CH4,2) ||
+            not_str("V\r\nCH8") || not_unsigned(CH8) ||
+            not_str("mA\r\nCH9") || not_ufixed(CH9,1) ||
+            not_str("C\r\nCH10") || not_ufixed(CH10,2) ||
+            not_str("A\r\nCH11") || not_ufixed(CH11,1) ||
+            not_str("C\r\nCH12") || not_ufixed(CH12,2) ||
+            not_str("V\r\nCH13") || not_ufixed(CH13,2) ||
+            not_str("V\r\nCH14") || not_ufixed(CH14,2) ||
+            not_str("C\r\nCH15") || not_ufixed(CH15,2) ||
+            not_str("C\r\n\r\n")
             ) {
           if (cp < nc) {
             consume(nc);
@@ -436,12 +436,12 @@ int TFLSer::not_ufixed(unsigned int &val, int ndecimals) {
   while (cp < nc && isspace(buf[cp]))
     ++cp;
   if (cp < nc) {
-    if (!isdigit(buf[cp]) && buf[cp] != '.' && buf[cp] != '<') {
-      report_err("Expected digit, '.' or '<' at column %d", cp);
+    if (!isdigit(buf[cp]) && buf[cp] != '.' && buf[cp] != '<' && buf[cp] != '>') {
+      report_err("Expected digit, '.', '<' or '>' at column %d", cp);
       return 1;
     }
   } else return 1;
-  if (buf[cp] == '<') {
+  if (buf[cp] == '<' || buf[cp] == '>') {
     ++cp;
   }
   while (cp < nc && isdigit(buf[cp])) {
@@ -449,19 +449,20 @@ int TFLSer::not_ufixed(unsigned int &val, int ndecimals) {
   }
   if (cp >= nc) {
     return 1;
-  } else if (buf[cp] != '.') {
-    report_err("Expected decimal in not_ufixed at column %d", cp);
-    return 1;
   }
-  ++cp;
-  while (cp < nc && nd < ndecimals && isdigit(buf[cp])) {
-    val = val*10 + buf[cp++] - '0';
+  if (buf[cp] == '.') {
+    ++cp;
+    while (cp < nc && nd < ndecimals && isdigit(buf[cp])) {
+      val = val*10 + buf[cp++] - '0';
+      ++nd;
+    }
+  }
+  while (nd < ndecimals) {
+    val *= 10;
     ++nd;
   }
-  if (nd < ndecimals) {
-    if (cp < nc)
-      report_err("Expected %d decimals, saw %d", ndecimals, nd);
-    return 1;
+  while (cp < nc && buf[cp] == ' ') {
+    ++cp;
   }
   return 0;
 }
@@ -479,6 +480,9 @@ int TFLSer::not_unsigned(unsigned int &val) {
   } else return 1;
   while (cp < nc && isdigit(buf[cp])) {
     val = val*10 + buf[cp++] - '0';
+  }
+  while (cp < nc && buf[cp] == ' ') {
+    ++cp;
   }
   return 0;
 }
