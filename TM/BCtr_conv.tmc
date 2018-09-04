@@ -88,7 +88,7 @@ TM typedef double ppb_t { text "%9.2lf"; }
   /* HCHO_CAL_CONSTANT units are something like:
       ppb hcho / (counts/(sec*mW))
   */
-  #define HCHO_CAL_CONSTANT 71.87
+  #define HCHO_CAL_CONSTANT 5.0
   /*
     t_z4
     BCtr_0_z4
