@@ -130,18 +130,16 @@ Partition
   double max_norm_ref_cts;
   HtrDAC_mV_t cur_peak_laser_V, peak_laser_V;
 
-  depending on (BCtr_LaserV once, BCtr_0_a once, BCtr_LasIn_mW once, BCtr_LVstat once) {
-    double norm_ref_cts;
-    norm_ref_cts = BCtr_0_a/convert(BCtr_LasIn_mW);
-    if (BCtr_LVstat & 1) {
+  depending on (t_z4) {
+    if (LVstat_z4 & 1) {
       if (scanning == 0) {
         scanning = 1;
-        max_norm_ref_cts = norm_ref_cts;
-        cur_peak_laser_V = BCtr_LaserV;
+        max_norm_ref_cts = norm_ref_cts_z4;
+        cur_peak_laser_V = LaserV_z4;
       } else {
-        if (norm_ref_cts > max_norm_ref_cts) {
-          max_norm_ref_cts = norm_ref_cts;
-          cur_peak_laser_V = BCtr_LaserV;
+        if (norm_ref_cts_z4 > max_norm_ref_cts) {
+          max_norm_ref_cts = norm_ref_cts_z4;
+          cur_peak_laser_V = LaserV_z4;
         }
       }
     }
@@ -149,8 +147,8 @@ Partition
 }
 
 State Laser_Scan_Watch {
-  hold until (BCtr_LVstat & 1);
-  hold until (!(BCtr_LVstat & 1));
+  hold until (t_z4 && (LVstat_z4 & 1));
+  hold until (t_z4 && !(LVstat_z4 & 1));
   { if (find_peak && scanning) {
       peak_laser_V = cur_peak_laser_V;
       if (convert(peak_laser_V) > convert(LV_online)+Drift_Limit ||
@@ -175,8 +173,8 @@ State Chop_Idle {}
 
 State Chop_Period_1 {
   > Laser Command Scan Start
-  Hold Until (BCtr_LVstat & 1);
-  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  Hold Until (t_z4 && (LVstat_z4 & 1));
+  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
   > Laser Command Chop Mode Begin
   Hold Until (SWStat == SWS_TIMEWARP) or 1:00;
   Validate Chop_Period_1;
@@ -184,8 +182,8 @@ State Chop_Period_1 {
 
 State Chop_Period_5 {
   > Laser Command Scan Start
-  Hold Until (BCtr_LVstat & 1);
-  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  Hold Until (t_z4 && (LVstat_z4 & 1));
+  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
   > Laser Command Chop Mode Begin
   Hold Until (SWStat == SWS_TIMEWARP) or 5:00;
   Validate Chop_Period_5;
@@ -193,8 +191,8 @@ State Chop_Period_5 {
 
 State Chop_Period_10 {
   > Laser Command Scan Start
-  Hold Until (BCtr_LVstat & 1);
-  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  Hold Until (t_z4 && (LVstat_z4 & 1));
+  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
   > Laser Command Chop Mode Begin
   Hold Until (SWStat == SWS_TIMEWARP) or 10:00;
   Validate Chop_Period_10;
@@ -202,8 +200,8 @@ State Chop_Period_10 {
 
 State Chop_Period_30 {
   > Laser Command Scan Start
-  Hold Until (BCtr_LVstat & 1);
-  Hold Until (!(BCtr_LVstat & 1) && !scanning);
+  Hold Until (t_z4 && (LVstat_z4 & 1));
+  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
   > Laser Command Chop Mode Begin
   Hold Until (SWStat == SWS_TIMEWARP) or 30:00;
   Validate Chop_Period_30;
@@ -223,36 +221,33 @@ Partition
 # probably harder.)
 
 %{
-  double pmncts; // prev_mean_normalized_online_cts;
-  double cncts;  // cur_normalized_online_cts;
-  double cmncts; // cur_mean_normalized_online_cts;
+  double pmncts; // prev_mean_online_normalized_ref_cts;
+  // double cncts;  // cur_normalized_online_cts;
+  // double cmncts; // cur_mean_online_normalized_ref_cts;
   HtrDAC_mV_t prev_LV, cur_LV;
-  int np_online;
+  // int np_online;
   bool dither_enable = false;
 %}
 
+{ depending on (t_z4) {
+    if ((LVstat_z4 & 0xA) == 0xA) {
+      cur_LV = LaserV_z4;
+    }
+  }
+}
+
 State Chop_Active {
-  { if (BCtr_LVstat&0x8) {
-      if (BCtr_LVstat&0x2) {
-        cur_LV = BCtr_LaserV;
-        cncts += BCtr_0_a/convert(BCtr_LasIn_mW);
-        ++np_online;
-      } else if (np_online) {
-        cmncts = cncts/np_online;
-        if (dither_enable) {
-          ci_sendfcmd(2, "Laser Command Dither Online %s\n",
-            ((cmncts > pmncts) != (cur_LV > prev_LV)) ?
-            "Down" : "Up");
-        }
-        pmncts = cmncts;
-        prev_LV = cur_LV;
-        cncts = 0;
-        np_online = 0;
+  depending on (mean_online_norm_ref_cts_z4 once) {
+    if (LVstat_z4 & 0x8) { /* Chopping */
+      if (dither_enable) {
+        ci_sendfcmd(2, "Laser Command Dither Online %s\n",
+          ((mean_online_norm_ref_cts_z4 > pmncts) != (cur_LV > prev_LV)) ?
+          "Down" : "Up");
       }
+      prev_LV = cur_LV;
+      pmncts = mean_online_norm_ref_cts_z4;
     } else {
       prev_LV = 0;
-      np_online = 0;
-      cncts = 0;
       pmncts = 0;
     }
   }
@@ -282,9 +277,11 @@ State Chop_Active {
   int thg_chop_mode_idx = 2; // 0==online, 1==offline, 2==other
   double thg_power[2];
   int thg_n_pwr;
-  bool thg_not_first;
+  // bool thg_not_first;
   bool thg_peakup_enable = true;
   #define THG_DEADBAND 0.015
+  #include "TM_average.h"
+  TM_average<double> LasPwrAvg;
 %}
 
 {
@@ -293,39 +290,30 @@ State Chop_Active {
   TFL_uint4_2_t curr_TFL_THG_SP;
   curr_TFL_THG_SP = TFL_THG_SP;
   
-  {
+  depending on (t_z4) {
     int crnt_chop_mode;
-    crnt_chop_mode = BCtr_LVstat&0xF;
-    if (thg_chop_mode_idx < 2 && thg_not_first && BCtr_Pfresh) {
-      thg_power[thg_chop_mode_idx] += convert(BCtr_LasIn_mW);
-      ++thg_n_pwr;
-    }
-    thg_not_first = true;
+    crnt_chop_mode = (LVstat_z4 & 0xF);
     if (crnt_chop_mode != thg_prev_chop_mode) {
+      double avg_pwr;
+      avg_pwr = LasPwrAvg();
       switch (thg_chop_mode_idx) {
-        case 2:
-          if (crnt_chop_mode == 0xA) {
-            thg_n_pwr = 0;
-            thg_power[0] = 0.;
-            thg_power[1] = 0.;
+        case 2: /* Not monitoring */
+          if (crnt_chop_mode == 0xA) { /* online */
             thg_chop_mode_idx = 0;
-            thg_not_first = false;
           }
           break;
-        case 0:
-          if (crnt_chop_mode == 0xC && thg_n_pwr > 0) {
-            thg_power[0] /= thg_n_pwr;
-            thg_n_pwr = 0;
+        case 0: /* Online */
+          if (crnt_chop_mode == 0xC && avg_pwr >= 0) { /* offline */
+            thg_power[0] = avg_pwr;;
             thg_chop_mode_idx = 1;
-            thg_not_first = false;
           } else {
             thg_chop_mode_idx = 2;
           }
           break;
-        case 1:
-          if (thg_n_pwr > 0 && thg_peakup_enable) {
+        case 1: /* Offline */
+          if (avg_pwr >= 0 && thg_peakup_enable) {
             double ratio;
-            thg_power[1] /= thg_n_pwr;
+            thg_power[1] = avg_pwr;
             ratio = (thg_power[0]-thg_power[1])/(thg_power[0]+thg_power[1]);
             if (fabs(ratio) > THG_DEADBAND) {
               ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
@@ -334,7 +322,7 @@ State Chop_Active {
                   -0.01 : 0.01));
             }
           }
-          thg_chop_mode_idx = 2;
+          thg_chop_mode_idx = 2; /* skip the next cycle */
           break;
         default:
           thg_chop_mode_idx = 2;
@@ -342,6 +330,7 @@ State Chop_Active {
       }
       thg_prev_chop_mode = crnt_chop_mode;
     }
+    LasPwrAvg(convert(LasIn_mW_z3));
   }
 }
 

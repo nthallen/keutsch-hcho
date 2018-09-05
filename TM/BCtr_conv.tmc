@@ -1,7 +1,8 @@
 %{
+  #include <deque>
   #include "nl_assert.h"
-  #define BCtr_Yes_No_txt(x) ((x)?"Yes":" No")
-  #define BCtr_OK_FAIL_txt(x) ((x)?"FAIL":"  OK")
+  #include "TM_delay.h"
+  #include "TM_average.h"
 
   BCtr_Trigger_t BCtr_sum(BCtr_Cts_t *Cts, int chan, int from, int to) {
     BCtr_Trigger_t sum = 0;
@@ -18,7 +19,7 @@
   }
 
   #define short2long(x,y) (x + (((unsigned long)y)<<16))
-  
+
   double BCtr_power(unsigned short lsw, unsigned short msw) {
     signed long pwr32 = (signed long)(
             (((unsigned long)msw) << 16) |
@@ -26,64 +27,211 @@
     double pwrd = ((double)pwr32) * 1.25 / 1073741824.;
     return pwrd;
   }
+
+  class PwrDelay {
+    public:
+      PwrDelay();
+      double operator()(double LasIn_mW, LVstat_t stat, bool Pfresh);
+      LVstat_t stat_z1;
+      bool stat_chg_z1;
+      bool PwrValid;
+      std::deque<double> pwr_q;
+  };
+
+  PwrDelay::PwrDelay() {
+    stat_z1 = 0;
+    stat_chg_z1 = false;
+    PwrValid = false;
+  }
+
+  LaserPwr_t PwrDelay::operator()(LaserPwr_t LasIn_mW, LVstat_t stat, bool Pfresh) {
+    bool stat_chg = (stat != stat_z1);
+
+    if (stat_chg_z1) {
+      PwrValid = false;
+    } else if (Pfresh) {
+      PwrValid = true;
+    }
+    if (PwrValid) {
+      while (pwr_q.size() < 4) {
+        pwr_q.push_back(LasIn_mW);
+      }
+    }
+    LaserPwr_t LasIn_mW_z3;
+    if (pwr_q.empty()) {
+      LasIn_mW_z3 = 0.;
+    } else {
+      LasIn_mW_z3 = pwr_q[0];
+      pwr_q.pop_front();
+    }
+
+    stat_z1 = stat;
+    stat_chg_z1 = stat_chg;
+    return LasIn_mW_z3;
+  }
+
+%}
+
+TM typedef double dtime_t { text "%14.3lf"; }
+TM typedef double mean_cts_t { text "%8.1lf"; }
+TM typedef double ppb_t { text "%9.2lf"; }
+
+%{
+  PwrDelay Las_mW_delay;
+  TM_delay<double,4> t_delay4;
+  TM_delay<BCtr_Trigger_t,4> BCtr_0_delay4;
+  TM_delay<BCtr_Trigger_t,4> BCtr_1_delay4;
+  TM_delay<LVstat_t,4> LVstat_delay4;
+  TM_delay<HtrDAC_mV_t,4> LaserV_delay4;
+  TM_average<mean_cts_t> mnrcts;
+  TM_average<mean_cts_t> mnscts;
+  /* HCHO_CAL_CONSTANT units are something like:
+      ppb hcho / (counts/(sec*mW))
+  */
+  #define HCHO_CAL_CONSTANT 71.87
+  /*
+    t_z4
+    BCtr_0_z4
+    BCtr_1_z4
+    LVstat_z4
+    LaserV_z4
+
+    norm_ref_cts_z4
+    norm_sample_cts_z4
+    mean_online_norm_ref_cts_z4
+    mean_online_norm_sample_cts_z4
+    mean_offline_norm_sample_cts_z4
+  */
 %}
 
 BCtr_Cts_t BCtr_Status; Invalidate BCtr_Status;
-{ BCtr_Status = BCtr_Bins[1]; Validate BCtr_Status; }
-
 BCtr_Cts_t BCtr_NWords; Invalidate BCtr_NWords;
-{ BCtr_NWords = BCtr_Bins[2]; Validate BCtr_NWords; }
-
 BCtr_NAB_t BCtr_IPnum; Invalidate BCtr_IPnum;
-{ BCtr_IPnum = BCtr_Bins[3]&0x3F; Validate BCtr_IPnum; }
-
 BCtr_Pfresh_t BCtr_Pfresh; Invalidate BCtr_Pfresh;
-{ BCtr_Pfresh = (BCtr_Bins[3]>>9) & 0x1; Validate BCtr_Pfresh; }
-
 LVstat_t BCtr_LVstat; Invalidate BCtr_LVstat;
-{ BCtr_LVstat = (BCtr_Bins[3] >> 10) & 0x1F; Validate BCtr_LVstat; }
-
 BCtr_Trigger_t BCtr_NTrigger; Invalidate BCtr_NTrigger;
-{ BCtr_NTrigger = short2long(BCtr_Bins[4], BCtr_Bins[5]);
-  Validate BCtr_NTrigger; }
-
 HtrDAC_mV_t BCtr_LaserV; Invalidate BCtr_LaserV;
-{ BCtr_LaserV = BCtr_Bins[6]; Validate BCtr_LaserV; }
-
-/* LaserPwr_t is defined in TS.tmc */
+/* LaserPwr_t (double) is defined in TS.tmc */
 LaserPwr_t BCtr_LasIn_mW; Invalidate BCtr_LasIn_mW;
-{ BCtr_LasIn_mW = BCtr_power(BCtr_Bins[7],BCtr_Bins[8]);
-  Validate BCtr_LasIn_mW; }
-
 BCtr_Yes_No BCtr_Enable; Invalidate BCtr_Enable;
-{ BCtr_Enable = (BCtr_Bins[1]>>0)&1; Validate BCtr_Enable; }
-
 BCtr_Yes_No BCtr_DRdy; Invalidate BCtr_DRdy;
-{ BCtr_DRdy = (BCtr_Bins[1]>>1)&1; Validate BCtr_DRdy; }
-
 BCtr_Yes_No BCtr_TxActive; Invalidate BCtr_TxActive;
-{ BCtr_TxActive = (BCtr_Bins[1]>>2)&1; Validate BCtr_TxActive; }
-
 BCtr_OK_FAIL BCtr_CfgErrOvf; Invalidate BCtr_CfgErrOvf;
-{ BCtr_CfgErrOvf = (BCtr_Bins[1]>>3)&1; Validate BCtr_CfgErrOvf; }
-
 BCtr_OK_FAIL BCtr_CfgErrNAB; Invalidate BCtr_CfgErrNAB;
-{ BCtr_CfgErrNAB = (BCtr_Bins[1]>>4)&1; Validate BCtr_CfgErrNAB; }
-
 BCtr_Yes_No BCtr_Ready; Invalidate BCtr_Ready;
-{ BCtr_Ready = (BCtr_Bins[1]>>5)&1; Validate BCtr_Ready; }
-
 BCtr_OK_FAIL BCtr_TxErrOvf; Invalidate BCtr_TxErrOvf;
-{ BCtr_TxErrOvf = (BCtr_Bins[1]>>9)&1; Validate BCtr_TxErrOvf; }
-
 BCtr_OK_FAIL BCtr_Expired; Invalidate BCtr_Expired;
-{ BCtr_Expired = (BCtr_Bins[1]>>10)&1; Validate BCtr_Expired; }
-
 BCtr_NAB_t BCtr_NAB; Invalidate BCtr_NAB;
-{ BCtr_NAB = (BCtr_Bins[1]>>6)&7; Validate BCtr_NAB; }
-
 BCtr_Trigger_t BCtr_0_a; Invalidate BCtr_0_a;
-{ BCtr_0_a = BCtr_sum(BCtr_Bins, 0, 15, 99); Validate BCtr_0_a; }
-
 BCtr_Trigger_t BCtr_1_a; Invalidate BCtr_1_a;
-{ BCtr_1_a = BCtr_sum(BCtr_Bins, 1, 15, 99); Validate BCtr_1_a; }
+LaserPwr_t LasIn_mW_z3; Invalidate LasIn_mW_z3;
+dtime_t t_z4; Invalidate t_z4;
+BCtr_Trigger_t BCtr_0_z4;
+BCtr_Trigger_t BCtr_1_z4;
+LVstat_t LVstat_z4;
+HtrDAC_mV_t LaserV_z4;
+mean_cts_t norm_ref_cts_z4;
+mean_cts_t norm_sample_cts_z4;
+ppb_t hcho_mr; Invalidate hcho_mr;
+
+{
+  BCtr_Status = BCtr_Bins[1];
+  BCtr_NWords = BCtr_Bins[2];
+  BCtr_IPnum = BCtr_Bins[3]&0x3F;
+  BCtr_Pfresh = (BCtr_Bins[3]>>9) & 0x1;
+  BCtr_LVstat = (BCtr_Bins[3] >> 10) & 0x1F;
+  BCtr_NTrigger = short2long(BCtr_Bins[4], BCtr_Bins[5]);
+  BCtr_LaserV = BCtr_Bins[6];
+  BCtr_LasIn_mW = BCtr_power(BCtr_Bins[7],BCtr_Bins[8]);
+  BCtr_Enable = (BCtr_Bins[1]>>0)&1;
+  BCtr_DRdy = (BCtr_Bins[1]>>1)&1;
+  BCtr_TxActive = (BCtr_Bins[1]>>2)&1;
+  BCtr_CfgErrOvf = (BCtr_Bins[1]>>3)&1;
+  BCtr_CfgErrNAB = (BCtr_Bins[1]>>4)&1;
+  BCtr_Ready = (BCtr_Bins[1]>>5)&1;
+  BCtr_TxErrOvf = (BCtr_Bins[1]>>9)&1;
+  BCtr_Expired = (BCtr_Bins[1]>>10)&1;
+  BCtr_NAB = (BCtr_Bins[1]>>6)&7;
+  BCtr_0_a = BCtr_sum(BCtr_Bins, 0, 15, 99);
+  BCtr_1_a = BCtr_sum(BCtr_Bins, 1, 15, 99);
+  LasIn_mW_z3 = Las_mW_delay(BCtr_LasIn_mW, BCtr_LVstat, BCtr_Pfresh);
+  t_z4 = t_delay4(dtime());
+  BCtr_0_z4 = BCtr_0_delay4(BCtr_0_a);
+  BCtr_1_z4 = BCtr_1_delay4(BCtr_1_a);
+  LVstat_z4 = LVstat_delay4(BCtr_LVstat);
+  LaserV_z4 = LaserV_delay4(BCtr_LaserV);
+  norm_ref_cts_z4 = (LasIn_mW_z3 == 0.) ? 0.
+    : (BCtr_0_z4/convert(LasIn_mW_z3));
+  norm_sample_cts_z4 = (LasIn_mW_z3 == 0.) ? 0.
+    : (BCtr_1_z4/convert(LasIn_mW_z3));
+
+  Validate BCtr_Status;
+  Validate BCtr_NWords;
+  Validate BCtr_IPnum;
+  Validate BCtr_Pfresh;
+  Validate BCtr_LVstat;
+  Validate BCtr_NTrigger;
+  Validate BCtr_LaserV;
+  Validate BCtr_LasIn_mW;
+  Validate BCtr_Enable;
+  Validate BCtr_DRdy;
+  Validate BCtr_TxActive;
+  Validate BCtr_CfgErrOvf;
+  Validate BCtr_CfgErrNAB;
+  Validate BCtr_Ready;
+  Validate BCtr_TxErrOvf;
+  Validate BCtr_Expired;
+  Validate BCtr_NAB;
+  Validate BCtr_0_a;
+  Validate BCtr_1_a;
+  Validate LasIn_mW_z3;
+  Validate t_z4;
+  /*
+  Validate BCtr_0_z4;
+  Validate BCtr_1_z4;
+  Validate LVstat_z4;
+  Validate LaserV_z4;
+  Validate norm_ref_cts_z4;
+  Validate norm_sample_cts_z4;
+  */
+}
+
+mean_cts_t mean_online_norm_ref_cts_z4; Invalidate mean_online_norm_ref_cts_z4;
+mean_cts_t mean_online_norm_sample_cts_z4; Invalidate mean_online_norm_sample_cts_z4;
+mean_cts_t mean_offline_norm_sample_cts_z4; Invalidate mean_offline_norm_sample_cts_z4;
+
+LVstat_t LVstat_z5;
+double mnnsctsz4;
+
+/* Could move this inside the block above */
+depending on (t_z4)
+{ if (LVstat_z4 != LVstat_z5) {
+    if (LVstat_z5 & 2) {
+      mean_online_norm_ref_cts_z4 = mnrcts();
+      mnnsctsz4 = mnscts();
+      mean_online_norm_sample_cts_z4 = mnnsctsz4;
+      if (mean_online_norm_ref_cts_z4 >= 0) {
+        Validate mean_online_norm_ref_cts_z4;
+      }
+      if (mean_online_norm_sample_cts_z4 >= 0) {
+        Validate mean_online_norm_sample_cts_z4;
+      }
+    } else if (LVstat_z5 & 4) {
+      double mfnsctsz4;
+      mnrcts();
+      mfnsctsz4 = mnscts();
+      if (mfnsctsz4 >= 0) {
+        mean_offline_norm_sample_cts_z4 = mfnsctsz4;
+        hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 * HCHO_CAL_CONSTANT;
+        Validate mean_offline_norm_sample_cts_z4;
+        Validate hcho_mr;
+      }
+    } else {
+      mnscts();
+      mnrcts();
+    }
+  }
+  mnrcts(norm_ref_cts_z4);
+  mnscts(norm_sample_cts_z4);
+  LVstat_z5 = LVstat_z4;
+}

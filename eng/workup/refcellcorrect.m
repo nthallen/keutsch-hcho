@@ -81,10 +81,12 @@ switch method
         % Interpolate the max peak heights
         refcellcorrect.scan_max_interp = interp1(refcellcorrect.time_max,refcellcorrect.scan_max_value_movmean,Data10Hz.Thchoeng_10);
         
+        refcellcorrect.time_max_datetime = datetime(refcellcorrect.time_max,'ConvertFrom','posixtime');
+        
         if plotme
-            figure,plot(Data10Hz.Thchoeng_10,refcellcorrect.scan_max_interp)
+            figure,plot(Data10Hz.datetime+hours(4),refcellcorrect.scan_max_interp)
             hold on
-            plot(refcellcorrect.time_max,refcellcorrect.scan_max_value,'.')
+            plot(refcellcorrect.time_max_datetime,refcellcorrect.scan_max_value,'.')
         end
         
         % Find correction ratio by dividing the interpolated heights by the power

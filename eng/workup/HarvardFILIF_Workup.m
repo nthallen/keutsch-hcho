@@ -7,27 +7,43 @@
 % 06FEB2018: Creation Date (JDS)
 % 17APR2018: v1.00 Release (JDS)
 % 17JUN2018: v1.50 Release (JDS): Added graphical removal capabilities
+% 30JUN2018: v2.00 Release (JDS): Ability to save workup settings; code reorganization
 
-%% INITIALIZATION
-% When working up Harvard FILIF data, the user should only have to change these parameter variables
+%% FOLDER INITIALIZATION
+% Specify where FILIF raw data is located by its run date
 
-run_date = '180622.1';            % Specify run date for loadFILIF.m '180614.1'
-powercal_date = '20JUN2018';      % Specify which power meter calibration to use for powercal.m
-cal_factor = 71.87;               % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
-DitherEnabled = true;             % Specify true if dithering was enabled during data collection
-MaxLaserVoltage = 220;            % Specify average max laser voltage seen during experiment 225
-min_acceptable_power = 0.12;      % Minimum power that's considered acceptable (in V) was 0.22
-mVwindow = 100;                   % Specify allowed range for possible max laser voltages in refcellcorrect.m
-SWScode = 6;                      % Specify chopping used during experiment (5-min chop cycle = 6; 1-min chop cycle = 5)
-GraphicalRemoval = false;          % Option to interactively remove data by graphical selection (via brush in Figure palette)
-GraphicalRemoval_Post = false;     % Option to interactively remove data by graphical selection after conversion into HCHO mixing ratio
+run_date = '180627.1'; % Specify raw data folder name (e.g. '180627.1')
+RAWdir = ['D:\Data\HCHO\RAW\',run_date,'\'];
 
-% Plots
-MakeRefCellCorrectPlot = true;    % Plot of ref cell correct graph
-MakePowerPlots = false;            % Plot of power calibration curve
-MakePlots = true;                 % Plot of final HCHO mixing ratio (false or true)
+%% WORKUP SETTINGS INITIALIZATION
+% Loads workup settings if they already exist or will create a new settings
+% file if this is the first time working up the data.
+
+file_exist_check = exist(fullfile(RAWdir,'WorkupSettings.mat'), 'file');
+
+if file_exist_check == 2
+    load('WorkupSettings.mat')
+else
+    s.powercal_date = '26JUN2018';      % Specify which power meter calibration to use for powercal.m
+    s.cal_factor = 78.76;               % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
+    s.DitherEnabled = true;             % Specify true if dithering was enabled during data collection
+    s.MaxLaserVoltage = 130;            % Specify average max laser voltage seen during experiment 225
+    s.min_acceptable_power = 0.09;      % Minimum power that's considered acceptable (in V) was 0.22
+    s.mVwindow = 80;                    % Specify allowed range for possible max laser voltages in refcellcorrect.m
+    s.SWScode = 6;                      % Specify chopping used during experiment (5-min chop cycle = 6; 1-min chop cycle = 5)
+    save(fullfile(RAWdir,'WorkupSettings.mat'),'s');
+end
+
+%% GRAPHICAL REMOVAL AND PLOTTING OPTIONS
+
+    s.GraphicalRemoval = false;          % Option to interactively remove data by graphical selection (via brush in Figure palette)
+    s.GraphicalRemoval_Post = false;     % Option to interactively remove data by graphical selection after conversion into HCHO mixing ratio
+    s.MakeRefCellCorrectPlot = false;    % Plot of ref cell correct graph
+    s.MakePowerPlots = false;            % Plot of power calibration curve
+    s.MakePlots = true;                 % Plot of final HCHO mixing ratio (false or true)
 
 %% LOAD RAW MAT FILES
+
 disp('Loading MAT files')
 [BCtr,Data1Hz,Data10Hz] = loadFILIF(run_date); % Load MAT raw data files
 
@@ -96,7 +112,7 @@ Data10Hz.trignorm_sample = 30000*(Data10Hz.sample_rawcps./corrected_Ntrigger);
 
 disp('Discarding points below acceptable laser power limit')
 for i = 1:length(Data10Hz.trignorm_ref)
-    if Data10Hz.BCtr_LasIn_mW(i) < min_acceptable_power
+    if Data10Hz.BCtr_LasIn_mW(i) < s.min_acceptable_power
         Data10Hz.trignorm_ref(i)    = NaN;
         Data10Hz.trignorm_sample(i) = NaN;
         Data10Hz.BCtr_LasIn_mW(i)   = NaN;
@@ -109,7 +125,6 @@ end
 % criterion exists to remove the data. Do not use this ability to
 % 'cherry-pick' the data!
 
-RAWdir = ['D:\Data\HCHO\RAW\',run_date,'\'];
 file_exist_check = exist(fullfile(RAWdir,'RemovedPoints.mat'), 'file');
 
 if file_exist_check == 2
@@ -125,7 +140,7 @@ if file_exist_check == 2
     loaded_ptsRemoved = ptsRemoved;
 end
 
-if GraphicalRemoval
+if s.GraphicalRemoval
     
     figure
     h = pan;
@@ -177,12 +192,14 @@ if exist('ptsRemoved','var') == 1
     end
 end
 
+clear('ax1','ax2','ax3','h','hLines','file_exist_check')
+
 %% POWER-NORMALIZING RAW COUNTS
 % Power-normalize the counts using the LasPwrIn
 % 01JUN2018 Update: Remove points that simply have too low of power 
 
 disp('Normalizing counts to laser power')
-power = powercal(Data10Hz.BCtr_LasIn_mW,powercal_date,MakePowerPlots);
+power = powercal(Data10Hz.BCtr_LasIn_mW,s.powercal_date,s.MakePowerPlots);
 
 Data10Hz.powernorm_ref = Data10Hz.trignorm_ref./power;
 Data10Hz.powernorm_sample = Data10Hz.trignorm_sample./power;
@@ -207,7 +224,7 @@ index.scan = scancorrect(index.scan);
 % have to correct for this here
 
 disp('Dither Correction')
-if DitherEnabled
+if s.DitherEnabled
     [Data10Hz.powernorm_sample, Data10Hz.powernorm_ref] = dithercorrect(Data10Hz);
 end
 
@@ -220,21 +237,21 @@ Data10Hz.diffcounts = diffcounts(Data10Hz,index);
 % Correct for the fact that the laser voltage reported by QNX doesn't
 % always track with the actual laser voltage of the laser
 disp('Ref Cell Correct Algorithm')
-Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,MaxLaserVoltage,'interpolate',MakeRefCellCorrectPlot,mVwindow,SWScode);
+Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,s.MaxLaserVoltage,'interpolate',s.MakeRefCellCorrectPlot,s.mVwindow,s.SWScode);
 
 %Find indices not equal to the online indices and assign NaN
 Data10Hz.diffcounts([index.offline;index.scan;index.rm_online;index.rm_offline]) = NaN;
 
 % Apply cal factor to difference counts to obtain the HCHO mixing ratio (10 Hz)
 disp('Calculating HCHO mixing ratios using specified cal factor')
-Data10Hz.hcho = Data10Hz.diffcounts./cal_factor;
+Data10Hz.hcho = Data10Hz.diffcounts./s.cal_factor;
 
 
 %% REMOVE DATA BY GRAPHICAL SELECTION POST-PROCESSING (OPTIONAL)
 % Now that HCHO mixing ratios have been calculated, here is another
 % opportunity to appropriately remove extraneous points.
 
-if GraphicalRemoval_Post
+if s.GraphicalRemoval_Post
     
     figure
     h = pan;
@@ -276,6 +293,8 @@ if GraphicalRemoval_Post
     end   
 end
 
+clear('h','hLines','k','i')
+
 %% OUTLIER REMOVAL
 % Remove outliers more than three local scaled MAD from the local median
 % Note: movmean (removing outliers more than three local standard deviations
@@ -293,26 +312,29 @@ for i=1:length(outlier_logical_array)
 end
 plot(Data10Hz.datetime,Data10Hz.hcho)
 
-% %% INTEGRATION TIME
-% % Raw data from Harvard FILIF is reported at 10 Hz. Let's also calculate
-% % the 1 sec averaged data as well
-% 
-% disp('Calculating 1 Hz data from the original 10 Hz data')
-% [Data1Hz.posixtime, Data1Hz.hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 3600);
-% 
-% % Convert from posixtime to datetime object and from Greenwich to Eastern time
-% Data1Hz.datetime = datetime(Data1Hz.posixtime,'ConvertFrom','posixtime');
-% Data1Hz.datetime = Data1Hz.datetime - hours(4);
-% 
-% %% PLOT OF HCHO MIXING RATIO
-% % Generates plot of 10 Hz data with 1 Hz HCHO mixing ratio superimposed on top
-% 
-% disp('Plotting 10 and 1 Hz data')
-% if MakePlots
-%     figure,plot(Data10Hz.datetime,Data10Hz.hcho)
-%     hold on
-%     plot(Data1Hz.datetime,Data1Hz.hcho)
-%     title(run_date)
-%     xlabel('Time')
-%     ylabel('HCHO / ppbv')
-% end
+%% INTEGRATION TIME
+% Raw data from Harvard FILIF is reported at 10 Hz. One could also
+% calculate integration times for other averaging periods by uncommenting
+% the below code
+
+% [posixtime_FILIF,hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 3600);
+% datetime_FILIF = datetime(posixtime_FILIF,'ConvertFrom','posixtime');
+
+%% PLOT OF HCHO MIXING RATIO
+% Generates plot of 10 Hz data
+
+disp('Plotting 10 Hz data')
+if s.MakePlots
+    figure,plot(Data10Hz.datetime,Data10Hz.hcho)
+    title(run_date)
+    xlabel('Time')
+    ylabel('HCHO / ppbv')
+end
+
+%% SAVE PROCESSED HCHO DATA AS MAT FILE
+% Save 10 Hz HCHO mixing ratio data as a MAT file in your RAW directory.
+% This file can then be sent around to others as your processed data file.
+
+FILIF.datetime = Data10Hz.datetime;
+FILIF.hcho     = Data10Hz.hcho;
+save(fullfile(RAWdir,'FILIF_ProcessedHCHO.mat'),'FILIF');

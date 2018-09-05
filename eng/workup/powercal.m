@@ -41,12 +41,15 @@ switch caldate
     case '20JUN2018' 
         power_cal = [7.63 6.60 6.85 6.35 5.86 5.34 4.55 3.63 2.88 2.41 2.29 2.06 2.12];
         udt_cal = [0.2113 0.2010 0.2037 0.1983 0.1925 0.1857 0.1745 0.1589 0.1428 0.1306 0.1267 0.1186 0.1211]; %LasPwrIn values         
+    case '26JUN2018' 
+        power_cal = [5.95 7.54 8.31 8.1 9.1 9.61 7.75 6.41 5.66 5.27 4.17 3.69 3.33 3.10 3.20 2.76 2.26 1.92 1.59 1.31 1.05];
+        udt_cal = [0.1933 0.2094 0.2161 0.2145 0.2225 0.2261 0.2125 0.1990 0.1900 0.1846 0.1680 0.1600 0.1530 0.1480 0.1502 0.1400 0.1256 0.1130 0.0985 0.0841 0.0690]; %LasPwrIn values         
     otherwise
         error('Calibration date not recognized!')
 end
 
 %do fit and correct input udt to power
-fitpar = polyfit(udt_cal,power_cal,2); %assume quadratic
+fitpar = polyfit(udt_cal,power_cal,3); %assume quadratic
 power = polyval(fitpar,udt);
 
 if plotme
@@ -54,6 +57,5 @@ if plotme
     xlabel('UDT (V)')
     ylabel('Laser Power (mW)')
     title(caldate)
-    linefit(udt_cal,power_cal,1,2);
+    linefit(udt_cal,power_cal,1,3);
 end
-

@@ -4,6 +4,8 @@
   #define BCTR_BIN_SIZE 211
   #define BCTR_NB_TOTAL ((BCTR_BIN_SIZE-BCTR_DATA_OFFSET)/BCTR_N_CHANNELS)
   #define BCtr_Pfresh_text(x) ((x)?" ":"*")
+  #define BCtr_Yes_No_txt(x) ((x)?"Yes":" No")
+  #define BCtr_OK_FAIL_txt(x) ((x)?"FAIL":"  OK")
 %}
 TM typedef unsigned short BCtr_Cts_t { text "%5u"; }
 TM typedef unsigned short BCtr_Yes_No { text "%3d" BCtr_Yes_No_txt(); }
