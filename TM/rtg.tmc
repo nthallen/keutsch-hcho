@@ -6,7 +6,7 @@ ci_sendfcmd(2, "PhRTG Datum PPS_min_drift %.3lf %s\n",
 ci_sendfcmd(2, "PhRTG Datum PPS_fine %.3lf %s\n", dtime(), text(PPS_fine));
 ci_sendfcmd(2, "PhRTG Datum SysTDrift %.3lf %s\n", dtime(), text(SysTDrift));
 
-ci_sendfcmd(2, "PhRTG Datum LasIn_mW %.3lf %s\n", dtime(), text(BCtr_LasIn_mW));
+ci_sendfcmd(2, "PhRTG Datum LasIn_mW %.3lf %.3lf\n", dtime(), convert(BCtr_LasIn_mW));
 ci_sendfcmd(2, "PhRTG Datum LasOut_mW %.3lf %s\n", dtime(), text(LasOut_mW));
 ci_sendfcmd(2, "PhRTG Datum CellP %.3lf %s\n", dtime(), text(OmegaP));
 ci_sendfcmd(2, "PhRTG Datum LaserV %.3lf %s\n", dtime(), text(BCtr_LaserV));
@@ -25,8 +25,8 @@ HtrDAC_mV_t LaserV_z5;
 ci_sendfcmd(2, "PhRTG Datum BCtr_0 %.3lf %s\n", dtime(), text(BCtr_0_a));
 ci_sendfcmd(2, "PhRTG Datum BCtr_1 %.3lf %s\n", dtime(), text(BCtr_1_a));
 depending on (t_z4 once, LasIn_mW_z3 once)
-  ci_sendfcmd(2, "PhRTG Datum LasPwr %.3lf %s\n",
-              t_z4, text(LasIn_mW_z3));
+  ci_sendfcmd(2, "PhRTG Datum LasPwr %.3lf %.3lf\n",
+              t_z4, convert(LasIn_mW_z3));
 depending on (t_z4 once)
   ci_sendfcmd(2, "PhRTG Datum NormRefCts %.3lf %.1lf\n",
               t_z4, norm_ref_cts_z4);
