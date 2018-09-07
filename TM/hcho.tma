@@ -84,7 +84,7 @@ Partition
 
 %{
   double CellP_integral;
-  #define CELLP_GP (100)
+  #define CELLP_GP (50)
   #define CELLP_GI (20)
   #define CELLP_CLIP_LIMIT 10000
   #define CELLP_INT_LIMIT (CELLP_CLIP_LIMIT/CELLP_GI)
