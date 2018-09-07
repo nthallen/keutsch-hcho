@@ -3,6 +3,7 @@
   #include "nl_assert.h"
   #include "TM_delay.h"
   #include "TM_average.h"
+  #include "HCHO_CAL.h"
 
   BCtr_Trigger_t BCtr_sum(BCtr_Cts_t *Cts, int chan, int from, int to) {
     BCtr_Trigger_t sum = 0;
@@ -86,9 +87,9 @@ TM typedef double ppb_t { text "%9.2lf"; }
   TM_average<mean_cts_t> mnrcts;
   TM_average<mean_cts_t> mnscts;
   /* HCHO_CAL_CONSTANT units are something like:
-      ppb hcho / (counts/(sec*mW))
+      counts/sec/mW/ppb of HCHO
+     This should be defined in HCHO_CAL.h
   */
-  #define HCHO_CAL_CONSTANT 71.87
   /*
     t_z4
     BCtr_0_z4
@@ -222,7 +223,7 @@ depending on (t_z4)
       mfnsctsz4 = mnscts();
       if (mfnsctsz4 >= 0) {
         mean_offline_norm_sample_cts_z4 = mfnsctsz4;
-        hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 * HCHO_CAL_CONSTANT;
+        hcho_mr = (mnnsctsz4 - mfnsctsz4) * 10 / HCHO_CAL_CONSTANT;
         Validate mean_offline_norm_sample_cts_z4;
         Validate hcho_mr;
       }
