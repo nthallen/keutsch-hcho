@@ -4,7 +4,7 @@ BCtr {
   BCtr_1: (BCtr_1_a,6);
   Status: (BCtr_LVstat,8);
   LaserV: (BCtr_LaserV,7) mV;
-  LasIn:  >HBox{(BCtr_Pfresh,1); (BCtr_LasIn_mW,6)} mW;
+  LasIn:  >HBox{(BCtr_Pfresh,1); (BCtr_LasIn_mW,7)} mW;
   Ready:  (BCtr_Ready,3);
   Enable: (BCtr_Enable,3);
   DRdy:   (BCtr_DRdy,3);

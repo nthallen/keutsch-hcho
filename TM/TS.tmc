@@ -11,7 +11,7 @@ TM typedef double TS_CELCIUS;
 TM typedef double TS_T_t { text "%7.2lf"; convert TS_CELCIUS; }
 TM typedef double TS_V_t { text "%9.5lf"; }
 TM typedef double Laser_mW;
-TM typedef double LaserPwr_t { text "%6.4lf"; convert Laser_mW; }
+TM typedef double LaserPwr_t { text "%7.4lf"; convert Laser_mW; }
 Calibration (LaserPwr_t,Laser_mW) {
   0.00000, 0.00,
   0.32439, 1.41,
