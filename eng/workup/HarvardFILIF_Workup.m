@@ -2,7 +2,7 @@
 % Convert raw data from the Harvard FILIF instrument into HCHO mixing ratios
 
 % This code assumes that data is stored on the Lenovo D:\ drive
-% Change variables in INITIALIZATION section before each experimental run
+% Change variables in INITIALIZATION sections before each experimental run
 
 % 06FEB2018: Creation Date (JDS)
 % 17APR2018: v1.00 Release (JDS)
@@ -12,8 +12,9 @@
 %% FOLDER INITIALIZATION
 % Specify where FILIF raw data is located by its run date
 
-run_date = '180627.1'; % Specify raw data folder name (e.g. '180627.1')
+run_date = '180914.1'; % Specify raw data folder name (e.g. '180627.1')
 RAWdir = ['D:\Data\HCHO\RAW\',run_date,'\'];
+addpath(RAWdir)
 
 %% WORKUP SETTINGS INITIALIZATION
 % Loads workup settings if they already exist or will create a new settings
@@ -24,22 +25,22 @@ file_exist_check = exist(fullfile(RAWdir,'WorkupSettings.mat'), 'file');
 if file_exist_check == 2
     load('WorkupSettings.mat')
 else
-    s.powercal_date = '26JUN2018';      % Specify which power meter calibration to use for powercal.m
-    s.cal_factor = 78.76;               % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
+    s.powercal_date = '12SEPT2018';      % Specify which power meter calibration to use for powercal.m
+    s.cal_factor = 83.9;                  % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
     s.DitherEnabled = true;             % Specify true if dithering was enabled during data collection
-    s.MaxLaserVoltage = 130;            % Specify average max laser voltage seen during experiment 225
+    s.MaxLaserVoltage = 260;            % Specify average max laser voltage seen during experiment 225
     s.min_acceptable_power = 0.09;      % Minimum power that's considered acceptable (in V) was 0.22
-    s.mVwindow = 80;                    % Specify allowed range for possible max laser voltages in refcellcorrect.m
+    s.mVwindow = 250;                    % Specify allowed range for possible max laser voltages in refcellcorrect.m
     s.SWScode = 6;                      % Specify chopping used during experiment (5-min chop cycle = 6; 1-min chop cycle = 5)
     save(fullfile(RAWdir,'WorkupSettings.mat'),'s');
 end
 
 %% GRAPHICAL REMOVAL AND PLOTTING OPTIONS
 
-    s.GraphicalRemoval = false;          % Option to interactively remove data by graphical selection (via brush in Figure palette)
-    s.GraphicalRemoval_Post = false;     % Option to interactively remove data by graphical selection after conversion into HCHO mixing ratio
-    s.MakeRefCellCorrectPlot = false;    % Plot of ref cell correct graph
-    s.MakePowerPlots = false;            % Plot of power calibration curve
+    s.GraphicalRemoval = true;          % Option to interactively remove data by graphical selection (via brush in Figure palette)
+    s.GraphicalRemoval_Post = true;     % Option to interactively remove data by graphical selection after conversion into HCHO mixing ratio
+    s.MakeRefCellCorrectPlot = true;    % Plot of ref cell correct graph
+    s.MakePowerPlots = true;            % Plot of power calibration curve
     s.MakePlots = true;                 % Plot of final HCHO mixing ratio (false or true)
 
 %% LOAD RAW MAT FILES
@@ -317,15 +318,15 @@ plot(Data10Hz.datetime,Data10Hz.hcho)
 % calculate integration times for other averaging periods by uncommenting
 % the below code
 
-% [posixtime_FILIF,hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 3600);
-% datetime_FILIF = datetime(posixtime_FILIF,'ConvertFrom','posixtime');
+ [posixtime_FILIF,hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 30);
+ datetime_FILIF = datetime(posixtime_FILIF,'ConvertFrom','posixtime');
 
 %% PLOT OF HCHO MIXING RATIO
-% Generates plot of 10 Hz data
+% Generates plot of the HCHO mixing ratio from the previous section
 
 disp('Plotting 10 Hz data')
 if s.MakePlots
-    figure,plot(Data10Hz.datetime,Data10Hz.hcho)
+    figure,plot(datetime_FILIF,hcho,'.')
     title(run_date)
     xlabel('Time')
     ylabel('HCHO / ppbv')
