@@ -1,19 +1,26 @@
 ModuleDef TFL [ TBLNAME=TFL ] {
   Module TFL collects data from the Thermo Scientific
   TFL 3000 Laser
+  This module supports modes 'present' and 'absent'.
+  mode 'absent' provides a mostly empty TFL.tbl
 }
 
-mode (default) {
+mode (present, default) {
   tmcbase = TFL.tmc
   colbase = TFL_col.tmc
   cmdbase = TFL.cmd
-  genuibase = TFL.genui
+  genuibase = TFL.genui:TFL.genui.in
   - : TFL.tbl:TFL.tbl.in
   DISTRIB = @MODDIR@/../tfl
   CPPFLAGS = -I @MODDIR@/..
   %%
 @MODDIR@/../tfl :
 	cd @MODDIR@/.. && make
+}
+
+mode (absent) [GENUIFMT=%-] {
+  genuibase = TFL.genui:TFL.genui.in
+  - : TFL.tbl:TFLabsent.tbl.in
 }
 
 %%

@@ -8,11 +8,11 @@ State Init {
       > Laser Chop NPts Online 50
       > Laser Chop NPts Offline 50
       > Laser Drift Limit Set 30
-      > TFL Set Pump Diode Current 3 A
-      > TFL Set Seed Diode 1 Current 109 mA
-      > TFL Set Seed Diode 1 Temperature 4.6 C
-      > TFL Set SHG Temperature 27.94 C
-      > TFL Set THG Temperature 33.07 C
+#     > TFL Set Pump Diode Current 3 A
+#     > TFL Set Seed Diode 1 Current 109 mA
+#     > TFL Set Seed Diode 1 Temperature 4.6 C
+#     > TFL Set SHG Temperature 27.94 C
+#     > TFL Set THG Temperature 33.07 C
       > SWStat Chop Dither Enable
   +10 > Log Initiating PPS Synchronization
       Validate PPS_synch;
@@ -272,67 +272,67 @@ State Chop_Active {
 #    should be discarded, as it frequently shows signs of transitional
 #    values which are likely not representative of the actual laser
 #    power.
-%{
-  int thg_prev_chop_mode = 0; // 0xA == online, 0xC == offline
-  int thg_chop_mode_idx = 2; // 0==online, 1==offline, 2==other
-  double thg_power[2];
-  int thg_n_pwr;
-  // bool thg_not_first;
-  bool thg_peakup_enable = true;
-  #define THG_DEADBAND 0.015
-  #include "TM_average.h"
-  TM_average<double> LasPwrAvg;
-%}
-
-{
-  mV_offset_t curr_offline_delta;
-  curr_offline_delta = LV_offdelta;
-  TFL_uint4_2_t curr_TFL_THG_SP;
-  curr_TFL_THG_SP = TFL_THG_SP;
-  
-  depending on (t_z4) {
-    int crnt_chop_mode;
-    crnt_chop_mode = (LVstat_z4 & 0xF);
-    if (crnt_chop_mode != thg_prev_chop_mode) {
-      double avg_pwr;
-      avg_pwr = LasPwrAvg();
-      switch (thg_chop_mode_idx) {
-        case 2: /* Not monitoring */
-          if (crnt_chop_mode == 0xA) { /* online */
-            thg_chop_mode_idx = 0;
-          }
-          break;
-        case 0: /* Online */
-          if (crnt_chop_mode == 0xC && avg_pwr >= 0) { /* offline */
-            thg_power[0] = avg_pwr;;
-            thg_chop_mode_idx = 1;
-          } else {
-            thg_chop_mode_idx = 2;
-          }
-          break;
-        case 1: /* Offline */
-          if (avg_pwr >= 0 && thg_peakup_enable) {
-            double ratio;
-            thg_power[1] = avg_pwr;
-            ratio = (thg_power[0]-thg_power[1])/(thg_power[0]+thg_power[1]);
-            if (fabs(ratio) > THG_DEADBAND) {
-              ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
-                convert(curr_TFL_THG_SP) +
-                (((ratio > 0) != (curr_offline_delta > 0)) ?
-                  -0.01 : 0.01));
-            }
-          }
-          thg_chop_mode_idx = 2; /* skip the next cycle */
-          break;
-        default:
-          thg_chop_mode_idx = 2;
-          break;
-      }
-      thg_prev_chop_mode = crnt_chop_mode;
-    }
-    LasPwrAvg(convert(LasIn_mW_z3));
-  }
-}
+# %{
+#   int thg_prev_chop_mode = 0; // 0xA == online, 0xC == offline
+#   int thg_chop_mode_idx = 2; // 0==online, 1==offline, 2==other
+#   double thg_power[2];
+#   int thg_n_pwr;
+#   // bool thg_not_first;
+#   bool thg_peakup_enable = true;
+#   #define THG_DEADBAND 0.015
+#   #include "TM_average.h"
+#   TM_average<double> LasPwrAvg;
+# %}
+# 
+# {
+#   mV_offset_t curr_offline_delta;
+#   curr_offline_delta = LV_offdelta;
+#   TFL_uint4_2_t curr_TFL_THG_SP;
+#   curr_TFL_THG_SP = TFL_THG_SP;
+#   
+#   depending on (t_z4) {
+#     int crnt_chop_mode;
+#     crnt_chop_mode = (LVstat_z4 & 0xF);
+#     if (crnt_chop_mode != thg_prev_chop_mode) {
+#       double avg_pwr;
+#       avg_pwr = LasPwrAvg();
+#       switch (thg_chop_mode_idx) {
+#         case 2: /* Not monitoring */
+#           if (crnt_chop_mode == 0xA) { /* online */
+#             thg_chop_mode_idx = 0;
+#           }
+#           break;
+#         case 0: /* Online */
+#           if (crnt_chop_mode == 0xC && avg_pwr >= 0) { /* offline */
+#             thg_power[0] = avg_pwr;;
+#             thg_chop_mode_idx = 1;
+#           } else {
+#             thg_chop_mode_idx = 2;
+#           }
+#           break;
+#         case 1: /* Offline */
+#           if (avg_pwr >= 0 && thg_peakup_enable) {
+#             double ratio;
+#             thg_power[1] = avg_pwr;
+#             ratio = (thg_power[0]-thg_power[1])/(thg_power[0]+thg_power[1]);
+#             if (fabs(ratio) > THG_DEADBAND) {
+#               ci_sendfcmd(0, "TFL Set THG Temperature %.2lf C\n",
+#                 convert(curr_TFL_THG_SP) +
+#                 (((ratio > 0) != (curr_offline_delta > 0)) ?
+#                   -0.01 : 0.01));
+#             }
+#           }
+#           thg_chop_mode_idx = 2; /* skip the next cycle */
+#           break;
+#         default:
+#           thg_chop_mode_idx = 2;
+#           break;
+#       }
+#       thg_prev_chop_mode = crnt_chop_mode;
+#     }
+#     LasPwrAvg(convert(LasIn_mW_z3));
+#   }
+# }
 
 Partition
 # This partition controls calibration sequences
