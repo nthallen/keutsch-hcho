@@ -12,8 +12,6 @@ ci_sendfcmd(2, "PhRTG Datum CellP %.3lf %s\n", dtime(), text(OmegaP));
 ci_sendfcmd(2, "PhRTG Datum LaserV %.3lf %s\n", dtime(), text(BCtr_LaserV));
 ci_sendfcmd(2, "PhRTG Datum LaserLims %.3lf %.1lf %.1lf %.1lf %.1lf\n", dtime(),
   convert(LV_start), convert(LV_stop), convert(LV_online), convert(LV_offline));
-ci_sendfcmd(2, "PhRTG Datum THG %.3lf %.2lf %.2lf\n", dtime(),
-        convert(TFL_THG), convert(TFL_THG_SP));
 
 int rtg_is_scanning, rtg_was_scanning;
 int scan_index;

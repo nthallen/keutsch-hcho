@@ -30,8 +30,6 @@
   : Peak Detect Disable { $0 = SWS_PEAK_DISABLE; }
   : Chop Dither Enable { $0 = SWS_DITHER_ENABLE; }
   : Chop Dither Disable { $0 = SWS_DITHER_DISABLE; }
-  : THG Peakup Enable { $0 = SWS_THG_PEAKUP_ENABLE; }
-  : THG Peakup Disable { $0 = SWS_THG_PEAKUP_DISABLE; }
   : Cal Idle { $0 = SWS_CAL_IDLE; }
   : Cal Zero 60min { $0 = SWS_CAL_ZERO_60MIN; }
   : Cal Zero 15min { $0 = SWS_CAL_ZERO_15MIN; }
