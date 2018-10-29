@@ -1,13 +1,14 @@
 State Init {
       > Telemetry Start
-   +1 > Laser Set Scan Start 195
-      > Laser Set Scan Stop 295
-      > Laser Set Scan Step 1
-      > Laser Set Offline Delta 45
-      > Laser Set Online Dither 1
+   +1 > Laser Set Scan Start 170
+      > Laser Set Scan Stop 255
+      > Laser Set Scan Step 0.25
+      > Laser Set Offline Delta 55
+      > Laser Set Online Dither 0.1
+	  > Laser Set Online Position 185
       > Laser Chop NPts Online 50
       > Laser Chop NPts Offline 50
-      > Laser Drift Limit Set 30
+      > Laser Drift Limit Set 10
 #     > TFL Set Pump Diode Current 3 A
 #     > TFL Set Seed Diode 1 Current 109 mA
 #     > TFL Set Seed Diode 1 Temperature 4.6 C
