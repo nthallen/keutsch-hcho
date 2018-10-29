@@ -12,7 +12,7 @@
 %% FOLDER INITIALIZATION
 % Specify where FILIF raw data is located by its run date
 
-run_date = '181015.1'; % Specify raw data folder name (e.g. '180627.1')
+run_date = '181027.2'; % Specify raw data folder name (e.g. '180627.1')
 RAWdir = ['D:\Data\HCHO\RAW\',run_date,'\'];
 addpath(RAWdir)
 
@@ -25,13 +25,13 @@ file_exist_check = exist(fullfile(RAWdir,'WorkupSettings.mat'), 'file');
 if file_exist_check == 2
     load('WorkupSettings.mat')
 else
-    s.powercal_date = '13OCT2018';      % Specify which power meter calibration to use for powercal.m
-    s.cal_factor = 68.86;                  % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
+    s.powercal_date = '28OCT2018';      % Specify which power meter calibration to use for powercal.m
+    s.cal_factor = 58.7;                  % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
     s.DitherEnabled = true;             % Specify true if dithering was enabled during data collection
-    s.MaxLaserVoltage = 400;            % Specify average max laser voltage seen during experiment 225
+    s.MaxLaserVoltage = 250;            % Specify average max laser voltage seen during experiment 225
     s.min_acceptable_power = 0.09;      % Minimum power that's considered acceptable (in V) was 0.22
-    s.mVwindow = 390;                    % Specify allowed range for possible max laser voltages in refcellcorrect.m
-    s.SWScode = 6;                      % Specify chopping used during experiment (5-min chop cycle = 6; 1-min chop cycle = 5)
+    s.mVwindow = 250;                    % Specify allowed range for possible max laser voltages in refcellcorrect.m
+    s.SWScode = 5;                      % Specify chopping used during experiment (5-min chop cycle = 6; 1-min chop cycle = 5)
     save(fullfile(RAWdir,'WorkupSettings.mat'),'s');
 end
 
@@ -76,8 +76,22 @@ Data1Hz.datetime = Data1Hz.datetime - hours(4);
 % BCtr_1: Sample cell
 
 disp('Converting raw counts to CPS')
-Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a;
-Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
+%Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a;
+%Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
+
+Data10Hz.BCtr_0_a_rev = [];
+Data10Hz.BCtr_1_a_rev = [];
+
+for i = 1:length(BCtr.BCtr0)
+    Data10Hz.BCtr_0_a_rev(i) = sum(BCtr.BCtr0(i,7:80));
+    Data10Hz.BCtr_1_a_rev(i) = sum(BCtr.BCtr1(i,7:80));
+end
+
+Data10Hz.BCtr_0_a_rev = Data10Hz.BCtr_0_a_rev';
+Data10Hz.BCtr_1_a_rev = Data10Hz.BCtr_1_a_rev';
+
+Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a_rev;
+Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a_rev;
 
 %% PRESSURE CHECK
 % Discard points where the pressure was either above 115.3 Torr or less
@@ -101,12 +115,11 @@ end
 % First we need to correct the number of triggers due to some being a
 % multiple of 2^13 away from the true value
 
-disp('Normalizing to trigger count')
-corrected_Ntrigger = trigcorrect(Data10Hz.BCtr_NTrigger);
+disp('NOT Normalizing to trigger count')
 
 % Then normalize to 30,000 triggers
-Data10Hz.trignorm_ref = 30000*(Data10Hz.ref_rawcps./corrected_Ntrigger); 
-Data10Hz.trignorm_sample = 30000*(Data10Hz.sample_rawcps./corrected_Ntrigger);
+Data10Hz.trignorm_ref = Data10Hz.ref_rawcps; 
+Data10Hz.trignorm_sample = Data10Hz.sample_rawcps;
 
 %% REMOVE POINTS WHERE POWER WAS TOO LOW
 % Remove points below the acceptable laser power
@@ -237,8 +250,8 @@ Data10Hz.diffcounts = diffcounts(Data10Hz,index);
 
 % Correct for the fact that the laser voltage reported by QNX doesn't
 % always track with the actual laser voltage of the laser
-disp('Ref Cell Correct Algorithm')
-Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,s.MaxLaserVoltage,'interpolate',s.MakeRefCellCorrectPlot,s.mVwindow,s.SWScode);
+%disp('Ref Cell Correct Algorithm')
+%Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,s.MaxLaserVoltage,'interpolate',s.MakeRefCellCorrectPlot,s.mVwindow,s.SWScode);
 
 %Find indices not equal to the online indices and assign NaN
 Data10Hz.diffcounts([index.offline;index.scan;index.rm_online;index.rm_offline]) = NaN;
@@ -318,7 +331,7 @@ plot(Data10Hz.datetime,Data10Hz.hcho)
 % calculate integration times for other averaging periods by uncommenting
 % the below code
 
- [posixtime_FILIF,hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 1);
+ [posixtime_FILIF,hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 300);
  datetime_FILIF = datetime(posixtime_FILIF,'ConvertFrom','posixtime');
 
 %% PLOT OF HCHO MIXING RATIO
