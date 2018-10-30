@@ -1,65 +1,48 @@
 %% PREAMBLE
 % Convert raw data from the Harvard FILIF instrument into HCHO mixing ratios
 
-% This code assumes that data is stored on the Lenovo D:\ drive
-% Change variables in INITIALIZATION sections before each experimental run
+% Please navigate to the directory containing your config.ini file before
+% running this script
 
 % 06FEB2018: Creation Date (JDS)
 % 17APR2018: v1.00 Release (JDS)
 % 17JUN2018: v1.50 Release (JDS): Added graphical removal capabilities
 % 30JUN2018: v2.00 Release (JDS): Ability to save workup settings; code reorganization
+% 30OCT2018: v3.00 Release (JDS): Accommodating HUVFL and code optimization; addition of config.ini capabilities
 
-%% FOLDER INITIALIZATION
-% Specify where FILIF raw data is located by its run date
+%% SETTINGS AND FOLDER INITIALIZATION
+% Settings for a run are located in a user-defined config.ini file. Please
+% see an example config.ini file for more details.
 
-run_date = '181027.2'; % Specify raw data folder name (e.g. '180627.1')
-RAWdir = ['D:\Data\HCHO\RAW\',run_date,'\'];
-addpath(RAWdir)
-
-%% WORKUP SETTINGS INITIALIZATION
-% Loads workup settings if they already exist or will create a new settings
-% file if this is the first time working up the data.
-
-file_exist_check = exist(fullfile(RAWdir,'WorkupSettings.mat'), 'file');
-
-if file_exist_check == 2
-    load('WorkupSettings.mat')
-else
-    s.powercal_date = '28OCT2018';      % Specify which power meter calibration to use for powercal.m
-    s.cal_factor = 58.7;                  % counts/s/ppbv/mW; Determined from calibration runs (was 71.87)
-    s.DitherEnabled = true;             % Specify true if dithering was enabled during data collection
-    s.MaxLaserVoltage = 250;            % Specify average max laser voltage seen during experiment 225
-    s.min_acceptable_power = 0.09;      % Minimum power that's considered acceptable (in V) was 0.22
-    s.mVwindow = 250;                    % Specify allowed range for possible max laser voltages in refcellcorrect.m
-    s.SWScode = 5;                      % Specify chopping used during experiment (5-min chop cycle = 6; 1-min chop cycle = 5)
-    save(fullfile(RAWdir,'WorkupSettings.mat'),'s');
+% Load configuration file containing settings
+s = ini2struct('config.ini');
+fields = fieldnames(s); % List field names in the settings structure
+for i = 1:numel(fields) 
+    s.(fields{i}) = str2double(s.(fields{i})); % Convert character strings to numerical values
 end
 
-%% GRAPHICAL REMOVAL AND PLOTTING OPTIONS
-
-    s.GraphicalRemoval = true;          % Option to interactively remove data by graphical selection (via brush in Figure palette)
-    s.GraphicalRemoval_Post = true;     % Option to interactively remove data by graphical selection after conversion into HCHO mixing ratio
-    s.MakeRefCellCorrectPlot = true;    % Plot of ref cell correct graph
-    s.MakePowerPlots = true;            % Plot of power calibration curve
-    s.MakePlots = true;                 % Plot of final HCHO mixing ratio (false or true)
+s.run_date = num2str(s.run_date);
+RAWdir = ['D:\Data\HCHO\RAW\',s.run_date,'\'];
+addpath(RAWdir)
 
 %% LOAD RAW MAT FILES
 
 disp('Loading MAT files')
-[BCtr,Data1Hz,Data10Hz] = loadFILIF(run_date); % Load MAT raw data files
+[BCtr,Data1Hz,Data10Hz] = loadFILIF(s.run_date); % Load MAT raw data files
 
 %% TIME CONVERSION
-% Convert the time in the Data10Hz structure to something more useful
-% Data10Hz.Thchoeng_10 is needed when averaging over longer integration
-% times (with binavg.m)
+% Convert the time in the Data10Hz and Data1Hz structures to Matlab
+% datetime objects. Please note that Data10Hz.Thchoeng_10 is needed when 
+% averaging over longer integration times (with binavg.m)
 
 disp('Converting instrument posixtime to Matlab datetime object')
 Data10Hz.datetime = datetime(Data10Hz.Thchoeng_10,'ConvertFrom','posixtime');
 Data1Hz.datetime = datetime(Data1Hz.Thchoeng_1,'ConvertFrom','posixtime');
 
-% Convert from Greenwich to Eastern Time
-Data10Hz.datetime = Data10Hz.datetime - hours(4);
-Data1Hz.datetime = Data1Hz.datetime - hours(4);
+if s.local_time_convert
+    Data10Hz.datetime = Data10Hz.datetime - hours(s.time_adjust);
+    Data1Hz.datetime = Data1Hz.datetime - hours(s.time_adjust);
+end
 
 %% CONVERT TO CPS
 % Unlike most other PMTs, our Sens-Tech PMTs output a TTL signal where a
@@ -94,44 +77,38 @@ Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a_rev;
 Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a_rev;
 
 %% PRESSURE CHECK
-% Discard points where the pressure was either above 115.3 Torr or less
-% than 114.7 Torr
+% Discard points whose pressures are above or below the specified values in config.ini
 
 disp('Pressure check data')
 Data10Hz.OmegaP_interpolated = interp1(Data1Hz.Thchoeng_1,Data1Hz.OmegaP,Data10Hz.Thchoeng_10);
 
 for i = 1:length(Data10Hz.Thchoeng_10)
-    if Data10Hz.OmegaP_interpolated(i) > 115.3 || Data10Hz.OmegaP_interpolated(i) < 114.7
+    if Data10Hz.OmegaP_interpolated(i) > s.max_pressure || Data10Hz.OmegaP_interpolated(i) < s.min_pressure
         Data10Hz.ref_rawcps(i) = NaN;
         Data10Hz.sample_rawcps(i) = NaN;
     end
 end
 
-%% NORMALIZING RAW COUNTS TO NUMBER OF TRIGGERS
-% Since each 10 Hz data point (100 ms) should ideally have 30,000 triggers 
-% (the rep rate of the laser is 300 kHz), the raw counts are normalized
-% such that no particular point had more or less triggers than any other point.
-
-% First we need to correct the number of triggers due to some being a
-% multiple of 2^13 away from the true value
-
-disp('NOT Normalizing to trigger count')
-
-% Then normalize to 30,000 triggers
-Data10Hz.trignorm_ref = Data10Hz.ref_rawcps; 
-Data10Hz.trignorm_sample = Data10Hz.sample_rawcps;
-
-%% REMOVE POINTS WHERE POWER WAS TOO LOW
-% Remove points below the acceptable laser power
+%% LASER POWER CHECK
+% Remove points below the acceptable laser power specified in config.ini
 
 disp('Discarding points below acceptable laser power limit')
-for i = 1:length(Data10Hz.trignorm_ref)
+for i = 1:length(Data10Hz.ref_rawcps)
     if Data10Hz.BCtr_LasIn_mW(i) < s.min_acceptable_power
-        Data10Hz.trignorm_ref(i)    = NaN;
-        Data10Hz.trignorm_sample(i) = NaN;
+        Data10Hz.ref_rawcps(i)    = NaN;
+        Data10Hz.sample_rawcps(i) = NaN;
         Data10Hz.BCtr_LasIn_mW(i)   = NaN;
     end    
 end
+
+%% NORMALIZING RAW COUNTS TO NUMBER OF TRIGGERS
+% Since each 10 Hz data point (100 ms) should ideally have 49,388 triggers 
+% (the rep rate of the laser is 493.88 kHz), the raw counts are normalized
+% such that no particular point had more or less triggers than any other point.
+
+disp('Normalizing to trigger count')
+Data10Hz.trignorm_ref = 49388*(Data10Hz.ref_rawcps./Data10Hz.BCtr_NTrigger); 
+Data10Hz.trignorm_sample = 49388*(Data10Hz.sample_rawcps./Data10Hz.BCtr_NTrigger);
 
 %% REMOVE DATA BY GRAPHICAL SELECTION (OPTIONAL)
 % Manually remove points by using the brush tool provided in the Matlab
@@ -154,7 +131,7 @@ if file_exist_check == 2
     loaded_ptsRemoved = ptsRemoved;
 end
 
-if s.GraphicalRemoval
+if s.graphical_removal
     
     figure
     h = pan;
@@ -210,10 +187,9 @@ clear('ax1','ax2','ax3','h','hLines','file_exist_check')
 
 %% POWER-NORMALIZING RAW COUNTS
 % Power-normalize the counts using the LasPwrIn
-% 01JUN2018 Update: Remove points that simply have too low of power 
 
 disp('Normalizing counts to laser power')
-power = powercal(Data10Hz.BCtr_LasIn_mW,s.powercal_date,s.MakePowerPlots);
+power = Data10Hz.BCtr_LasIn_mW;
 
 Data10Hz.powernorm_ref = Data10Hz.trignorm_ref./power;
 Data10Hz.powernorm_sample = Data10Hz.trignorm_sample./power;
@@ -238,7 +214,7 @@ index.scan = scancorrect(index.scan);
 % have to correct for this here
 
 disp('Dither Correction')
-if s.DitherEnabled
+if s.dither_enable
     [Data10Hz.powernorm_sample, Data10Hz.powernorm_ref] = dithercorrect(Data10Hz);
 end
 
@@ -251,7 +227,7 @@ Data10Hz.diffcounts = diffcounts(Data10Hz,index);
 % Correct for the fact that the laser voltage reported by QNX doesn't
 % always track with the actual laser voltage of the laser
 %disp('Ref Cell Correct Algorithm')
-%Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,s.MaxLaserVoltage,'interpolate',s.MakeRefCellCorrectPlot,s.mVwindow,s.SWScode);
+%Data10Hz.diffcounts = refcellcorrect(Data10Hz,Data1Hz,s.max_laser_voltage,'interpolate',s.make_ref_cell_correct_plot,s.mv_window,s.swscode);
 
 %Find indices not equal to the online indices and assign NaN
 Data10Hz.diffcounts([index.offline;index.scan;index.rm_online;index.rm_offline]) = NaN;
@@ -265,7 +241,7 @@ Data10Hz.hcho = Data10Hz.diffcounts./s.cal_factor;
 % Now that HCHO mixing ratios have been calculated, here is another
 % opportunity to appropriately remove extraneous points.
 
-if s.GraphicalRemoval_Post
+if s.graphical_removal_post
     
     figure
     h = pan;
@@ -326,21 +302,14 @@ for i=1:length(outlier_logical_array)
 end
 plot(Data10Hz.datetime,Data10Hz.hcho)
 
-%% INTEGRATION TIME
-% Raw data from Harvard FILIF is reported at 10 Hz. One could also
-% calculate integration times for other averaging periods by uncommenting
-% the below code
-
- [posixtime_FILIF,hcho] = binavg(Data10Hz.Thchoeng_10, Data10Hz.hcho, 300);
- datetime_FILIF = datetime(posixtime_FILIF,'ConvertFrom','posixtime');
 
 %% PLOT OF HCHO MIXING RATIO
-% Generates plot of the HCHO mixing ratio from the previous section
+% Generates plot of the 10 Hz HCHO mixing ratio
 
 disp('Plotting 10 Hz data')
-if s.MakePlots
-    figure,plot(datetime_FILIF,hcho,'-') % This is plotting UTC!
-    title(run_date)
+if s.make_plots
+    figure,plot(Data10Hz.datetime,Data10Hz.hcho)
+    title(s.run_date)
     xlabel('Time')
     ylabel('HCHO / ppbv')
 end
