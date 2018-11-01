@@ -11,4 +11,4 @@
   2018-09-07 NTA 3.91 V == 1 mW
   2018-09-07 NTA/JDS nonlinear cal
 */
-#define HCHO_CAL_CONSTANT 1
+#define HCHO_CAL_CONSTANT 27.4
