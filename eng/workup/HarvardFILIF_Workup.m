@@ -59,22 +59,22 @@ end
 % BCtr_1: Sample cell
 
 disp('Converting raw counts to CPS')
-%Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a;
-%Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
+Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a;
+Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
 
-Data10Hz.BCtr_0_a_rev = [];
-Data10Hz.BCtr_1_a_rev = [];
-
-for i = 1:length(BCtr.BCtr0)
-    Data10Hz.BCtr_0_a_rev(i) = sum(BCtr.BCtr0(i,7:80));
-    Data10Hz.BCtr_1_a_rev(i) = sum(BCtr.BCtr1(i,7:80));
-end
-
-Data10Hz.BCtr_0_a_rev = Data10Hz.BCtr_0_a_rev';
-Data10Hz.BCtr_1_a_rev = Data10Hz.BCtr_1_a_rev';
-
-Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a_rev;
-Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a_rev;
+% Data10Hz.BCtr_0_a_rev = [];
+% Data10Hz.BCtr_1_a_rev = [];
+% 
+% for i = 1:length(BCtr.BCtr0)
+%     Data10Hz.BCtr_0_a_rev(i) = sum(BCtr.BCtr0(i,7:80));
+%     Data10Hz.BCtr_1_a_rev(i) = sum(BCtr.BCtr1(i,7:80));
+% end
+% 
+% Data10Hz.BCtr_0_a_rev = Data10Hz.BCtr_0_a_rev';
+% Data10Hz.BCtr_1_a_rev = Data10Hz.BCtr_1_a_rev';
+% 
+% Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a_rev;
+% Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a_rev;
 
 %% PRESSURE CHECK
 % Discard points whose pressures are above or below the specified values in config.ini
