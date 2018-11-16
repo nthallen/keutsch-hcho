@@ -4,7 +4,7 @@
 %% FOLDER INITIALIZATION
 % Specify where FILIF raw data is located by its run date
 
-run_date = '181011.1'; % Specify raw data folder name (e.g. '181026.1')
+run_date = '181027.2'; % Specify raw data folder name (e.g. '181026.1')
 RAWdir = ['D:\Data\HCHO\RAW\',run_date,'\'];
 addpath(RAWdir)
 
@@ -28,7 +28,7 @@ ending   = 41000; % Specify last fluorescence curve to plot 41000
 
 figure
 for i=starting:ending
-    plot(BCtr.BCtr0(i,:))
+    plot(BCtr.BCtr1(i,:))
     hold on
 end
 xlabel('Bins')
