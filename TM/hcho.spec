@@ -33,7 +33,7 @@ cmdbase = fcc.cmd
 genuibase = fcc.genui
 
 Module TMbase
-Module BCtr rate=10 NA=1,90
+Module BCtr rate=10 NA=1,90 from=12 to=45
 tmcbase = pps_time.tmc
 Module TFL mode=absent
 
