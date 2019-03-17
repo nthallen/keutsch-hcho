@@ -8,7 +8,7 @@ State Init {
 	  > Laser Set Online Position 185
       > Laser Chop NPts Online 50
       > Laser Chop NPts Offline 50
-      > Laser Drift Limit Set 10
+      > Laser Drift Limit Set 20
 #     > TFL Set Pump Diode Current 3 A
 #     > TFL Set Seed Diode 1 Current 109 mA
 #     > TFL Set Seed Diode 1 Temperature 4.6 C

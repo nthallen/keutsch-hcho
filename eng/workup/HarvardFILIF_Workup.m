@@ -10,7 +10,7 @@
 % 30JUN2018: v2.00 Release (JDS): Ability to save workup settings; code reorganization
 % 30OCT2018: v3.00 Release (JDS): Accommodating HUVFL and code optimization; addition of config.ini capabilities
 
-%% SETTINGS AND FOLDER INITIALIZATION
+% SETTINGS AND FOLDER INITIALIZATION
 % Settings for a run are located in a user-defined config.ini file. Please
 % see an example config.ini file for more details.
 
@@ -25,12 +25,12 @@ s.run_date = num2str(s.run_date);
 RAWdir = ['D:\Data\HCHO\RAW\',s.run_date,'\'];
 addpath(RAWdir)
 
-%% LOAD RAW MAT FILES
+% LOAD RAW MAT FILES
 
 disp('Loading MAT files')
 [BCtr,Data1Hz,Data10Hz] = loadFILIF(s.run_date); % Load MAT raw data files
 
-%% TIME CONVERSION
+% TIME CONVERSION
 % Convert the time in the Data10Hz and Data1Hz structures to Matlab
 % datetime objects. Please note that Data10Hz.Thchoeng_10 is needed when 
 % averaging over longer integration times (with binavg.m)
@@ -44,7 +44,7 @@ if s.local_time_convert
     Data1Hz.datetime = Data1Hz.datetime - hours(s.time_adjust);
 end
 
-%% CONVERT TO CPS
+% CONVERT TO CPS
 % Unlike most other PMTs, our Sens-Tech PMTs output a TTL signal where a
 % rising and falling edge of the signal correspond to two photons rather
 % than just to a single photon. (Note: If one were to count photons with an
@@ -59,24 +59,10 @@ end
 % BCtr_1: Sample cell
 
 disp('Converting raw counts to CPS')
-% Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a;
-% Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
-
-Data10Hz.BCtr_0_a_rev = [];
-Data10Hz.BCtr_1_a_rev = [];
-
-for i = 1:length(BCtr.BCtr0)
-    Data10Hz.BCtr_0_a_rev(i) = sum(BCtr.BCtr0(i,7:80));
-    Data10Hz.BCtr_1_a_rev(i) = sum(BCtr.BCtr1(i,7:80));
-end
-
-Data10Hz.BCtr_0_a_rev = Data10Hz.BCtr_0_a_rev';
-Data10Hz.BCtr_1_a_rev = Data10Hz.BCtr_1_a_rev';
-
-Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a_rev;
-Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a_rev;
-
-%% PRESSURE CHECK
+Data10Hz.ref_rawcps    = (10.)*Data10Hz.BCtr_0_a;
+Data10Hz.sample_rawcps = (10.)*Data10Hz.BCtr_1_a;
+ 
+% PRESSURE CHECK
 % Discard points whose pressures are above or below the specified values in config.ini
 
 disp('Pressure check data')
@@ -89,7 +75,7 @@ for i = 1:length(Data10Hz.Thchoeng_10)
     end
 end
 
-%% LASER POWER CHECK
+% LASER POWER CHECK
 % Remove points below the acceptable laser power specified in config.ini
 
 disp('Discarding points below acceptable laser power limit')
@@ -101,7 +87,7 @@ for i = 1:length(Data10Hz.ref_rawcps)
     end    
 end
 
-%% NORMALIZING RAW COUNTS TO NUMBER OF TRIGGERS
+% NORMALIZING RAW COUNTS TO NUMBER OF TRIGGERS
 % Since each 10 Hz data point (100 ms) should ideally have 49,388 triggers 
 % (the rep rate of the laser is 493.88 kHz), the raw counts are normalized
 % such that no particular point had more or less triggers than any other point.
@@ -194,7 +180,7 @@ power = Data10Hz.BCtr_LasIn_mW;
 Data10Hz.powernorm_ref = Data10Hz.trignorm_ref./power;
 Data10Hz.powernorm_sample = Data10Hz.trignorm_sample./power;
 
-%% DATA POINT ASSIGNMENTS
+% DATA POINT ASSIGNMENTS
 % Determine indices for points that either correspond to ONLINE, OFFLINE,
 % or SCAN
 
@@ -209,7 +195,7 @@ index.scan     = find(Data10Hz.BCtr_LVstat==1);  % SCAN = 1 from BCtr_LVStat
 % actually complete)
 index.scan = scancorrect(index.scan);
 
-%% DITHERING CORRECTION
+% DITHERING CORRECTION
 % If online dithering was enabled by the user during data collection, we 
 % have to correct for this here
 
@@ -218,7 +204,7 @@ if s.dither_enable
     [Data10Hz.powernorm_sample, Data10Hz.powernorm_ref] = dithercorrect(Data10Hz);
 end
 
-%% COUNTS TO MIXING RATIO CONVERSION
+% COUNTS TO MIXING RATIO CONVERSION
 
 % Find the signal for the concentration by determining difference counts
 % between the ONLINE and interpolated OFFLINE positions
@@ -303,7 +289,7 @@ end
 plot(Data10Hz.datetime,Data10Hz.hcho)
 
 
-%% PLOT OF HCHO MIXING RATIO
+% PLOT OF HCHO MIXING RATIO
 % Generates plot of the 10 Hz HCHO mixing ratio
 
 disp('Plotting 10 Hz data')
