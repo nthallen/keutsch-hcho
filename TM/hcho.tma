@@ -82,6 +82,33 @@ State PPS_rate_synch {
 }
 
 Partition
+# Automatically start flows and other functions at a specified time of day (such as early morning to allow for equilibration)
+# Currently hard-coded for 5:00 in the morning (10:00 UTC)
+# ssm is seconds since midnight
+
+State Overnight_Flow_Idle{
+}
+
+State Overnight_Flow{
++10 {
+  long unixtime;
+  long ssm;
+  unixtime = itime();
+  ssm = unixtime % 86400;
+
+  if (ssm >= 3600*9.0)
+	Validate Overnight_Flow_Execute;
+  
+  else Validate Overnight_Flow;
+  }
+}
+
+State Overnight_Flow_Execute{
+	> Flow Span Set SCCM 75
+	Validate Overnight_Flow_Idle;
+}
+
+Partition
 
 %{
   double CellP_integral;

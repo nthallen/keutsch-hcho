@@ -27,6 +27,9 @@ SWS_CAL_SPAN_STEPPED  20  Cal Span StepConc: Validate Cal_Span_StepConc; break;
 SWS_PUMPPURGE_ENABLE  21  PumpPurge Enable: Validate PumpPurge_Enable; break;
 SWS_PUMPPURGE_DISABLE 22  PumpPurge Disable: Validate PumpPurge_Disable; break;
 SWS_PUMPPURGE_IDLE    23  PumpPurge Idle: Validate PumpPurge_Idle; break;
+SWS_OVERNIGHT_FLOW_IDLE	       24   Overnight Flow Idle: Validate Overnight_Flow_Idle; break;
+SWS_OVERNIGHT_FLOW_ACTIVATE    25   Overnight Flow Activate: Validate Overnight_Flow; break;
+SWS_OVERNIGHT_FLOW_EXECUTE     26   Overnight Flow Execute: Validate Overnight_Flow_Execute; break;
 
 SWS_TIMEWARP   254   Time Warp: break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
