@@ -14,8 +14,8 @@ TM typedef double Laser_mW;
 TM typedef double LaserPwr_t { text "%7.4lf"; convert Laser_mW; }
 /*
 LaserPwt_t is in Volts (TS1_T), Laser_mW is in mW
-Verified July 23, 2019 by JDS
-FILIF Folder: 190723.5 
+Verified April 1, 2021 by JDS
+FILIF Folder: 210401.2 
 */
 Calibration (LaserPwr_t,Laser_mW) {
   0.0000, 0.00,
