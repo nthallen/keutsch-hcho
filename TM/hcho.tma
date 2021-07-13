@@ -105,7 +105,7 @@ State Overnight_Flow{
 
 State Overnight_Flow_Execute{
 	> Valve 1 On
-	> Flow Span Set SCCM 75
+	> Flow Span Set SCCM 35
 	Validate Overnight_Flow_Idle;
 }
 
