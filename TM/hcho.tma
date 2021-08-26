@@ -155,7 +155,7 @@ State LC_Steps_Idle {
 State LC_Steps {
 			> Flag Set 50
 +09:50      > Flag Set 51
-+10:00      > Flag Set 0
++15:00      > Flag Set 0
 			Validate LC_Steps_Idle;
 }
 
