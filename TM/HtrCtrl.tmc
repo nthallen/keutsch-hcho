@@ -3,13 +3,13 @@
 
 
 TM typedef double HtrVolts { text "%6.3lf"; }
-TM typedef unsigned short HtrStatus_t { text "%5u"; }
-TM typedef unsigned short HtrDAC_t { convert HtrVolts; text "%6.3lf"; }
+TM typedef uint16_t HtrStatus_t { text "%5u"; }
+TM typedef uint16_t HtrDAC_t { convert HtrVolts; text "%6.3lf"; }
 Calibration (HtrDAC_t, HtrVolts) {
   0, 0,
   65536, 5
 }
-TM typedef short HtrADC_t { convert HtrVolts; text "%7.3lf"; }
+TM typedef int16_t HtrADC_t { convert HtrVolts; text "%7.3lf"; }
 Calibration (HtrADC_t, HtrVolts) {
   -32768, -6.144,
    32768,  6.144
@@ -25,7 +25,7 @@ TM 1 Hz HtrADC_t HtrADC1;
 
 Group HtrCtrl (Htr_Status, HtrDAC1_SP, HtrDAC1_RB,
               HtrADC1) {
-  unsigned short data[4];
+  uint16_t data[4];
   if (HtrCtrl_collect(data) >= 0) {
     Htr_Status = data[0];
     HtrDAC1_SP = data[1];

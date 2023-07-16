@@ -5,7 +5,7 @@
  @rate@ BCtr_NTrigger  BCtr NTrigger
  @rate@ BCtr_LaserV    BCtr LaserV
  @rate@ BCtr_LasIn_mW  BCtr LaserP
- @rate@ BCtr_Pfresh:BCtr_Pfresh:0 BCtr Status %.0lf
+ @rate@ BCtr_Pfrsh:BCtr_Pfresh:0 BCtr Status %.0lf
  @rate@ BC_scanning:BCtr_LVstat:0 BCtr Status %.0lf
  @rate@ BC_Online:BCtr_LVstat:1 BCtr Status %.0lf
  @rate@ BC_Offline:BCtr_LVstat:2 BCtr Status %.0lf

@@ -1,5 +1,5 @@
 tmcbase = base.tmc
-cmdbase = /usr/local/share/huarp/phrtg.cmd
+# cmdbase = /usr/local/share/huarp/phrtg.cmd
 genuibase = hcho.genui
 
 tmcbase = SWStat.tmc
@@ -35,7 +35,7 @@ genuibase = fcc.genui
 Module TMbase
 Module BCtr rate=10
 tmcbase = pps_time.tmc
-Module TFL
+# Module TFL
 
 SCRIPT = interact
 TGTDIR = $(TGTNODE)/home/hcho
@@ -44,8 +44,8 @@ IGNORE = Makefile
 hchocol : -lsubbuspp
 hchosrvr : SB.cc SB.oui -lsubbuspp
 hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc fcc_conv.tmc \
-           ../TFL/TM/TFL_conv.tmc HCHO.tbl HCHO_Eng.tbl
-hchortgext : BCtr_conv.tmc TS_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
+           HCHO.tbl HCHO_Eng.tbl
+# hchortgext : BCtr_conv.tmc TS_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 TSrawext : TSraw.cdf
 doit : hcho.doit
 hchoalgo : BCtr_conv.tmc TS_conv.tmc hcho.tma hcho.sws

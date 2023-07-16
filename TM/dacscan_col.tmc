@@ -2,7 +2,7 @@
   #include "SB.h"
   static subbus_mread_req *DACscanReq;
 
-  static int DACscan_collect(unsigned short*data) {
+  static int DACscan_collect(uint16_t*data) {
     return (SB.BCtr ? SB.BCtr->mread_subbus(DACscanReq, data) : 0);
   }
   static void DACscan_init() {

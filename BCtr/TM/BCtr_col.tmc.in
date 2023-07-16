@@ -92,38 +92,38 @@
      be BCTR_BIN_SIZE-2 (Two for the status(20) and NWords(21)
      values which are not read from address 22)
    */
-  unsigned short NA[BCTR_N_BIN_SPECS] = { @NA@ };
-  unsigned short NB[BCTR_N_BIN_SPECS] = { @NB@ };
+  uint16_t NA[BCTR_N_BIN_SPECS] = { @NA@ };
+  uint16_t NB[BCTR_N_BIN_SPECS] = { @NB@ };
   subbus_mread_req *BCtr_req;
   
   
   void BCtr_init() {
     int i;
-    unsigned short status = 1;
+    uint16_t status = 1;
     if (SB.BCtr) {
-      SB.BCtr->sbwr(BCtr_BASE, 0);
-      SB.BCtr->sbwr(BCtr_BASE, 0x8000);
+      SB.BCtr->write_ack(BCtr_BASE, 0);
+      SB.BCtr->write_ack(BCtr_BASE, 0x8000);
       while (status) {
-        status = SB.BCtr->sbrw(BCtr_BASE);
+        status = SB.BCtr->read_subbus(BCtr_BASE);
       }
       for (i = 0; i < BCTR_N_BIN_SPECS; ++i) {
-        SB.BCtr->sbwr(BCtr_BASE+3+2*i, NA[i]);
-        SB.BCtr->sbwr(BCtr_BASE+4+2*i, NB[i]);
+        SB.BCtr->write_ack(BCtr_BASE+3+2*i, NA[i]);
+        SB.BCtr->write_ack(BCtr_BASE+4+2*i, NB[i]);
       }
       BCtr_req = SB.BCtr->pack_mread_request(BCTR_BIN_SIZE, "60,20,21|@HEXCNT@@22");
     } else {
-      nl_error(2, "BCtr lib not found");
+      msg(2, "BCtr lib not found");
     }
   }
 
-  unsigned short BCtr_collect(unsigned short *Bins) {
-    unsigned short nw;
-    static unsigned short saw_nw = 0;
+  uint16_t BCtr_collect(uint16_t *Bins) {
+    uint16_t nw;
+    static uint16_t saw_nw = 0;
     if (SB.BCtr) {
       SB.BCtr->mread_subbus_nw(BCtr_req, Bins, &nw);
     }
     if (nw != saw_nw) {
-      // nl_error(0, "nw = %u", nw);
+      // msg(0, "nw = %u", nw);
       saw_nw = nw;
     }
     while (nw < @NW@) {

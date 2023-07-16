@@ -2,7 +2,7 @@
   #include "SB.h"
   static subbus_mread_req *HtrCtrlReq;
 
-  static int HtrCtrl_collect(unsigned short*data) {
+  static int HtrCtrl_collect(uint16_t*data) {
     return (SB.BCtr ? SB.BCtr->mread_subbus(HtrCtrlReq, data) : 0);
   }
   static void HtrCtrl_init() {

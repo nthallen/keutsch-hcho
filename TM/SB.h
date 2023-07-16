@@ -30,8 +30,8 @@ extern "C" {
 #endif
 
 void SB_init(); // for oui
-int tick_sic();
-int disarm_sic();
+void tick_sic();
+void disarm_sic();
 
 #ifdef __cplusplus
 };

@@ -1,4 +1,4 @@
-TM typedef unsigned short UINT { text "%5u"; }
+TM typedef uint16_t UINT { text "%5u"; }
 TM MAXCOLS = 480;
 
 TM 1 Hz UINT Synch, MFCtr;

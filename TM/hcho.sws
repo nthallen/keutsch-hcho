@@ -1,4 +1,4 @@
-SW_Variable: SWStat
+SW_Variable: <uint8_t,UCHAR> SWStat
 SWS_PPS_IDLE     1   PPS Idle: Validate PPS_idle; break;
 SWS_PPS_SYNC     2   PPS Sync: Validate PPS_synch; break;
 SWS_PCTRL_IDLE   3   Pressure Control Idle: Validate CellP_idle; break;
@@ -17,8 +17,8 @@ SWS_PEAK_ENABLE  10   Peak Detect Enable: find_peak = true; break;
 SWS_PEAK_DISABLE 11  Peak Detect Disable: find_peak = false; break;
 SWS_DITHER_ENABLE 12  Chop Dither Enable: dither_enable = true; break;
 SWS_DITHER_DISABLE 13 Chop Dither Disable: dither_enable = false; break;
-SWS_THG_PEAKUP_ENABLE 14 THG Peakup Enable: thg_peakup_enable = true; break;
-SWS_THG_PEAKUP_DISABLE 15 THG Peakup Disable: thg_peakup_enable = false; break;
+#SWS_THG_PEAKUP_ENABLE 14 THG Peakup Enable: thg_peakup_enable = true; break;
+#SWS_THG_PEAKUP_DISABLE 15 THG Peakup Disable: thg_peakup_enable = false; break;
 SWS_CAL_IDLE          16  Cal Idle: Validate Cal_Idle; break;
 SWS_CAL_ZERO_60MIN    17  Cal Zero 60min: Validate Cal_Zero_60min; break;
 SWS_CAL_ZERO_15MIN    18  Cal Zero 15min: Validate Cal_Zero_15min; break;
@@ -31,14 +31,14 @@ SWS_PUMPPURGE_IDLE    23  PumpPurge Idle: Validate PumpPurge_Idle; break;
 SWS_TIMEWARP   254   Time Warp: break;
 SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
 
-SW_Variable: Flag
+SW_Variable: <uint8_t,UCHAR> Flag
   : Set %d { $0 = $2; }
 
-#SW_Variable: <unsigned short,DS_POINTS> NPts_Online Laser NPoints Online
+#SW_Variable: <uint16_t,DS_POINTS> NPts_Online Laser NPoints Online
 #  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
-#SW_Variable: <unsigned short,DS_POINTS> NPts_Offline Laser NPoints Offline
+#SW_Variable: <uint16_t,DS_POINTS> NPts_Offline Laser NPoints Offline
 #  : Set %d (Enter number of 100 ms samples) { $0 = $2; }
-#SW_Variable: <signed short,DS_DELTA_t> Offline_Delta Laser Offline Delta
+#SW_Variable: <int16_t,DS_DELTA_t> Offline_Delta Laser Offline Delta
 #  : Set %d (Enter mVolts) { $0 = $2; }
-SW_Variable: <unsigned short,DS_DRIFT_t> Drift_Limit Laser Drift Limit
+SW_Variable: <uint16_t,DS_DRIFT_t> Drift_Limit Laser Drift Limit
   : Set %d (Enter mV of laser voltage) { $0 = $2; }

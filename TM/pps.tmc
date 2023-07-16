@@ -7,14 +7,14 @@
   int PPS_sample;
 %}
 TM typedef double PPS_Seconds { text "%6.4lf"; }
-TM typedef unsigned short PPS_t {
+TM typedef uint16_t PPS_t {
   text "%6.4lf";
   convert PPS_Seconds;
 }
 Calibration (PPS_t, PPS_Seconds) { 0, 0, 48828.125, 1 }
 TM typedef double PPS_msecs { text "%7.2lf"; }
-TM typedef signed short PPS_fine_t { text "%6d"; }
-TM typedef unsigned char IPS_stat_t { text "%3d"; }
+TM typedef int16_t PPS_fine_t { text "%6d"; }
+TM typedef uint8_t IPS_stat_t { text "%3d"; }
 
 /* TM 10 Hz PPS_t PPS_time; collect PPS_time = BCtr_rd(0x60); */
 TM 1  Hz PPS_fine_t PPS_fine; collect PPS_fine = BCtr_rd(0x61);

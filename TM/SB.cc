@@ -1,5 +1,5 @@
 #include "SB.h"
-#include "nortlib.h"
+#include "nl.h"
 
 SB_t SB;
 
@@ -31,17 +31,17 @@ SB_t::~SB_t() {
 void SB_t::check_spot(subbuspp *lib, const char *devname,
     subbuspp *&spot, const char *spotname) {
   if (spot) {
-    nl_error(2, "Duplicate %s found on %s", spotname, devname);
+    msg(2, "Duplicate %s found on %s", spotname, devname);
   } else {
     spot = lib;
-    nl_error(0, "%s lib found at %s", spotname, devname);
+    msg(0, "%s lib found at %s", spotname, devname);
   }
 }
 
 subbuspp *SB_t::load_lib(const char *devname) {
   subbuspp *lib;
   
-  lib = new subbuspp(devname);
+  lib = new subbuspp(devname, "serusb");
   if (lib->load()) {
     uint16_t BdID = lib->sbrd(3);
     switch (BdID) {
@@ -55,12 +55,12 @@ subbuspp *SB_t::load_lib(const char *devname) {
         check_spot(lib, devname, FCC2, "FCC2");
         break;
       default:
-        nl_error(3, "Unknown device code %d on device %s", BdID, devname);
+        msg(3, "Unknown device code %d on device %s", BdID, devname);
         break;
     }
     return lib;
   } else {
-    nl_error(2, "Device %s not found", devname);
+    msg(2, "Device %s not found", devname);
     delete lib;
     return 0;
   }
@@ -70,6 +70,6 @@ void SB_init() {
   SB.init();
 }
 
-int tick_sic() {}
-int disarm_sic() {}
+void tick_sic() {}
+void disarm_sic() {}
 

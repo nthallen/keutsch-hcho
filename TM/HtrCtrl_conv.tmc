@@ -2,7 +2,7 @@
   #define HtrFresh(x) (x?" ":"*")
 %}
 
-TM typedef unsigned short HtrFresh_t { text "%1d" HtrFresh(); }
+TM typedef uint16_t HtrFresh_t { text "%1d" HtrFresh(); }
 
 HtrFresh_t HtrDAC1_Fresh; Invalidate HtrDAC1_Fresh;
 { HtrDAC1_Fresh = (Htr_Status>>7)&1; Validate HtrDAC1_Fresh; }

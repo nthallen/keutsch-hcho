@@ -21,15 +21,15 @@
       }
 
       if (SB.BCtr)
-        SB.BCtr->sbwr($3, usp);
+        SB.BCtr->write_ack($3, usp);
     }
   : Laser Chop NPts &NPtsOnOff %d * {
       if (SB.BCtr)
-        SB.BCtr->sbwr($4, $5);
+        SB.BCtr->write_ack($4, $5);
     }
   : Laser Command &lasercmd * {
         if (SB.BCtr)
-          SB.BCtr->sbwr(0x80, $3);
+          SB.BCtr->write_ack(0x80, $3);
       }
   ;
 

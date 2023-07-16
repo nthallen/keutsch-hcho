@@ -12,7 +12,7 @@
  * 0x89 NPtsOffline
  */
  
-  const char *LV_stat_text(unsigned char val) {
+  const char *LV_stat_text(uint8_t val) {
     switch (val&0x1F) {
       case 0:    return "        ";
       case 1:    return "scanning";
@@ -32,12 +32,12 @@
 %}
 
 TM typedef double DS_mV;
-TM typedef unsigned char LVstat_t { text "%8d" LV_stat_text(); }
-TM typedef unsigned short HtrDAC_mV_t { text "%7.2lf"; convert DS_mV; }
+TM typedef uint8_t LVstat_t { text "%8d" LV_stat_text(); }
+TM typedef uint16_t HtrDAC_mV_t { text "%7.2lf"; convert DS_mV; }
 Calibration (HtrDAC_mV_t, DS_mV) { 0, 0, 65536, 5000 }
-TM typedef signed short mV_offset_t { text "%7.2lf"; convert DS_mV; }
+TM typedef int16_t mV_offset_t { text "%7.2lf"; convert DS_mV; }
 Calibration (mV_offset_t, DS_mV) { 0, 0, 32768, 2500 }
-TM typedef unsigned short LasVStep_t { text "%7.2lf"; convert DS_mV; }
+TM typedef uint16_t LasVStep_t { text "%7.2lf"; convert DS_mV; }
 Calibration (LasVStep_t, DS_mV) {
    0, 0,
    104.8576, 1
@@ -57,7 +57,7 @@ TM 1 Hz DS_POINTS     NPts_Offline;
 Group DACscan (LV_status, LaserV, LV_start,
     LV_stop, LV_step, LV_online, LV_offdelta, LV_dither,
     NPts_Online, NPts_Offline) {
-  unsigned short data[10];
+  uint16_t data[10];
   if (DACscan_collect(data) >= 0) {
     LV_status = data[0];
     LaserV = data[1];

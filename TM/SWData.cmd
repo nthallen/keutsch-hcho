@@ -15,7 +15,7 @@
   : Flag &Flag { SWData.Flag = $2; }
   : Laser Drift Limit &Drift_Limit { SWData.Drift_Limit = $4; }
   ;
-&SWStat <unsigned char>
+&SWStat <uint8_t>
   : PPS Idle { $0 = SWS_PPS_IDLE; }
   : Set %d { $0 = $2; }
   : PPS Sync { $0 = SWS_PPS_SYNC; }
@@ -30,8 +30,6 @@
   : Peak Detect Disable { $0 = SWS_PEAK_DISABLE; }
   : Chop Dither Enable { $0 = SWS_DITHER_ENABLE; }
   : Chop Dither Disable { $0 = SWS_DITHER_DISABLE; }
-  : THG Peakup Enable { $0 = SWS_THG_PEAKUP_ENABLE; }
-  : THG Peakup Disable { $0 = SWS_THG_PEAKUP_DISABLE; }
   : Cal Idle { $0 = SWS_CAL_IDLE; }
   : Cal Zero 60min { $0 = SWS_CAL_ZERO_60MIN; }
   : Cal Zero 15min { $0 = SWS_CAL_ZERO_15MIN; }
@@ -43,9 +41,9 @@
   : Time Warp { $0 = SWS_TIMEWARP; }
   : Shutdown { $0 = SWS_SHUTDOWN; }
   ;
-&Flag <unsigned char>
+&Flag <uint8_t>
   : Set %d { $0 = $2; }
   ;
-&Drift_Limit <unsigned short>
+&Drift_Limit <uint16_t>
   : Set %d (Enter mV of laser voltage) { $0 = $2; }
   ;

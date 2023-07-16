@@ -1,16 +1,16 @@
 %{
   #include <stdio.h>
-  #include "tmctime.h"
+  #include "dasio/tmctime.h"
 
   FILE *ofp;
 
   void BCtrext_init() {
     ofp = fopen("BCtrext.csv", "w");
     if (ofp == 0)
-      nl_error(3, "Unable to write to BCtrext.csv");
+      msg(3, "Unable to write to BCtrext.csv");
   }
 
-  void BCtrext_output(double T, unsigned short *Bins) {
+  void BCtrext_output(double T, uint16_t *Bins) {
     int i;
     fprintf(ofp, "%.3lf", T);
     for (i=0; i < BCTR_BIN_SIZE; ++i)

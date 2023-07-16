@@ -15,8 +15,8 @@
       if (dsp > 65535) usp = 65535;
       else if (dsp < 0) usp = 0;
       else usp = dsp;
-      if (SB.FCC) SB.FCC->sbwr(0x14+$2, usp);
-      else nl_error(2, "FCC not present");
+      if (SB.FCC) SB.FCC->write_ack(0x14+$2, usp);
+      else msg(2, "FCC not present");
     }
   : Flow &flowchan Set SCCM %f (Enter value in SCCM) * {
       double dsp;
@@ -27,26 +27,26 @@
         if (dsp > 65535) usp = 65535;
         else if (dsp < 0) usp = 0;
         else usp = dsp;
-        if (SB.FCC) SB.FCC->sbwr(0x14+$2, usp);
-        else nl_error(2, "FCC not present");
-      } else nl_error(2, "Invalid DAC Channel: %d", $2);
+        if (SB.FCC) SB.FCC->write_ack(0x14+$2, usp);
+        else msg(2, "FCC not present");
+      } else msg(2, "Invalid DAC Channel: %d", $2);
     }
   : Flow &flowchan Solenoid &OpenCloseCtrl * {
       uint16_t cmd = ($2<<2) + $4;
-      nl_error(0, "FCC command is %u", cmd);
-      if (SB.FCC) SB.FCC->sbwr(0x18, cmd);
-      else nl_error(2, "FCC not present");
+      msg(0, "FCC command is %u", cmd);
+      if (SB.FCC) SB.FCC->write_ack(0x18, cmd);
+      else msg(2, "FCC not present");
     }
   : Valve &ValveSelect &OpenClose * {
       uint16_t cmd = 38 + $2*2 + $3;
-      if (SB.FCC) SB.FCC->sbwr(0x18, cmd);
-      else nl_error(2, "FCC not present");
+      if (SB.FCC) SB.FCC->write_ack(0x18, cmd);
+      else msg(2, "FCC not present");
     }
   : FCC2 Measure Single Ended * {
-      if (SB.FCC2) SB.FCC2->sbwr(0x18, 36);
+      if (SB.FCC2) SB.FCC2->write_ack(0x18, 36);
     }
   : FCC2 Measure Differentially * {
-      if (SB.FCC2) SB.FCC2->sbwr(0x18, 35);
+      if (SB.FCC2) SB.FCC2->write_ack(0x18, 35);
     }
   ;
 

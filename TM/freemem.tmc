@@ -1,13 +1,15 @@
 %{
   /* Defines types for free memory reports.
      Requires freemem_col.tmc to do the actual collection.
+     The raw data is in kB. I am converting to MB simply to
+     make it easier to read.
   */
 %}
-TM typedef double MB;
-TM typedef unsigned short freemem_t {
-  convert MB; text "%7.2lf";
-  collect x = get_free_mem();
+TM typedef double MEM_PCT;
+TM typedef uint16_t memused_t {
+  convert MEM_PCT; text "%6.2lf";
+  collect x = get_memused();
 }
-Calibration (freemem_t, MB) { 0, 0, 60000, 1200.00 }
+Calibration (memused_t, MEM_PCT) { 0, 0, 65535, 100 }
 
-TM 1 Hz freemem_t freemem;
+TM 1 Hz memused_t memused;

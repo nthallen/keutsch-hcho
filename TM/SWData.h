@@ -3,9 +3,9 @@
 #define SWDATA_H_INCLUDED
 
 typedef struct __attribute__((__packed__)) {
-  unsigned char SWStat;
-  unsigned char Flag;
-  unsigned short Drift_Limit;
+  uint8_t SWStat;
+  uint8_t Flag;
+  uint16_t Drift_Limit;
 } SWData_t;
 extern SWData_t SWData;
 
@@ -22,8 +22,6 @@ extern SWData_t SWData;
 #define SWS_PEAK_DISABLE 11
 #define SWS_DITHER_ENABLE 12
 #define SWS_DITHER_DISABLE 13
-#define SWS_THG_PEAKUP_ENABLE 14
-#define SWS_THG_PEAKUP_DISABLE 15
 #define SWS_CAL_IDLE 16
 #define SWS_CAL_ZERO_60MIN 17
 #define SWS_CAL_ZERO_15MIN 18

@@ -3,10 +3,10 @@
   
   #define TS_cnt(x) TS_buf[x].cnt
   #define TS_raw(x) TS_buf[x].raw
-  #define TS_buf_ptr (unsigned short *)TS_buf
+  #define TS_buf_ptr (uint16_t *)TS_buf
 %}
-TM typedef signed long TS_raw_t;
-TM typedef unsigned short TS_cnt_t { text "%3u"; }
+TM typedef int32_t TS_raw_t;
+TM typedef uint16_t TS_cnt_t { text "%3u"; }
 TM typedef double TS_CELCIUS;
 TM typedef double TS_T_t { text "%7.2lf"; convert TS_CELCIUS; }
 TM typedef double TS_V_t { text "%9.5lf"; }

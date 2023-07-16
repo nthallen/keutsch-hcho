@@ -5,15 +5,15 @@
 &command
   : PPS Rate Adjust %d * {
       if (SB.BCtr)
-        SB.BCtr->sbwr(0x61, (short)$4);
+        SB.BCtr->write_ack(0x61, (uint16_t)$4);
     }
   : PPS Offset Adjust %ld * {
       uint32_t offset = $4;
       if ($4 < 0) {
-        nl_error(2, "PPS Offset must be positive");
+        msg(2, "PPS Offset must be positive");
       } else if (SB.BCtr) {
-        SB.BCtr->sbwr(0x64, (short)(offset & 0xFFFF));
-        SB.BCtr->sbwr(0x65, (short)((offset>>8) & 0xFFFF));
+        SB.BCtr->write_ack(0x64, (uint16_t)(offset & 0xFFFF));
+        SB.BCtr->write_ack(0x65, (uint16_t)((offset>>8) & 0xFFFF));
       }
     }
   ;

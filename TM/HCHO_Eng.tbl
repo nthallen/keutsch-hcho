@@ -1,7 +1,6 @@
 Input "TS.tbl";
 Input "dacscan.tbl";
 Input "PPS.tbl";
-Input "TFL.tbl";
 
 MFCtr {
   VGlue 0+1;
@@ -12,7 +11,7 @@ MFCtr {
 { HBox {
     |+; { [PPS]; [TS] }; |+;
         { [dacscan]; [DS_SWStat] }; |+;
-        { [TFL]; [MFCtr] }; |+
+        { [MFCtr] }; |+
   };
   -;
 }

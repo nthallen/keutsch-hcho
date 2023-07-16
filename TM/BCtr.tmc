@@ -7,12 +7,12 @@
   #define BCtr_Yes_No_txt(x) ((x)?"Yes":" No")
   #define BCtr_OK_FAIL_txt(x) ((x)?"FAIL":"  OK")
 %}
-TM typedef unsigned short BCtr_Cts_t { text "%5u"; }
-TM typedef unsigned short BCtr_Yes_No { text "%3d" BCtr_Yes_No_txt(); }
-TM typedef unsigned short BCtr_OK_FAIL { text "%3d" BCtr_OK_FAIL_txt(); }
-TM typedef unsigned short BCtr_NAB_t { text "%1d"; }
-TM typedef unsigned long  BCtr_Trigger_t { text "%6ld"; }
-TM typedef unsigned short BCtr_Pfresh_t { text "%1d" BCtr_Pfresh_text(); }
+TM typedef uint16_t BCtr_Cts_t { text "%5u"; }
+TM typedef uint16_t BCtr_Yes_No { text "%3d" BCtr_Yes_No_txt(); }
+TM typedef uint16_t BCtr_OK_FAIL { text "%3d" BCtr_OK_FAIL_txt(); }
+TM typedef uint16_t BCtr_NAB_t { text "%1d"; }
+TM typedef uint32_t  BCtr_Trigger_t { text "%6ld"; }
+TM typedef uint16_t BCtr_Pfresh_t { text "%1d" BCtr_Pfresh_text(); }
 
 TM 10 Hz BCtr_Cts_t BCtr_Bins[211];
 Collect BCtr_Bins { BCtr_collect(BCtr_Bins); }

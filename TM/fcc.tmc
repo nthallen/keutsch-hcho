@@ -15,9 +15,9 @@
   #include "SB.h"
 %}
 TM typedef double FCC_Volts;
-TM typedef unsigned char FCC_status_t { text "%3d"; }
-TM typedef signed short FCC_ADC_t { text "%6.4lf"; convert FCC_Volts; }
-TM typedef unsigned short FCC_DAC_t { text "%6.4lf"; convert FCC_Volts; }
+TM typedef uint8_t FCC_status_t { text "%3d"; }
+TM typedef int16_t FCC_ADC_t { text "%6.4lf"; convert FCC_Volts; }
+TM typedef uint16_t FCC_DAC_t { text "%6.4lf"; convert FCC_Volts; }
 Calibration (FCC_ADC_t, FCC_Volts) { 0, 0, 32768, 6.144 }
 Calibration (FCC_DAC_t, FCC_Volts) { 0, 0, 65536, 5 }
 
@@ -52,7 +52,7 @@ TM 1 Hz FCC_status_t FCC0_Status;
 
 Group fcc (FC0_Flow, FC1_Flow, FC2_Flow, FCC_U2_T, FCC_U3_T,
             FC0_Set, FC1_Set, FC2_Set, FCC0_Status) {
-  unsigned short data[9];
+  uint16_t data[9];
   if (FCC0_collect(data) >= 0) {
     FC0_Flow = data[0];
     FC1_Flow = data[1];
@@ -67,13 +67,13 @@ Group fcc (FC0_Flow, FC1_Flow, FC2_Flow, FCC_U2_T, FCC_U3_T,
 }
 
 TM typedef double FCC2_SCCM { text "%4.0lf"; }
-TM typedef signed short FCC2_10SLM_t { text "%6.0lf"; convert FCC2_SCCM; }
+TM typedef int16_t FCC2_10SLM_t { text "%6.0lf"; convert FCC2_SCCM; }
 
 Calibration (FCC2_10SLM_t, FCC2_SCCM) { 5333.333, 0, 28354.667, 10000 }
-TM typedef signed short FCC2_5SLM_t { text "%6.0lf"; convert FCC2_SCCM; }
+TM typedef int16_t FCC2_5SLM_t { text "%6.0lf"; convert FCC2_SCCM; }
 calibration (FCC2_5SLM_t, FCC2_SCCM) { 5333.333, 0, 28354.667, 5000 }
 TM typedef double FCC2_TORR { text "%6.2lf"; }
-TM typedef signed short FCC2_Omega_t { text "%6.2lf"; convert FCC2_TORR; }
+TM typedef int16_t FCC2_Omega_t { text "%6.2lf"; convert FCC2_TORR; }
 calibration (FCC2_Omega_t, FCC2_TORR) { 0, 0, 26666.667, 775.7 }
 
 TM 1 Hz FCC2_10SLM_t SampleFlow; /* FCC2_10SLM_t */
@@ -81,7 +81,7 @@ TM 1 Hz FCC2_5SLM_t PurgeFlow; /* FCC2_5SLM_t */
 TM 1 Hz FCC2_Omega_t OmegaP;
 
 Group fcc2 (SampleFlow, PurgeFlow, OmegaP) {
-  unsigned short data[3];
+  uint16_t data[3];
   if (FCC2_collect(data) >= 0) {
     SampleFlow = data[0];
     PurgeFlow = data[1];

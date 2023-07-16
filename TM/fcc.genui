@@ -11,8 +11,8 @@
   1 FC1Open:FCC0_Status:1   FCC Status
   1 FC2Open:FCC0_Status:2   FCC Status
   1 Vlv1:FCC0_Status:3      FCC Status
-  1 FC2Closed:FCC0_Status:4 FCC Status
-  1 FC2Closed:FCC0_Status:5 FCC Status
+  1 FC0Closed:FCC0_Status:4 FCC Status
+  1 FC1Closed:FCC0_Status:5 FCC Status
   1 FC2Closed:FCC0_Status:6 FCC Status
   1 Vlv2:FCC0_Status:7      FCC Status
 
