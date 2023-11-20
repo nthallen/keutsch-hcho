@@ -1,5 +1,18 @@
-function ui_hcho
-f = ne_dialg('HCHO Instrument',1);
+function ui_hcho(dirfunc, stream)
+% ui_hcho
+% ui_hcho(dirfunc [, stream])
+% dirfunc is a string specifying the name of a function
+%   that specifies where data run directories are stored.
+% stream is an optional argument specifying which stream
+%   the run directories have recorded, e.g. 'SerIn'
+if nargin < 1
+  dirfunc = 'HCHO_DATA_DIR';
+end
+if nargin >= 2
+  f = ne_dialg(stream, 1);
+else
+  f = ne_dialg('HCHO Instrument',1);
+end
 f = ne_dialg(f, 'add', 0, 1, 'ghchopps', 'PPS' );
 f = ne_dialg(f, 'add', 1, 0, 'phchoppsd', 'Drift' );
 f = ne_dialg(f, 'add', 1, 0, 'phchoppsr', 'Raw' );
@@ -52,6 +65,15 @@ f = ne_dialg(f, 'add', 1, 0, 'phchobclv', 'Laser V' );
 f = ne_dialg(f, 'add', 1, 0, 'phchobclp', 'Laser P' );
 f = ne_dialg(f, 'add', 1, 0, 'phchobcs', 'Status' );
 f = ne_dialg(f, 'add', 1, 0, 'phchobcnab', 'NAB' );
-f = ne_listdirs(f, 'HCHO_DATA_DIR', 15);
+f = ne_dialg(f, 'newcol');
+f = ne_dialg(f, 'add', 0, 1, 'ghchotfl', 'TFL' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotfla', 'mA' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotflamps', 'Amps' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotflt', 'Temp' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotflp', 'Power' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotflhgt', 'HGT' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotfls', 'Status' );
+f = ne_dialg(f, 'add', 1, 0, 'phchotflstale', 'Stale' );
+f = ne_listdirs(f, dirfunc, 15);
 f = ne_dialg(f, 'newcol');
 ne_dialg(f, 'resize');

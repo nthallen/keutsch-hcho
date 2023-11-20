@@ -38,6 +38,11 @@
   : PumpPurge Enable { $0 = SWS_PUMPPURGE_ENABLE; }
   : PumpPurge Disable { $0 = SWS_PUMPPURGE_DISABLE; }
   : PumpPurge Idle { $0 = SWS_PUMPPURGE_IDLE; }
+  : Overnight Flow Idle { $0 = SWS_OVERNIGHT_FLOW_IDLE; }
+  : Overnight Flow Activate { $0 = SWS_OVERNIGHT_FLOW_ACTIVATE; }
+  : Overnight Flow Execute { $0 = SWS_OVERNIGHT_FLOW_EXECUTE; }
+  : LC Steps Idle { $0 = SWS_LC_STEPS_IDLE; }
+  : LC Steps Activate { $0 = SWS_LC_STEPS_ACTIVATE; }
   : Time Warp { $0 = SWS_TIMEWARP; }
   : Shutdown { $0 = SWS_SHUTDOWN; }
   ;
