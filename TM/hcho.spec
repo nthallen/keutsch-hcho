@@ -39,7 +39,7 @@ Module TFL mode=absent
 
 SCRIPT = interact
 TGTDIR = $(TGTNODE)/home/hcho
-IGNORE = Makefile
+IGNORE = Makefile "*.exe" "*.stackdump"
 
 hchocol : -lsubbuspp
 hchosrvr : SB.cc SB.oui -lsubbuspp

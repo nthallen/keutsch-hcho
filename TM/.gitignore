@@ -53,6 +53,8 @@ HCHOtblnc.tmc.dep
 HCHO_Engtblnc.tmc.dep
 *.err
 Makefile
+*.exe
+*.stackdump
 BCtrext
 hchocol
 hchosrvr
