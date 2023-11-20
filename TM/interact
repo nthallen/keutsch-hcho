@@ -1,22 +1,21 @@
 # Startup script for hcho
-  Launch memo memo -o $Experiment.log
+  Launch memo memo -o $Experiment.log -l4
   # Pick one:
-# Launch /dev/huarp/subbus subbusd_serusb -b 57600 -p /dev/serusb2
-# Launch /dev/huarp/subbus subbusd_serusb -b 115200 -p /dev/serusb1
-  [ -e /dev/serusb1 ] && [ ! -e /dev/huarp/HCHO/SB1 ] &&
-    Launch SB1 subbusd_serusb -b 115200 -p /dev/serusb1 -N SB1 -h SB1
-  [ -e /dev/serusb2 ] && [ ! -e /dev/huarp/HCHO/SB2 ] &&
-    Launch SB2 subbusd_serusb -b 115200 -p /dev/serusb2 -N SB2 -h SB2
-  [ -e /dev/serusb3 ] && [ ! -e /dev/huarp/HCHO/SB3 ] &&
-    Launch SB3 subbusd_serusb -b 115200 -p /dev/serusb3 -N SB3 -h SB3
-  Launch TM/DCo TMbfr
+# Launch /dev/huarp/subbus subbusd_serusb -b 57600 -p /dev/ttyUSB2
+# Launch /dev/huarp/subbus subbusd_serusb -b 115200 -p /dev/ttyUSB1
+  [ -e /dev/ttyUSB0 ] && [ ! -e /dev/huarp/HCHO/SB1 ] &&
+    Launch SB1 subbusd_serusb -b 115200 -p /dev/ttyUSB0 -n SB1 -s SB1
+  [ -e /dev/ttyUSB1 ] && [ ! -e /dev/huarp/HCHO/SB2 ] &&
+    Launch SB2 subbusd_serusb -b 115200 -p /dev/ttyUSB1 -n SB2 -s SB2
+  [ -e /dev/ttyUSB2 ] && [ ! -e /dev/huarp/HCHO/SB3 ] &&
+    Launch SB3 subbusd_serusb -b 115200 -p /dev/ttyUSB2 -n SB3 -s SB3
+  Launch tm_bfr bfr -H bfr: -S:
 
   memo=/dev/huarp/$Experiment/memo
-  echo "Running script interact" >$memo
+  msg "Running script interact"
 
-  Launch DG/cmd hchocol
-  Launch cmd/server hchosrvr
-  Launch - lgr -N `mlf_find LOG`
-  Launch - tmdf
-# Launch - tfl -d /dev/ser1
-  Launch - hchoalgo -v
+  Launch -TMC-  lgr -N `mlf_find LOG`
+  Launch tm_gen hchocol
+  Launch cmd    hchosrvr
+  Launch -      tmdf
+  Launch -TMC-  hchoalgo -v

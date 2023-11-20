@@ -38,6 +38,7 @@ tmcbase = pps_time.tmc
 Module TFL mode=absent
 
 SCRIPT = interact
+DISTRIB = services
 TGTDIR = $(TGTNODE)/home/hcho
 IGNORE = Makefile "*.exe" "*.stackdump"
 
