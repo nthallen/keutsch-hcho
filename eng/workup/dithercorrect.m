@@ -4,6 +4,8 @@ function [dithercorrect_sample, dithercorrect_ref] = dithercorrect(Data10Hz)
 % wavelengths where the laser was not on the maximum of the HCHO spectral
 % line
 
+% Written by JDS (May 2018)
+
 % Find online indices for each online/offline cycle. Remove first few
 % when necessary in order to minimize their effect on the bin average
 dither.online = find(Data10Hz.BCtr_LVstat==10);
@@ -32,6 +34,14 @@ end
 
 dither.movingavg = movmean(dither.online_LaserV,4);
 
+% Converting to datetime for plotting purposes only
+dither.datetime = datetime(dither.time_avg,'ConvertFrom','posixtime');
+figure,plot(dither.datetime,dither.online_LaserV)
+hold on
+plot(dither.datetime,dither.movingavg)
+ylabel('Laser Voltage (mV)')
+legend('Online Laser Voltage Average','4-Pt Moving Average')
+
 % Determine how far away (in LaserV) that each point is away from the line
 % center
 
@@ -40,13 +50,16 @@ dither.distanceFromLineCenter = dither.online_LaserV - dither.movingavg;
 % Load correction factors file derived for the HCHO spectral line at 115
 % Torr (code to generate this file is located below)
 
-dither.CorrectionLookupTable = load('dithercorrectfactors.mat');
+dither.CorrectionLookupTable = load('dithercorrectfactors_HUVFL.mat');
 
 % Using the interpolation function, find the correction factors for our
 % actual data
 dither.CorrectionValues = interp1(dither.CorrectionLookupTable.offset, dither.CorrectionLookupTable.correct_factor_avg, dither.distanceFromLineCenter);
 
 % Correct the ONLINE data from both the sample AND reference cells
+
+figure,plot(dither.datetime,dither.CorrectionValues)
+ylabel('Dither Correction Values')
 
 length=size(dither.online_chunks,1);
 
@@ -58,6 +71,9 @@ end
 
 dithercorrect_sample = Data10Hz.powernorm_sample;
 dithercorrect_ref = Data10Hz.powernorm_ref;
+
+
+
 
 % %% Determination of Correction Factors (at 115 Torr) using multiple scans
 % % Correction factor (correct_factor) based upon distance from the line center
@@ -73,7 +89,7 @@ dithercorrect_ref = Data10Hz.powernorm_ref;
 % hold on
 % plot(scantimes,laserVs)
 % 
-% % First, create an array where each row corresponds to a different scan
+% % Then create an array where each row corresponds to a different scan
 % % This array is called all_scans with corresponding laser voltages in
 % % lasVolts
 % 
@@ -95,18 +111,20 @@ dithercorrect_ref = Data10Hz.powernorm_ref;
 % all_scans(any(isnan(all_scans),2),:) = [];
 % 
 % 
+% figure,plot(lasVolts,all_scans)
+% 
 % % Now just choose lasVolts whose range covers the dominant spectral line
 % % and nothing more
 % 
 % %range start is 210 mV, so range_start_index = 45
 % %range end is 245 mV, so range_end_index = 198
 % 
-% all_scans_parsed = all_scans(:,45:198);
-% lasVolts_parsed = lasVolts(45:198);
+% all_scans_parsed = all_scans(:,325:725);
+% lasVolts_parsed = lasVolts(325:725);
 % 
-% %a = all_scans_parsed(100,:);
-% %f = fit(lasVolts_parsed,a','gauss2');
-% %figure,plot(f,lasVolts_parsed,a)
+% a = all_scans_parsed(12,:);
+% f = fit(lasVolts_parsed,a','gauss2');
+% figure,plot(f,lasVolts_parsed,a)
 % 
 % 
 % [m,n] = size(all_scans_parsed);
@@ -165,9 +183,9 @@ dithercorrect_ref = Data10Hz.powernorm_ref;
 % end
 % offset = lasV - max_lasV;
 % 
-% Note: The .mat file should contain the following variables:
-% (1) offset
-% (2) correct_factor_avg
-% (3) correct_factor_std
-%
-% %% END
+% % Note: The .mat file should contain the following variables:
+% % (1) offset
+% % (2) correct_factor_avg
+% % (3) correct_factor_std
+
+%% END

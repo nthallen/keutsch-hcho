@@ -92,7 +92,7 @@
      be BCTR_BIN_SIZE-2 (Two for the status(20) and NWords(21)
      values which are not read from address 22)
    */
-  uint16_t NA[BCTR_N_BIN_SPECS] = { 1,220 };
+  uint16_t NA[BCTR_N_BIN_SPECS] = { 1,90 };
   uint16_t NB[BCTR_N_BIN_SPECS] = { 100,1 };
   subbus_mread_req *BCtr_req;
   

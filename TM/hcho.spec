@@ -33,9 +33,9 @@ cmdbase = fcc.cmd
 genuibase = fcc.genui
 
 Module TMbase
-Module BCtr rate=10
+Module BCtr rate=10 NA=1,90 from=10 to=43
 tmcbase = pps_time.tmc
-# Module TFL
+Module TFL mode=absent
 
 SCRIPT = interact
 TGTDIR = $(TGTNODE)/home/hcho

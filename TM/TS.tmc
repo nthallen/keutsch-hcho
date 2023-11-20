@@ -12,26 +12,31 @@ TM typedef double TS_T_t { text "%7.2lf"; convert TS_CELCIUS; }
 TM typedef double TS_V_t { text "%9.5lf"; }
 TM typedef double Laser_mW;
 TM typedef double LaserPwr_t { text "%7.4lf"; convert Laser_mW; }
+/*
+LaserPwt_t is in Volts (TS1_T), Laser_mW is in mW
+Verified May 7, 2021 by JDS
+FILIF Folder: 210508.1 
+*/
 Calibration (LaserPwr_t,Laser_mW) {
-  0.00000, 0.00,
-  0.32439, 1.41,
-  0.35530, 1.56,
-  0.39795, 1.79,
-  0.44765, 2.08,
-  0.49499, 2.42,
-  0.53686, 2.77,
-  0.57482, 3.15,
-  0.60651, 3.53,
-  0.63899, 3.96,
-  0.67343, 4.47,
-  0.70551, 4.98,
-  0.73682, 5.52,
-  0.76499, 6.05,
-  0.79356, 6.57,
-  0.82016, 7.12,
-  0.84521, 7.65,
-  0.86986, 8.20
+  0.0000, 0.00,
+  0.0150, 0.072,
+  0.0410, 0.21,
+  0.0610, 0.31,
+  0.0880, 0.46,
+  0.1220, 0.64,
+  0.1600, 0.85,
+  0.2030, 1.08,
+  0.2250, 1.21,
+  0.2450, 1.33,
+  0.2860, 1.59,
+  0.3190, 1.81,
+  0.3450, 2.00,
+  0.3600, 2.12,
+  0.3650, 2.16,
+  0.3670, 2.18
 }
+
+
 
 TM 1 Hz TS_raw_t TS0_raw; TM 1 Hz TS_cnt_t TS0_cnt;
 TM 1 Hz TS_raw_t TS1_raw; TM 1 Hz TS_cnt_t TS1_cnt;
