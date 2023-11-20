@@ -3,8 +3,8 @@ client hchoclt
 
 # PhRTG configuration: only run when not in text mode
 server [!screen] cmd/server playbacksrvr
-server [!screen] - phrtg
-extraction [!screen] hchortgext
+#server [!screen] - phrtg
+#extraction [!screen] hchortgext
 
 memo
 batchfile interact
