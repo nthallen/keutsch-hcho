@@ -16,6 +16,6 @@
 
   Launch -TMC-  lgr -N `mlf_find LOG`
   Launch tm_gen hchocol
-  Launch cmd    hchosrvr
+  Launch cmd    hchosrvr -H srvr: -S:
   Launch -      tmdf
   Launch -TMC-  hchoalgo -v
