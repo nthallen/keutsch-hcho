@@ -1,17 +1,17 @@
 # Startup script for hcho
+/usr/local/libexec/usb_enum >USB_def.log
+. ./USB_def.log
+
   Launch memo memo -o $Experiment.log -l4
-  # Pick one:
-# Launch /dev/huarp/subbus subbusd_serusb -b 57600 -p /dev/ttyUSB2
-# Launch /dev/huarp/subbus subbusd_serusb -b 115200 -p /dev/ttyUSB1
-  [ -e /dev/ttyUSB0 ] && [ ! -e /dev/huarp/HCHO/SB1 ] &&
-    Launch SB1 subbusd_serusb -b 115200 -p /dev/ttyUSB0 -n SB1 -s SB1
-  [ -e /dev/ttyUSB1 ] && [ ! -e /dev/huarp/HCHO/SB2 ] &&
-    Launch SB2 subbusd_serusb -b 115200 -p /dev/ttyUSB1 -n SB2 -s SB2
-  [ -e /dev/ttyUSB2 ] && [ ! -e /dev/huarp/HCHO/SB3 ] &&
-    Launch SB3 subbusd_serusb -b 115200 -p /dev/ttyUSB2 -n SB3 -s SB3
+
+  SBN=1
+  for $port in $subbus_port; do
+    Launch SB$SBN subbusd_serusb -b 115200 -p /dev/ttyUSB0 -n SB$SBN -s SB$SBN
+    let SBN=SBN+1
+  done
+
   Launch tm_bfr bfr -H bfr: -S:
 
-  memo=/dev/huarp/$Experiment/memo
   msg "Running script interact"
 
   Launch -TMC-  lgr -N `mlf_find LOG`
