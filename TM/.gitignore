@@ -20,6 +20,13 @@ hchodispnc.cc
 hchodispncoui.cc
 hchodispnc.o
 hchodispncoui.o
+hchojsonext.cdf
+hchojsonextcdf.oui
+hchojsonextcdf.tmc
+hchojsonext.cc
+hchojsonextoui.cc
+hchojsonext.o
+hchojsonextoui.o
 TSrawextcdf.oui
 TSrawcdf.tmc
 TSrawext.cc
@@ -59,6 +66,7 @@ BCtrext
 hchocol
 hchosrvr
 hchodispnc
+hchojsonext
 TSrawext
 doit
 hchoalgo

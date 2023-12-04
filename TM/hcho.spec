@@ -46,6 +46,8 @@ hchocol : -lsubbuspp
 hchosrvr : SB.cc SB.oui -lsubbuspp
 hchodisp : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc fcc_conv.tmc \
            HCHO.tbl HCHO_Eng.tbl
+hchojsonext : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc fcc_conv.tmc \
+           $genuibase
 # hchortgext : BCtr_conv.tmc TS_conv.tmc rtg.tmc /usr/local/share/oui/cic.oui
 TSrawext : TSraw.cdf
 doit : hcho.doit
