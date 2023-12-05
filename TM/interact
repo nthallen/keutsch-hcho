@@ -5,8 +5,8 @@
   Launch memo memo -o $Experiment.log -l4
 
   SBN=1
-  for $port in $subbus_port; do
-    Launch SB$SBN subbusd_serusb -b 115200 -p /dev/ttyUSB0 -n SB$SBN -s SB$SBN
+  for port in $subbus_port; do
+    Launch SB$SBN subbusd_serusb -b 115200 -p $port -n SB$SBN -s SB$SBN
     let SBN=SBN+1
   done
 
@@ -18,6 +18,6 @@
   Launch tm_gen hchocol
   Launch cmd    hchosrvr -H srvr: -S:
   [ -e "$meerstetter_port" ] &&
-  Launch -      meerstetter -n ME -p $meerstetter_port -a 1:SHG,2:THG
+  Launch -      meerstetter -n HG -p $meerstetter_port -a 1:SHG,2:THG
   Launch -      tmdf
   Launch -TMC-  hchoalgo -v
