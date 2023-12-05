@@ -1,8 +1,8 @@
 # HG.txt Harmonic Generator heaters
 Name HG
 TempFormat %7.4f
-AmpsFormat %7.3f
-VoltsFormat %7.3f
+AmpsFormat %7.4f
+VoltsFormat %7.4f
 NoSink
 Data SHG 1 "Meerstetter SHG"
 Data THG 2 "Meerstetter THG"
