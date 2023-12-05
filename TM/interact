@@ -17,5 +17,7 @@
   Launch -TMC-  lgr -N `mlf_find LOG`
   Launch tm_gen hchocol
   Launch cmd    hchosrvr -H srvr: -S:
+  [ -e "$meerstetter_port" ] &&
+  Launch -      meerstetter -n ME -p $meerstetter_port -a 1:SHG,2:THG
   Launch -      tmdf
   Launch -TMC-  hchoalgo -v
