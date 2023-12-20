@@ -5,7 +5,7 @@ State Init {
       > Laser Set Scan Step 0.25
       > Laser Set Offline Delta 55
       > Laser Set Online Dither 0.1
-	  > Laser Set Online Position 185
+      > Laser Set Online Position 185
       > Laser Chop NPts Online 50
       > Laser Chop NPts Offline 50
       > Laser Drift Limit Set 40
