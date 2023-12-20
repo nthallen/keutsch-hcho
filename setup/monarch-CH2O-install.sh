@@ -1,176 +1,9 @@
-# Setup script for the Monarch architecture when run under Cygwin
-# on Windows.
-#
-# --------------------
-# Invocation:
-# --------------------
-# 
-# This script can be run from a Windows Cmd shell as:
-# > PowerShell -ExecutionPolicy Bypass ./cygwin-monarch-hcho-install.ps1
-#
-# ---------
-# Uninstall:
-# ---------
-#
-# If you would like to reverse the actions of this script
-# (i.e. delete the flight group), you can issue the command:
-# > PowerShell -ExecutionPolicy Bypass ./cygwin-monarch-hcho-install.ps1 -uninstall
-
-param (
-  [switch]$uninstall = $false,
-  [switch]$setup_cygwin = $false
-)
-
-# If we are uninstalling, we probably need to run a Cygwin bash
-# script first before deleting the group. That would presumably
-# delete the monarch source hierarchy, /var/run/monarch, etc.
-#
-# Check here to figure out whether we have to do anything
-#   Does the $fltgrp exist
-#   Is the current user a member?
-$fltgrp = 'flight'
-$fulluser = "$Env:USERDOMAIN\$Env:USERNAME"
-$need_to_be_admin = $true
-$is_admin = $false
-$reason = ''
-$check = 'Checking'
-$ok_when = 'already'
-$exp_option = ''
-# $exp_option = '-E moudi:nthallen/keutsch-moudi.git'
-
-while ($need_to_be_admin -AND -NOT $is_admin) {
-  Write-Output "`n$check for group existence and membership"
-  if ($uninstall) {
-    if (-NOT ((Get-LocalGroup).Name -contains $fltgrp)) {
-      Write-Output "Group $fltgrp does not exist, so no changes required for uninstall."
-      $need_to_be_admin = $false
-    } elseif ($fltgrp -ine 'Administrators') {
-      $reason = "delete group $fltgrp"
-    } else {
-      $need_to_be_admin = $false
-    }
-  } else {
-    if ((Get-LocalGroup).Name -contains $fltgrp) {
-      if ((Get-LocalGroupMember $fltgrp).Name -contains $fulluser ) {
-        Write-Output "Group $fltgrp $ok_when exists and $fulluser is a member"
-        $need_to_be_admin = $false
-      } else {
-        $reason = "add user $fulluser to group $fltgrp"
-      }
-    } else {
-      $reason = "create group $fltgrp"
-    }
-  }
-
-  # This is the elevation check and elevation
-  $is_admin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
-      [Security.Principal.WindowsBuiltInRole] "Administrator")
-
-  if ($need_to_be_admin) {
-    $ok_when = 'now'
-    $check = 'Rechecking'
-    if ($is_admin) {
-      # Do admin stuff now
-      Write-Output "We are elevated now to $reason"
-      if ($uninstall) {
-        if ((Get-LocalGroupMember $fltgrp).Name -contains $fulluser ) {
-          Write-Output "Removing $fulluser from local group $fltgrp"
-          Remove-LocalGroupMember -Name $fltgrp -Member $fulluser
-        }
-        if ((Get-LocalGroupMember $fltgrp).Name.count -eq 0) {
-          Write-Output "Removing local group $fltgrp"
-          Remove-LocalGroup -Name $fltgrp
-        } else {
-          Write-Output "Holding off on removing non-empty local group $fltgrp"
-        }
-      } else {
-        Write-Output "Installing ..."
-        if (-NOT ((Get-LocalGroup).Name -contains $fltgrp) ) {
-          Write-Output "Creating Local Group $fltgrp"
-          $grp = New-LocalGroup -Name "$fltgrp" -Description 'Monarch flight group'
-        }
-        Write-Output "Adding $fulluser to local group $fltgrp"
-        Add-LocalGroupMember -Name $fltgrp -Member $fulluser
-      }
-      $cont = Read-Host -Prompt "Continue?"
-      Return
-    } else {
-      # Try to elevate to become admin:
-      # $MyInvocation | Format-List | Write-Output
-      # $MyInvocation.MyCommand | Format-List | Write-Output
-      $cmdline = $MyInvocation.Line.Replace($MyInvocation.InvocationName, $MyInvocation.MyCommand.Definition)
-      Write-Verbose "Invocation: $cmdline"
-      Write-Output "We need to RunAs an Administrator to $reason"
-      Write-Warning "Will now attempt to RunAs Administrator:"
-      $cont = Read-Host -Prompt "Continue? [N/y]"
-      if ( $cont -match 'y(es)?' ) {
-        Write-Output "Restarting script as Administrator"
-        $cmdline = "-ExecutionPolicy Bypass $cmdline"
-        Start-Process -FilePath PowerShell.exe -ArgumentList "$cmdline" -Verb RunAs -Wait
-        # Write-Output "Back from RunAs"
-        # $cont = Read-Host -Prompt "Continue?"
-      } else {
-        Write-Output "Please contact the author if you need help with this installation"
-        Return
-      }
-    }
-  }
-}
-
-if ($uninstall) {
-  Return
-}
-
-if (-not $setup_cygwin -AND
-    -not (Test-Path -Path c:\cygwin64 -PathType Container)) {
-  $setup_cygwin = $true
-}
-
-if ($setup_cygwin) {
-  # Run Cygwin Setup
-  $curloc = Get-Location
-  Set-Location $env:USERPROFILE\Downloads
-  if (-not (Test-Path -Path setup-x86_64.exe -PathType Leaf))
-  { # need to download the program
-    $url = "https://cygwin.com/setup-x86_64.exe"
-    [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-    write-host "Need to download cygwin setup from $url"
-    $dest = "setup-x86_64.exe"
-    $start_time = Get-Date
-    Invoke-WebRequest -Uri $url -OutFile $dest
-    Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
-  }
-
-  if (Test-Path -Path setup-x86_64.exe -PathType Leaf)
-  {
-    Write-Output "`nInvoking Cygwin Setup`n"
-    start-process setup-x86_64.exe  -Wait -argumentlist "--packages bzip2,cygwin-doc,file,less,openssh,git,chere,cmake,doxygen,graphviz,gcc-core,gcc-g++,gdb,make,bison,flex,perl,libncurses-devel,screen"
-  }
-  else
-  {
-    Write-Output "Download must have failed: Please contact the author for help"
-    Return
-  }
-}
-
-if (Test-Path -Path "c:\cygwin64\usr\local" -PathType container) {
-  if (-NOT (Test-Path -Path "c:\cygwin64\usr\local\src" -PathType container)) {
-    mkdir "c:\cygwin64\usr\local\src"
-  }
-  Set-Location c:\cygwin64\usr\local\src
-} else {
-  Write-Error "Unable to locate the Cygwin installation"
-  Return
-}
-
-# Create the bash install script
-$setup_script = @'
 #! /bin/bash
 
 function print_usage {
 cat 1>&2 <<'EOF'
 # Usage:
-#   ./monarch-hcho-install.sh [ -E moudi:nthallen/keutsch-moudi.git ] [-n] [-h] [-S]
+#   ./monarch-CH2O-install.sh [ -E moudi:nthallen/keutsch-moudi.git ] [-n] [-h] [-S]
 #
 # -E <basename>:<URL>
 #    Also install the instrument source code. <basename> is the
@@ -218,7 +51,7 @@ function wrap_path {
   esac
 }
 
-exp_option='hcho:nthallen/keutsch-hcho.git'
+exp_option='CH2O:nthallen/keutsch-hcho.git'
 exp_base=''
 exp_url=''
 testmode=no
@@ -250,18 +83,18 @@ if [ $machine = Cygwin ]; then
     cygperm=`stat --format='%a' "$cyglnk"`
     [ "$cygperm" = "775" ] || {
       chmod 0775 "$cyglnk"
-      echo "monarch-hcho-install.sh: Permission fix applied for Cygwin Start Menu Link"
+      echo "monarch-CH2O-install.sh: Permission fix applied for Cygwin Start Menu Link"
     }
   fi
   # Apply vi annoyance fix if it isn't already present
   [ -f ~/.exrc ] || {
     touch ~/.exrc
-    echo "monarch-hcho-install.sh: Installed vi startup error mitigation"
+    echo "monarch-CH2O-install.sh: Installed vi startup error mitigation"
   }
   # Verify that the monarch group flight exists and user is a member
   id | grep -q '(flight)' || {
     if id | grep -q "(`hostname`+flight)"; then
-      echo "monarch-hcho-install.sh: The flight group 'flight' has been created,"
+      echo "monarch-CH2O-install.sh: The flight group 'flight' has been created,"
       echo "but it is manifested under Cygwin here as '`hostname`+flight'."
       if [ -f /etc/group ]; then
         echo "It looks like you may already have a mitigation in place in"
@@ -276,10 +109,10 @@ if [ $machine = Cygwin ]; then
       echo "This script was executed as '$0'"
       echo "from the directory '$PWD'"
     else
-      echo "monarch-hcho-install.sh: user '$myuser' does not appear to be a member"
-      echo "of group 'flight'. If you have not run cygwin-monarch-hcho-install.ps1,"
+      echo "monarch-CH2O-install.sh: user '$myuser' does not appear to be a member"
+      echo "of group 'flight'. If you have not run cygwin-monarch-CH2O-install.ps1,"
       echo "do so now. Otherwise try restarting the system and then rerun"
-      echo "cygwin-monarch-hcho-install.ps1."
+      echo "cygwin-monarch-CH2O-install.ps1."
     fi
     echo
     echo -n "Hit Enter to terminate:"
@@ -325,17 +158,17 @@ else
   if grep -q "^flight:" /etc/passwd; then
     echo "monarch_install.sh: flight user already exists"
   else
-    echo "monarch-hcho-install.sh: Need to create user flight and group flight"
+    echo "monarch-CH2O-install.sh: Need to create user flight and group flight"
     $sudo addgroup flight
-    echo "monarch-hcho-install.sh: flight group created"
+    echo "monarch-CH2O-install.sh: flight group created"
     $sudo adduser --disabled-password --gecos "flight user" --no-create-home --ingroup flight flight
-    echo "monarch-hcho-install.sh: flight user created"
+    echo "monarch-CH2O-install.sh: flight user created"
   fi
   id -Gn | grep -q '\bflight\b' ||
     $sudo adduser $myuser flight
 fi
 id -Gn | grep -q '\bflight\b' || {
-  echo "monarch-hcho-install.sh: user '$myuser' does not appear to be a member"
+  echo "monarch-CH2O-install.sh: user '$myuser' does not appear to be a member"
   echo "of group 'flight'. If this script just created group flight,"
   echo "you will need to close your terminal session, open another, and"
   echo "rerun this script in order to complete the installation"
@@ -346,7 +179,7 @@ id -Gn | grep -q '\bflight\b' || {
 }
 
 umask 02
-echo "monarch-hcho-install.sh: checking permissions on /usr/local/src"
+echo "monarch-CH2O-install.sh: checking permissions on /usr/local/src"
 [ -d /usr/local/src ] || $sudo mkdir -p -m 02775 /usr/local/src
 uls_g=`stat --format '%G' /usr/local/src`
 [ "$uls_g" = "flight" ] || $sudo chgrp flight /usr/local/src
@@ -487,10 +320,10 @@ if [ $machine = Linux ]; then
     *) distro=Unclear;;
   esac
   if [ $distro = Ubuntu ]; then
-    echo "monarch-hcho-install.sh: Checking prerequisites"
+    echo "monarch-CH2O-install.sh: Checking prerequisites"
     sudo apt install cmake doxygen graphviz gdb gcc g++ git bison flex libncurses-dev openssh-server screen
   else
-    echo "monarch-hcho-install.sh: Not specifically configured for release '$release'."
+    echo "monarch-CH2O-install.sh: Not specifically configured for release '$release'."
     echo "Need to determine how to add packages to meet build prerequisites."
     echo "The following tools are required:"
     echo "  cmake git gdb gcc g++ bison flex libncurses-dev screen"
@@ -665,10 +498,3 @@ EOF
   fi
 
 fi
-'@
-$setup_script | Out-File -FilePath "./monarch-hcho-install.sh" -NoNewLine -Encoding ASCII
-
-Write-Output "`nStarting standard install script: /usr/local/src/monarch-hcho-install.sh`n"
-
-# -Wait won't work here, because mintty.exe doesn't really exit until ssh-agent does
-start-process C:\cygwin64\bin\mintty.exe -argumentlist "-h always /bin/bash --login /usr/local/src/monarch-hcho-install.sh -S $exp_option"
