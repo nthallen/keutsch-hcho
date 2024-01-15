@@ -40,7 +40,7 @@ tmcbase = pps_time.tmc
 
 SCRIPT = interact
 DISTRIB = services USB.id
-TGTDIR = $(TGTNODE)/home/hcho
+TGTDIR = $(TGTNODE)/home/CH2O
 IGNORE = Makefile "*.exe" "*.stackdump"
 
 hchocol : -lsubbuspp
