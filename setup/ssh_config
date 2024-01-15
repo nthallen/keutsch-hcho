@@ -1,0 +1,13 @@
+# Add:
+#   include /home/ch2o/src/setup/ssh_config
+# to ~/.ssh/config
+# Optionally override the username with:
+#   hostname 10.245.83.9
+#   user my_username
+
+host ch2o ch2o.arp.harvard.edu hcho
+hostname 10.245.83.9
+
+Match final host 10.245.83.9
+ForwardAgent yes
+# user default_username
