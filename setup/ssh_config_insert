@@ -1,0 +1,10 @@
+### Begin CH2O ssh_config_insert ###
+include /home/CH2O/src/setup/ssh_config
+
+# If your username on the local machine differs from the username
+# you will use on the flight computer, specify it outside this
+# block using the following syntax or equivalent:
+#   hostname 10.245.83.9
+#   user my_username
+
+### End CH2O ssh_config_insert ###
