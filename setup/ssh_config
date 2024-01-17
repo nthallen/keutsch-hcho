@@ -5,7 +5,7 @@
 #   hostname 10.245.83.9
 #   user my_username
 
-host ch2o ch2o.arp.harvard.edu hcho
+host ch2o ch2o.arp.harvard.edu hcho 10.245.83.9
 hostname 10.245.83.9
 ForwardAgent yes
 user ch2o_user
