@@ -7,7 +7,5 @@
 
 host ch2o ch2o.arp.harvard.edu hcho
 hostname 10.245.83.9
-
-Match final host 10.245.83.9
 ForwardAgent yes
 user ch2o_user
