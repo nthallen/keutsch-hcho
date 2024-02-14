@@ -20,4 +20,4 @@
   [ -e "$meerstetter_port" ] &&
   Launch -      meerstetter -n HG -p $meerstetter_port -a 1:SHG,2:THG
   Launch -      tmdf
-  Launch -TMC-  hchoalgo -v
+  Launch -TMC-  hchoalgo

@@ -32,12 +32,6 @@ hchojsonext.cc
 hchojsonextoui.cc
 hchojsonext.o
 hchojsonextoui.o
-TSrawextcdf.oui
-TSrawcdf.tmc
-TSrawext.cc
-TSrawextoui.cc
-TSrawext.o
-TSrawextoui.o
 doit.dep
 hchoalgosws.tma
 hchoalgoa.tmc
@@ -77,7 +71,6 @@ hchocol
 hchosrvr
 hchodispnc
 hchojsonext
-TSrawext
 doit
 hchoalgo
 normctsext

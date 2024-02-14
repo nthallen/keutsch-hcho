@@ -4,10 +4,16 @@ BCtr {
   BCtr_1: (BCtr_1_a,6);
   Status: (BCtr_LVstat,8);
   LaserV: (BCtr_LaserV,7) mV;
-  LasIn:  >HBox{(BCtr_Pfresh,1); (BCtr_LasIn_mW,7)} mW;
+# LasIn:  >HBox{(BCtr_Pfresh,1); (BCtr_LasIn_mW,7)} mW;
+  PwrIn:  (LasIn_mW,7)    mW;
+  PwrOut: (LasOut_mW,7)   mW;
   Ready:  (BCtr_Ready,3);
   Enable: (BCtr_Enable,3);
   DRdy:   (BCtr_DRdy,3);
+}
+
+BCtr_HK {
+  HBox { +-; Title: >"BCtr HK"<; -+ };
   Exp:    (BCtr_Expired,4);
   NAB:    (BCtr_NAB,1);
   TxAct:  (BCtr_TxActive,3);
@@ -20,4 +26,3 @@ BCtr {
   TxErr:;
   " Ovf:" (BCtr_TxErrOvf,4);
 }
-

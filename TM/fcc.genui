@@ -1,12 +1,12 @@
 # fcc.genui
-  1 FC0_Flow FCC Flow0
-  1 FC1_Flow FCC Flow1
-  1 FC2_Flow FCC Flow2
+  1 FC0_Flow FCC Zero Flow
+  1 FC1_Flow FCC Span Flow
+  1 FC2_Flow FCC Bypass Flow
   1 FCC_U2_T FCC Temps
   1 FCC_U3_T FCC Temps
-  1 FC0_Set  FCC Flow0
-  1 FC1_Set  FCC Flow1
-  1 FC2_Set  FCC Flow2
+  1 FC0_Set  FCC Zero Set
+  1 FC1_Set  FCC Span Set
+  1 FC2_Set  FCC Bypass Set
   1 FC0Open:FCC0_Status:0   FCC Status
   1 FC1Open:FCC0_Status:1   FCC Status
   1 FC2Open:FCC0_Status:2   FCC Status

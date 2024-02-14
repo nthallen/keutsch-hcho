@@ -1,24 +1,24 @@
 Input "TS.tbl";
 Input "dacscan.tbl";
 Input "PPS.tbl";
-Input "HG.tbl";
 
 MFCtr {
   +-+;
   VGlue 0+1;
-  HBox { (flttime,9); HGlue 0+1 };
-  { MFCtr: (MFCtr,5)}
+  HBox {
+    HGlue 0+1;
+    {
+      HBox {  HGlue 0+1; (flttime,9) };
+      { MFCtr: (MFCtr,5)}
+    }
+  }
 }
 
 { HBox {
-    |+; {
-      [HG];
-      HBox {
-        { [PPS]; [TS] }; |+;
-        { [dacscan]; [DS_SWStat] }; |+;
-        { [MFCtr] }
-      }
-    };
+    |+;
+    { [dacscan]; [DS_SWStat] };
+    |+;
+    { [PPS]; [TS]; [MFCtr] };
     |+
   };
   -;

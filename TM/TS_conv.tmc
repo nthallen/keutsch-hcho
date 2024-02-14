@@ -10,16 +10,6 @@
   #define to_double(x) (double)x
   #define TS_FS_CNT 268435456.
 %}
-TS_V_t TS0_T; Invalidate TS0_T;
-{
-  if (TS0_cnt > 0) {
-    TS0_T = (to_double(TS0_raw))/TS0_cnt;
-    TS0_T = 1.25 * TS0_T/TS_FS_CNT;
-  } else {
-    TS0_T = -10.0;
-  }
-  Validate TS0_T;
-}
 
 TS_V_t TS1_T; Invalidate TS1_T;
 LaserPwr_t LasIn_mW; Invalidate LasIn_mW;
@@ -33,17 +23,6 @@ LaserPwr_t LasIn_mW; Invalidate LasIn_mW;
   TS1_T = LasIn_mW;
   Validate LasIn_mW;
   Validate TS1_T;
-}
-
-TS_V_t TS2_T; Invalidate TS2_T;
-{
-  if (TS2_cnt > 0) {
-    TS2_T = (to_double(TS2_raw))/TS2_cnt;
-    TS2_T = 1.25 * TS2_T/TS_FS_CNT;
-  } else {
-    TS2_T = -10.0;
-  }
-  Validate TS2_T;
 }
 
 TS_V_t TS3_T; Invalidate TS3_T;
@@ -60,17 +39,6 @@ TS_T_t CellT; Invalidate CellT;
   Validate TS3_T;
 }
 
-TS_V_t TS4_T; Invalidate TS4_T;
-{
-  if (TS4_cnt > 0) {
-    TS4_T = (to_double(TS4_raw))/TS4_cnt;
-    TS4_T = 1.25 * TS4_T/TS_FS_CNT;
-  } else {
-    TS4_T = -10.0;
-  }
-  Validate TS4_T;
-}
-
 LaserPwr_t LasOut_mW; Invalidate LasOut_mW;
 TS_V_t TS5_T; Invalidate TS5_T;
 {
@@ -84,3 +52,42 @@ TS_V_t TS5_T; Invalidate TS5_T;
   Validate LasOut_mW;
   Validate TS5_T;
 }
+
+%{
+
+#ifdef UNUSED_TEMP_SENSORS
+
+TS_V_t TS0_T; Invalidate TS0_T;
+{
+  if (TS0_cnt > 0) {
+    TS0_T = (to_double(TS0_raw))/TS0_cnt;
+    TS0_T = 1.25 * TS0_T/TS_FS_CNT;
+  } else {
+    TS0_T = -10.0;
+  }
+  Validate TS0_T;
+}
+
+TS_V_t TS2_T; Invalidate TS2_T;
+{
+  if (TS2_cnt > 0) {
+    TS2_T = (to_double(TS2_raw))/TS2_cnt;
+    TS2_T = 1.25 * TS2_T/TS_FS_CNT;
+  } else {
+    TS2_T = -10.0;
+  }
+  Validate TS2_T;
+}
+
+TS_V_t TS4_T; Invalidate TS4_T;
+{
+  if (TS4_cnt > 0) {
+    TS4_T = (to_double(TS4_raw))/TS4_cnt;
+    TS4_T = 1.25 * TS4_T/TS_FS_CNT;
+  } else {
+    TS4_T = -10.0;
+  }
+  Validate TS4_T;
+}
+#endif
+%}

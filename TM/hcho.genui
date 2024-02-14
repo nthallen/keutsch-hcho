@@ -2,6 +2,11 @@ HEADER HCHO Instrument
 MNEMONIC hcho
 HOMEDIR HCHO_DATA_DIR
 
+ 10 BCtr_0_a      Monitor RefCts
+ 10 BCtr_LasIn_mW Monitor LaserP
+ 1  LasOut_mW     Monitor LaserP
+ 10 BCtr_LaserV   Monitor LaserV
+
  10 PPS_drift PPS Drift
  10 PPS_min_drift PPS Drift
  10 PPS_time  PPS Raw  %.0lf

@@ -5,6 +5,7 @@ Input "HtrCtrl.tbl";
 #Input "dacscan.tbl";
 Input "fcc.tbl";
 #Input "PPS.tbl";
+Input "HG.tbl";
 
 Cell {
   HBox{ +-; Title: "Cell"; -+ };
@@ -14,8 +15,14 @@ Cell {
 
 System {
   HBox{ +-; Title: "System"; -+ };
-  SWStat: (SWStat,3) Flag: (Flag,3);
-  [TMbase];
+  HBox {
+    { SWStat: (SWStat,3) Flag: (Flag,3);
+      [TMbase_data];
+    }; |; {
+      VGlue 0+1;
+      [TMbase_times]
+    }
+  };
 }
 
 MR {
@@ -23,15 +30,22 @@ MR {
   HCHO: (hcho_mr,9) ppb;
 }
 
-{ HBox {
-    |+; [BCtr]; |+;
-    { [FCC];
-      HBox { {[Cell]; [FCC2]; [MR] } ; |+;
-             { [HtrCtrl]; VGlue 0+1; [System] }
-      }
-    }; |+;
+{ HBox { |+;
+    { HBox {
+        [BCtr]; |+;
+        { [FCC];
+          HBox { [FCC2]; |+; [HtrCtrl] };
+        }
+      };
+      [HG];
+      HBox {
+        { [Cell];
+          VGlue 0+1;
+          [MR]
+        }; |+; [System]
+      };
+    };
+    |+;
   };
   -;
 }
-#             {[dacscan]; [DS_SWStat] } } }; |+;
-#    { [HtrCtrl]; [PPS]; [System] }; |+ };
