@@ -33,8 +33,13 @@ SWS_OVERNIGHT_FLOW_EXECUTE     26   Overnight Flow Execute: Validate Overnight_F
 SWS_LC_STEPS_IDLE              27  LC Steps Idle: Validate LC_Steps_Idle; break;
 SWS_LC_STEPS_ACTIVATE          28  LC Steps Activate: Validate LC_Steps; break;
 
-SWS_TIMEWARP   254   Time Warp: break;
-SWS_SHUTDOWN   255   Shutdown: Validate Shutdown; break;
+SWS_DAILY_SAVERUN_ENABLE      40 Daily Saverun Enable: Validate Daily_Saverun_Enable; break;
+SWS_DAILY_SAVERUN_DISABLE     41 Daily Saverun Disable: Validate Daily_Saverun_Disable; break;
+SWS_DAILY_SAVERUN_EXECUTE     42 Daily Saverun Execute: Validate Daily_Saverun; break;
+
+SWS_FULL_SHUTDOWN            253 Full Shutdown: Validate Full_Shutdown; break;
+SWS_TIMEWARP                 254 Time Warp: break;
+SWS_SHUTDOWN                 255 Shutdown: Validate Shutdown; break;
 
 SW_Variable: <uint8_t,UCHAR> Flag
   : Set %d { $0 = $2; }
