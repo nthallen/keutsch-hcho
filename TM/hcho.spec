@@ -1,6 +1,6 @@
 tmcbase = base.tmc
-# cmdbase = /usr/local/share/huarp/phrtg.cmd
 genuibase = hcho.genui
+cmdbase = loop.cmd
 
 tmcbase = SWStat.tmc
 genuibase = SWStat.genui
