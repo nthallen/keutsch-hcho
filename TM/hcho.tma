@@ -84,9 +84,7 @@ State Daily_Saverun {
 
 State Full_Shutdown {
   Hold Until Valid (Chop_Idle) or 35:00;
-  # If we are chopping, wait until scan, then
-  # stop chopping
-  # Shutdown
+  Validate Shutdown;
 }
 
 State Shutdown {
