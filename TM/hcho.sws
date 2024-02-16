@@ -37,6 +37,7 @@ SWS_DAILY_SAVERUN_ENABLE      40 Daily Saverun Enable: Validate Daily_Saverun_En
 SWS_DAILY_SAVERUN_DISABLE     41 Daily Saverun Disable: Validate Daily_Saverun_Disable; break;
 SWS_DAILY_SAVERUN_EXECUTE     42 Daily Saverun Execute: Validate Daily_Saverun; break;
 SWS_DAILY_AUTOSTART_EXECUTE   43 Daily Auto Start Execute: Validate Auto_Start; break;
+SWS_DAILY_AUTOSTART_DISABLE   44 Daily Auto Start Disable: Validate Daily_Saverun_Disable; break;
 
 SWS_FULL_SHUTDOWN            253 Full Shutdown: Validate Full_Shutdown; break;
 SWS_TIMEWARP                 254 Time Warp: break;

@@ -15,10 +15,13 @@ State Init {
 #     > TFL Set SHG Temperature 27.94 C
 #     > TFL Set THG Temperature 33.07 C
       > SWStat Chop Dither Enable
+      > SWStat THG Peakup Enable
       Hold until valid (PPS_rate_synch);
-  +5  { if (FC0_Set == 0 /* && !(FCC0_Status&(1<<3) */) {
+  +5  { if (FC0_Set == 0 && !(FCC0_Status&(1<<3)) ) {
           /*  Valve 1 is off and Zero Flow setpoint is zero */
           Validate Auto_Start;
+        } else {
+          Validate Daily_Saverun_Disable;
         }
       }
 }
