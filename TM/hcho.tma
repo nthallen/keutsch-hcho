@@ -39,7 +39,7 @@ State Daily_Saverun_Disable {}
      able to detect time both before and after the specified
      hour.
    */
-  #define DAILY_SAVERUN_TIME_UTC_HOURS 18.0
+  #define DAILY_SAVERUN_TIME_UTC_HOURS 21.0
 %}
 State Daily_Saverun_Enable {
    +1 > Log Advancing to Daily_Saverun_Prepending
