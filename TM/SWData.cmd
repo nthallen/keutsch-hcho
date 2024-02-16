@@ -46,6 +46,7 @@
   : Daily Saverun Enable { $0 = SWS_DAILY_SAVERUN_ENABLE; }
   : Daily Saverun Disable { $0 = SWS_DAILY_SAVERUN_DISABLE; }
   : Daily Saverun Execute { $0 = SWS_DAILY_SAVERUN_EXECUTE; }
+  : Daily Auto Start Execute { $0 = SWS_DAILY_AUTOSTART_EXECUTE; }
   : Full Shutdown { $0 = SWS_FULL_SHUTDOWN; }
   : Time Warp { $0 = SWS_TIMEWARP; }
   : Shutdown { $0 = SWS_SHUTDOWN; }

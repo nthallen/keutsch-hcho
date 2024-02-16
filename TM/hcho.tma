@@ -291,43 +291,43 @@ Partition
 State Chop_Idle {}
 
 State Chop_Period_1 {
-  > Laser Command Scan Start
-  Hold Until (t_z4 && (LVstat_z4 & 1));
-  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
-  Depending on (Full_Shutdown) { Validate Chop_Idle; }
-  > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIMEWARP) or 1:00;
-  Validate Chop_Period_1;
+      > Laser Command Scan Start
+      Hold Until (t_z4 && (LVstat_z4 & 1));
+      Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
+      Depending on (Full_Shutdown) { Validate Chop_Idle; }
+   +1 > Laser Command Chop Mode Begin
+      Hold Until (SWStat == SWS_TIMEWARP) or 1:00;
+      Validate Chop_Period_1;
 }
 
 State Chop_Period_5 {
-  > Laser Command Scan Start
-  Hold Until (t_z4 && (LVstat_z4 & 1));
-  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
-  Depending on (Full_Shutdown) { Validate Chop_Idle; }
-  > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIMEWARP) or 5:00;
-  Validate Chop_Period_5;
+      > Laser Command Scan Start
+      Hold Until (t_z4 && (LVstat_z4 & 1));
+      Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
+      Depending on (Full_Shutdown) { Validate Chop_Idle; }
+   +1 > Laser Command Chop Mode Begin
+      Hold Until (SWStat == SWS_TIMEWARP) or 5:00;
+      Validate Chop_Period_5;
 }
 
 State Chop_Period_10 {
-  > Laser Command Scan Start
-  Hold Until (t_z4 && (LVstat_z4 & 1));
-  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
-  Depending on (Full_Shutdown) { Validate Chop_Idle; }
-  > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIMEWARP) or 10:00;
-  Validate Chop_Period_10;
+      > Laser Command Scan Start
+      Hold Until (t_z4 && (LVstat_z4 & 1));
+      Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
+      Depending on (Full_Shutdown) { Validate Chop_Idle; }
+   +1 > Laser Command Chop Mode Begin
+      Hold Until (SWStat == SWS_TIMEWARP) or 10:00;
+      Validate Chop_Period_10;
 }
 
 State Chop_Period_30 {
-  > Laser Command Scan Start
-  Hold Until (t_z4 && (LVstat_z4 & 1));
-  Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
-  Depending on (Full_Shutdown) { Validate Chop_Idle; }
-  > Laser Command Chop Mode Begin
-  Hold Until (SWStat == SWS_TIMEWARP) or 30:00;
-  Validate Chop_Period_30;
+      > Laser Command Scan Start
+      Hold Until (t_z4 && (LVstat_z4 & 1));
+      Hold Until (t_z4 && !(LVstat_z4 & 1) && !scanning);
+      Depending on (Full_Shutdown) { Validate Chop_Idle; }
+   +1 > Laser Command Chop Mode Begin
+      Hold Until (SWStat == SWS_TIMEWARP) or 30:00;
+      Validate Chop_Period_30;
 }
 
 State Chop_Stop {
@@ -404,6 +404,8 @@ State Chop_Active {
   bool thg_peakup_enable = true;
   #define THG_DEADBAND 0.015
   #define THG_STEPSIZE 0.005
+  #define THG_HARD_LOWER_LIMIT 36.3
+  #define THG_HARD_UPPER_LIMIT 36.4
   #include "TM_average.h"
   TM_average<double> LasPwrAvg;
 %}
@@ -440,10 +442,18 @@ State Chop_Active {
             thg_power[1] = avg_pwr;
             ratio = (thg_power[0]-thg_power[1])/(thg_power[0]+thg_power[1]);
             if (fabs(ratio) > THG_DEADBAND) {
-              ci_sendfcmd(Cmd_Send, "Meerstetter THG SetPoint %.4lf C\n",
-                convert(curr_THG_Set_T) +
-                  (((ratio > 0) != (curr_offline_delta > 0)) ? -1 : 1)
-                  * THG_STEPSIZE);
+              double new_setpoint;
+              new_setpoint = convert(curr_THG_Set_T) +
+                    (((ratio > 0) != (curr_offline_delta > 0)) ? -1 : 1)
+                    * THG_STEPSIZE;
+              if (new_setpoint >= THG_HARD_LOWER_LIMIT &&
+                  new_setpoint <= THG_HARD_UPPER_LIMIT) {
+                ci_sendfcmd(Cmd_Send, "Meerstetter THG SetPoint %.4lf C\n",
+                  new_setpoint);
+              } else {
+                msg(1, "THG algo setpoint (%.4lf C) rejected: outside range %.4lf to %.4lf",
+                  new_setpoint, THG_HARD_LOWER_LIMIT, THG_HARD_UPPER_LIMIT);
+              }
             }
           }
           thg_chop_mode_idx = 2; /* skip the next cycle */
