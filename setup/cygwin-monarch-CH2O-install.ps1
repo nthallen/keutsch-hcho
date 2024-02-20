@@ -646,6 +646,14 @@ EOF
   fi
 
   ins_file=$exp_src/setup/ssh_config_insert
+  ssh_cfg=$exp_src/setup/ssh_config
+  cfg_dir=/etc/monarch/$exp_base
+  if [ -f $ssh_cfg ]; then
+    $sudo mkdir -p $cfg_dir
+    [ -d $cfg_dir ] || nl_error "Unable to create $cfg_dir"
+    cp $ssh_cfg $cfg_dir
+    $sudo chmod g-w $cfg_dir/ssh_config
+  fi
   if [ -f $ins_file ]; then
     umask 023 # Make sure not to add g+w to ~/.ssh/config
     line1=$(head -n1 $ins_file)

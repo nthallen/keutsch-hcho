@@ -1,7 +1,7 @@
 ### Begin CH2O ssh_config_insert ###
 # Match all is necessary to close any preceding host blocks
 Match all
-include /home/CH2O/src/setup/ssh_config
+include /etc/monarch/CH2O/ssh_config
 
 # If your username on the local machine differs from the username
 # you will use on the flight computer, specify it outside this
