@@ -1,5 +1,5 @@
- @rate@ BCtr_0_a       BCtr Cts
- @rate@ BCtr_1_a       BCtr Cts
+ @rate@ BCtr_0_a       BCtr Reference
+ @rate@ BCtr_1_a       BCtr Sample
  @rate@ BCtr_NWords    BCtr NWords
  @rate@ BCtr_IPnum     BCtr IPnum %.0lf
  @rate@ BCtr_NTrigger  BCtr NTrigger

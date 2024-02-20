@@ -7,6 +7,8 @@ HOMEDIR HCHO_DATA_DIR
  1  LasOut_mW     Monitor LaserP
  10 BCtr_LaserV   Monitor LaserV
 
+  1 hcho_mr       Analysis ppb
+
  10 PPS_drift PPS Drift
  10 PPS_min_drift PPS Drift
  10 PPS_time  PPS Raw  %.0lf

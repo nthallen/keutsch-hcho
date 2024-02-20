@@ -1,5 +1,5 @@
- 10 BCtr_0_a       BCtr Cts
- 10 BCtr_1_a       BCtr Cts
+ 10 BCtr_0_a       BCtr Reference
+ 10 BCtr_1_a       BCtr Sample
  10 BCtr_NWords    BCtr NWords
  10 BCtr_IPnum     BCtr IPnum %.0lf
  10 BCtr_NTrigger  BCtr NTrigger
