@@ -651,7 +651,7 @@ EOF
   if [ -f $ssh_cfg ]; then
     $sudo mkdir -p $cfg_dir
     [ -d $cfg_dir ] || nl_error "Unable to create $cfg_dir"
-    cp $ssh_cfg $cfg_dir
+    $sudo cp $ssh_cfg $cfg_dir
     $sudo chmod g-w $cfg_dir/ssh_config
   fi
   if [ -f $ins_file ]; then
