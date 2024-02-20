@@ -34,12 +34,12 @@ MR {
     { HBox {
         [BCtr]; |+;
         { [FCC];
-          HBox { [FCC2]; |+; [HtrCtrl] };
+          HBox { [FCC2]; |+; [Cell] };
         }
       };
       [HG];
       HBox {
-        { [Cell];
+        { [HtrCtrl];
           VGlue 0+1;
           [MR]
         }; |+; [System]
