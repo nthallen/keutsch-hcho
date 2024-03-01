@@ -36,6 +36,9 @@ Module TMbase
 Module BCtr rate=10 NA=1,90 from=10 to=43
 Module Meerstetter mode=ignore name=HG src=HG.txt
 tmcbase = pps_time.tmc
+
+Module anal
+
 # Module TFL mode=absent
 
 SCRIPT = interact

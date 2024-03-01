@@ -1,0 +1,134 @@
+#! /bin/bash
+# Analysis script to run under reduce as:
+# Analysis='bin/$(cat VERSION)/nightly_process background $directory'
+#   Can also be run in the foreground as
+# Analysis='bin/$(cat VERSION)/nightly_process $directory'
+# This script will actually only enqueue processing unless the
+# environment variable BEDTIME = "yes"
+#
+# Options:
+#   -q $directory Queue $directory for overnight processing
+#   -p Perform overnight processing nicely in the background
+#   -P Perform overnight processing in the foreground
+function info {
+  msg -V -n nightly_process -- "$*"
+}
+
+function nl_error {
+  msg -V -n nightly_process "[Error] $*" >&2
+  exit 1
+}
+
+opt_q=''
+opt_p=no
+opt_P=no
+
+while getopts "q:pP" option; do
+  case $option in
+    q) opt_q=$OPTARG;;
+    p) opt_p=yes;;
+    P) opt_P=yes;;
+    *) nl_error "Invalid option '-$option'"
+  esac
+done
+
+[ $opt_p = yes -a $opt_P = yes ] &&
+  nl_error "Options -p and -P are mutually exclusive"
+
+if [ -n "$opt_q" ]; then
+  [ -d "$opt_q" ] ||
+    nl_error "Specified directory '$opt_q' is not a directory"
+  run=/${opt_q#*raw/}
+  [ "$run" = "$opt_q" ] &&
+    nl_error "Expected raw/ in directory path '$opt_q'"
+  echo $opt_q >>saved.runs
+  info "Directory $opt_q queued for processing"
+fi
+
+if [ $opt_p = yes ]; then
+  info "Proceeding with run analysis in the background"
+  nohup nice -2 $0 -P >>analysis.log 2>&1 &
+  exit 0
+fi
+
+if [ $opt_P = yes ]; then
+  echo
+  info "Starting run analysis $(date)"
+  if [ -f saved.runs ]; then
+    rm -f saved.runs.$$
+    mv saved.runs saved.runs.$$
+    dirs=$(cat saved.runs.$$)
+  else
+    dirs=''
+    info "No runs queued for processing"
+  fi
+  for dir in $dirs; do
+    # redo our sanity checks
+    run=/${dir#*raw/}
+    if [ ! -d "$dir" ]; then
+      info "[Error] Directory '$dir' not found"
+    elif [ "$run" = "$dir" ]; then
+      info "[Error] Expected raw/ in directory path '$dir'"
+    fi
+
+    # Run dircksum -w
+    if [ -f $dir/.MD5SUM ]; then
+      info "Skipping dircksum on $dir"
+    else
+      info "Calculating dircksum on $dir"
+      dircksum -w "$dir"
+    fi
+
+    # Create tar.gz
+    dest=$(echo $dir | sed -e 's/^raw\//HCHO_/; s/\//_/').tar.gz
+    info "Creating archive $dest"
+    tar -czf $dest $dir
+    
+    # Move tar.gz into staging directory
+    [ -d archive/stage ] || mkdir -p archive/stage
+    if [ -d archive/stage ]; then
+      mv $dest archive/stage/
+      [ -f $dest ] && info "Failed to move $dest into archive/stage"
+    else
+      info "Unable to create stage directory"
+    fi
+  done
+
+  [ -d archive/receipt ] || mkdir -p archive/receipt
+  [ -d archive/receipt ] ||
+    info "Failed to create archive/receipt directory"
+  [ -d archive/done ] || mkdir -p archive/done
+  [ -d archive/done ] ||
+    info "Failed to create archive/done directory"
+
+  # Clear out already backed up runs from staging directory*
+  for rcpt in archive/receipt/*; do
+    dest=''
+    if [ -f $rcpt ]; then
+      case $rcpt in
+        *.rcpt) ;;
+        *) info "[Error] Unrecognized receipt: '$rcpt'";;
+      esac
+      dest=${rcpt##*/}
+      dest=${dest%.rcpt}
+      if [ -f archive/stage/$dest ]; then
+        [ -d archive/done ] &&
+          mv archive/stage/$dest archive/done/
+        if [ -f archive/stage/$dest -o ! -f archive/done/$dest ]; then
+          info "[Error] Move of $dest failed"
+        else
+          info "Moved $dest to done"
+          rm $rcpt
+        fi
+      elif [ -f archive/done/$dest ]; then
+        info "[Error] $dest already moved to done"
+        rm $rcpt
+      else
+        info "[Error] $dest not found in stage or done"
+        rm $rcpt
+      fi
+    fi
+  done
+fi
+
+rm -f saved.runs.$$
