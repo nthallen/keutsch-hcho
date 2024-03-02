@@ -32,6 +32,7 @@ State Init {
 }
 
 State Auto_Start {
+  Hold until (SWStat == 0) or 2;
   > SWstat Pressure Control Activate
   Hold until (SWStat != 0) or 2;
   Hold until (SWStat == 0) or 2;
