@@ -133,7 +133,8 @@ LVstat_t LVstat_z4;
 HtrDAC_mV_t LaserV_z4;
 mean_cts_t norm_ref_cts_z4;
 mean_cts_t norm_sample_cts_z4;
-ppb_t hcho_mr; Invalidate hcho_mr;
+ppb_t hcho_mr;
+ppb_t hcho_mr_v; Invalidate hcho_mr_v;
 
 {
   BCtr_Status = BCtr_Bins[1];
@@ -225,7 +226,8 @@ depending on (t_z4)
         mean_offline_norm_sample_cts_z4 = mfnsctsz4;
         hcho_mr = (mnnsctsz4 - mfnsctsz4) * @rate@ / HCHO_CAL_CONSTANT;
         Validate mean_offline_norm_sample_cts_z4;
-        Validate hcho_mr;
+        hcho_mr_v = hcho_mr;
+        Validate hcho_mr_v;
       }
     } else {
       mnscts();

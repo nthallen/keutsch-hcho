@@ -27,7 +27,7 @@ System {
 
 MR {
   HBox{ +-; Title: "Analysis"; -+ };
-  HCHO: (hcho_mr,9) ppb;
+  HCHO: (hcho_mr_v,9) ppb;
 }
 
 { HBox { |+;
