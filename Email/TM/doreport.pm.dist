@@ -1,0 +1,20 @@
+package DoReport;
+
+our %default_msg = (
+  To => [ 'Alice Ames <alice.ames@example.com>',
+          'Bob Builder <bob.builder@example.com>' ],
+  From => 'Uranium Instrument <u@example.com>',
+  Subject => 'Uranium',
+  Message => 'stuff',
+  Message_ID_Template => 'u-%d-%d-%d@example.com'
+);
+
+our %account = (
+  queue_dir => '/home/u',
+  username => 'u@example.com',
+  password => 'password',
+  server => 'smtp.example.com',
+  port => 587
+);
+
+1;

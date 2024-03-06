@@ -1,0 +1,295 @@
+#! /usr/bin/perl -w
+package DoReport;
+use strict;
+
+use lib '@dest@';
+use doreport;
+our %default_msg;
+our %account;
+
+use Net::SMTP;
+use MIME::QuotedPrint;
+use POSIX qw(strftime :sys_wait_h);
+
+# Read $base/report.queue
+# Note the most severe message level
+# Format will be:
+# Date Severity [filename] Message
+#  where:
+#    Date is an optional field [Tue, 5 Mar 2024 10:53:09 -0700 (MST)]
+#    Severity is 0, 1 or 2, standing for
+#      Report, Warning or Error respectively
+#    [filename] is optional to specify a file to attach
+#    Message is the short text body
+
+umask 02;
+
+my @log;
+# my @files;
+my $base = $account{queue_dir};
+my $rpt = "$base/report.queue";
+my $rptmp = "$rpt.tmp";
+my $pnd = "$rpt.pending";
+my $newpnd = "$pnd.new";
+my $mailstate = "$base/mailstate.dat";
+
+my @severity = qw( Report Warning Error );
+my $last_success = '';
+
+# Returns the number of e-mail failures since the last
+# successful delivery. Sets $last_success as a side effect
+sub read_state {
+  my $failures = 0;
+  if ( -f $mailstate ) {
+    open( MSTATE, "<$mailstate" ) ||
+      die "doreport: Unable to read mailstate file $mailstate\n";
+    while (<MSTATE>) {
+      $last_success = $_ if /^Last Successful/;
+      if ( m/^Failures Since: *(\d+)$/ ) {
+        $failures = $1;
+      }
+    }
+    close MSTATE;
+  }
+  return $failures;
+}
+
+# Writes out the mailstate file, taking the number
+# of failures as an input. If $failures == 0, report
+# the current time as the last successful delivery.
+sub report_state {
+  my ( $failures ) = @_;
+  open( MSTATE, ">$mailstate" ) ||
+    die "doreport: Unable to write to $mailstate\n";
+  if ( $failures ) {
+    print MSTATE $last_success, "Failures Since: $failures\n";
+  } else {
+    my $now = localtime;
+    print MSTATE "Last Successful Mail Delivery: $now\n";
+  }
+  close MSTATE;
+}
+
+sub print_recp {
+  my ($hdr) = @_;
+  my $output = '';
+  if (defined($default_msg{$hdr})) {
+    my @list = @{$default_msg{$hdr}}; # split_recp($hdr);
+    $output = "$hdr:" . join(",\n", map " $_", @list) . "\n";
+  }
+  my @output = map "$_\n", split("\n",$output);
+}
+
+sub transmit {
+  my @msg = @_;
+  my @mlog;
+  my $success = 1;
+  my @recipients = @{$default_msg{To}};
+  if (defined($default_msg{Cc})) {
+    push(@recipients, @{$default_msg{Cc}});
+  }
+
+  my $smtp = Net::SMTP->new(Host => $account{'server'}, Port => $account{'port'}) ||
+    die "Unable to connect to " . $account{'server'} . ":" . $account{'port'} . "\n";
+  $smtp->starttls() || die $smtp->message();
+  # Below is a hack because endymion is currently disallowing auth
+  # for this IP address.
+  if (exists ${*$smtp}{'net_smtp_esmtp'}->{AUTH}) {
+    $smtp->auth($account{'username'}, $account{'password'}) ||
+      return (0, @mlog, $smtp->message());
+  }
+  $smtp->mail($account{'username'}) ||
+    return (0, @mlog, $smtp->message());
+  my $has_good_addr = 0;
+  for my $recipient (@recipients) {
+    if ($smtp->recipient($recipient, { Notify => ['NEVER'] })) {
+      $has_good_addr = 1;
+    } else {
+      push @mlog, "Error for recipient '$recipient':\n", $smtp->message();
+    }
+  }
+  if ($has_good_addr) {
+    $smtp->data() ||
+      return (0, @mlog, $smtp->message());
+    for (@msg) {
+      $smtp->datasend($_) ||
+        return (0, @mlog, $smtp->message());
+    }
+    $smtp->dataend();
+    push(@mlog, $smtp->message());
+    $smtp->quit();
+  } else {
+    return(0, @mlog, "No valid addresses\n");
+  }
+  return(1, @mlog);
+}
+
+my $last_time;
+my $last_enum;
+
+sub sendmail {
+  my (%msg) = @_;
+  my $time = time();
+  my $enum;
+  if ($last_time && $time == $last_time) {
+    $enum = ++$last_enum;
+  } else {
+    $last_time = $time;
+    $enum = $last_enum = 1;
+  }
+  my $MID = sprintf($msg{Message_ID_Template}, $$, time(), $enum);
+  my @message = (
+    "Message-ID: <$MID>\n",
+    "Date: ", $msg{Date}, "\n",
+    "Subject: ", $msg{Subject}, "\n",
+    "From: ", $msg{From}, "\n",
+    print_recp('To'),
+    print_recp('Cc') );
+  if ($msg{'content-type'}) {
+    push(@message, join('', "Mime-Version: 1.0\nContent-Type: ",
+              $msg{'content-type'}, "\n"));
+  }
+  push(@message, "\n", $msg{Message} . "\n");
+  # sendmail returns an array with the first arg being true
+  # if the message was delivered successfully and the rest being
+  # the log of the transmission.
+  return transmit(@message);
+}
+
+# @return true on success
+sub send_rpt {
+  my ( $subject, $date_in, $file_in, @msg ) = @_;
+  my %msg = %default_msg;
+  $msg{Date} = $date_in || strftime("%a, %d %b %Y %H:%M:%S %z", localtime(time()));
+  $msg{Message} = join '', @msg;
+  $msg{Subject} .= " $subject";
+  my $summary = scalar(localtime) . ": $subject: $msg[0]";
+  $summary .= " [$file_in]" if $file_in;
+
+  if ( $file_in ) {
+    if ( open (F, $file_in) ) {
+      my $boundary = "====" . time() . "====";
+      $msg{'content-type'} = "multipart/mixed; boundary=\"$boundary\"";
+      my $txtmessage = encode_qp( $msg{Message} );
+      my $filetext;
+      my $filename = $file_in;
+      $filename =~ s|^.*/||;
+
+      { local $/;
+        $filetext = encode_qp(<F>);
+        close F;
+      }
+      $boundary = '--'.$boundary;
+      $msg{Message} = <<END_OF_BODY;
+$boundary
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+$txtmessage
+$boundary
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment; filename="$filename"
+
+$filetext
+$boundary--
+END_OF_BODY
+    } else {
+      $msg{Message} .= "\nCannot read file '$file_in'\n";
+    }
+  }
+
+  my @record = sendmail( %msg );
+  my $status = shift @record;
+  if ( open( MLOG, ">>$base/mail.log" ) ) {
+    print MLOG "$summary\n", @record;
+    print MLOG "----------------------------\n";
+    close(MLOG);
+  }
+  return $status;
+}
+
+open( PEND, ">>$pnd" ) || die "Unable to write pending report\n";
+
+sub tmp_to_pend {
+  if ( open( RPT, "<$rptmp" ) ) {
+    while (<RPT>) {
+      print PEND;
+    }
+    close RPT;
+  } else {
+    push @log, "Unable to read $rptmp\n";
+  }
+  unlink $rptmp || push @log, "Unable to delete $rptmp\n";
+}
+
+if ( -f $rptmp ) {
+  push @log, "Previous report apparently not complete\n";
+  tmp_to_pend();
+}
+if ( -f $rpt ) {
+  rename( $rpt, $rptmp );
+  tmp_to_pend();
+}
+close PEND;
+
+# mailstate file syntax:
+# Last Successful Mail Delivery: <date>
+# Failures Since: <n>
+my $failures = read_state();
+if ( $failures ) {
+  if ( send_rpt( $severity[0], '', '',
+        "E-mail Recovery\n",
+        $last_success,
+        "Failures Since: $failures\n" ) ) {
+    report_state( 0 );
+  } else {
+    report_state( $failures+1 );
+    exit(0);
+  }
+}
+
+if ( -f $pnd ) {
+  if ( open( PEND, "<$pnd" ) ) {
+    while (<PEND>) {
+      if ( m/^\s* (?:\[([^\]]*)\]\s+)? (\d) \s+ (?:\[([^\]]*)\]\s+)? (.*)$/x ) {
+        my $level = @log ? 2 : 0;
+        my $date = $1;
+        my $severity = $2;
+        $severity = 2 if $severity > 2;
+        my $file = $3 || '';
+        $level = $severity if $severity > $level;
+        my $msg = $4 || $severity[$level];
+        if ( send_rpt( $severity[$level], $date, $file, $msg, @log ) ) {
+          report_state( 0 );
+        } else {
+          report_state( 1 );
+          open( NEWPEND, ">$newpnd" ) || die "Unable to write $newpnd\n";
+          print NEWPEND;
+          while (<PEND>) {
+            print NEWPEND;
+          }
+          close NEWPEND;
+          close PEND;
+          unlink $pnd;
+          rename $newpnd, $pnd;
+          exit(1);
+        }
+        @log = ();
+      }
+    }
+    close(PEND);
+    unlink $pnd;
+  } else {
+    push @log, "Unable to read $pnd\n";
+  }
+}
+
+if ( @log ) {
+  if ( send_rpt( "ERROR", '', '', @log ) ) {
+    report_state( 0 );
+  } else {
+    print STDERR @log;
+    report_state( 1 );
+  }
+}

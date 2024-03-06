@@ -1,0 +1,17 @@
+Moduledef Email [ dest= ] {
+  dest is where doreport and doreport.pm will be installed.
+  doreport.pm must be provided locally, based on doreport.pm.dist.
+}
+
+mode (default) {
+  cmdbase = Email.cmd
+  - : doreport:doreport.in
+  IGNORE = doreport
+%%
+.PHONY : install-Email
+distribution : install-Email
+install-Email :
+	@chmod +x doreport
+	@[ -d @dest@ ] || mkdir -p --mode=775 @dest@
+	@distribute $(FORCE) @dest@ doreport @MODDIR@/doreport.pm
+}

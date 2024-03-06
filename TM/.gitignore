@@ -58,6 +58,7 @@ hchoengextoui.o
 HCHOtblnc.tmc.dep
 HCHO_Engtblnc.tmc.dep
 *.err
+doreport
 HG.tmc
 HG_col.tmc
 HG.cmd
