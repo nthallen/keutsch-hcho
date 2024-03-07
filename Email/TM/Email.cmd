@@ -8,6 +8,7 @@
     char timebuf[40];
     time_t time_of_day;
 
+    time_of_day = time(0);
     strftime(timebuf, 40, "%a, %d %b %Y %T %z", localtime(&time_of_day));
     fp = fopen( "report.queue", "a" );
     if ( fp == 0 ) msg( 2, "Unable to write to report.queue" );
