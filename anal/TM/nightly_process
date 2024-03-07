@@ -144,7 +144,7 @@ if [ $opt_P = yes ]; then
           info "[Error] Move of $dest failed"
         else
           info "Moved $dest to done"
-          echo "[$(date +'%a, %d %b %Y %T %z')] Moved $dest to done" >>report.queue
+          echo "[$(date +'%a, %d %b %Y %T %z')] 0 Moved $dest to done" >>report.queue
           rm $rcpt
         fi
       elif [ -f archive/done/$dest ]; then
