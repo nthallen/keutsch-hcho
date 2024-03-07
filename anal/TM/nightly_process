@@ -8,8 +8,15 @@
 #
 # Options:
 #   -q $directory Queue $directory for overnight processing
-#   -p Perform overnight processing nicely in the background
+#   -s Invoke -p via SSH
+#   -p Invoke -P inside nice nohup background execution
 #   -P Perform overnight processing in the foreground
+
+# We may be running via SSH, so need to initialize path
+cd /home/CH2O
+export PATH=/bin:/usr/bin:/usr/local/bin
+umask g+w
+
 function info {
   msg -V -n nightly_process -- "$*"
 }
@@ -22,12 +29,14 @@ function nl_error {
 opt_q=''
 opt_p=no
 opt_P=no
+opt_s=no
 
-while getopts "q:pP" option; do
+while getopts "q:pPs" option; do
   case $option in
     q) opt_q=$OPTARG;;
     p) opt_p=yes;;
     P) opt_P=yes;;
+    s) opt_s=yes;;
     *) nl_error "Invalid option '-$option'"
   esac
 done
@@ -43,6 +52,11 @@ if [ -n "$opt_q" ]; then
     nl_error "Expected raw/ in directory path '$opt_q'"
   echo $opt_q >>saved.runs
   info "Directory $opt_q queued for processing"
+fi
+
+if [ $opt_s = yes ]; then
+  info "Invoking analysis via SSH"
+  ssh localhost $0 -p
 fi
 
 if [ $opt_p = yes ]; then
