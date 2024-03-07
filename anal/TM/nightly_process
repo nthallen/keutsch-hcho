@@ -79,33 +79,45 @@ if [ $opt_P = yes ]; then
   for dir in $dirs; do
     # redo our sanity checks
     run=/${dir#*raw/}
+    msgstatus=0
+    message=$dir
     if [ ! -d "$dir" ]; then
       info "[Error] Directory '$dir' not found"
+      msgstatus=2
+      message="$message Directory not found"
     elif [ "$run" = "$dir" ]; then
       info "[Error] Expected raw/ in directory path '$dir'"
-    fi
-
-    # Run dircksum -w
-    if [ -f $dir/.MD5SUM ]; then
-      info "Skipping dircksum on $dir"
     else
-      info "Calculating dircksum on $dir"
-      dircksum -w "$dir"
-    fi
+      # Run dircksum -w
+      if [ -f $dir/.MD5SUM ]; then
+        info "Skipping dircksum on $dir"
+      else
+        info "Calculating dircksum on $dir"
+        dircksum -w "$dir"
+      fi
 
-    # Create tar.gz
-    dest=$(echo $dir | sed -e 's/^raw\//HCHO_/; s/\//_/').tar.gz
-    info "Creating archive $dest"
-    tar -czf $dest $dir
-    
-    # Move tar.gz into staging directory
-    [ -d archive/stage ] || mkdir -p archive/stage
-    if [ -d archive/stage ]; then
-      mv $dest archive/stage/
-      [ -f $dest ] && info "Failed to move $dest into archive/stage"
-    else
-      info "Unable to create stage directory"
+      # Create tar.gz
+      dest=$(echo $dir | sed -e 's/^raw\//HCHO_/; s/\//_/').tar.gz
+      info "Creating archive $dest"
+      tar -czf $dest $dir
+      
+      # Move tar.gz into staging directory
+      [ -d archive/stage ] || mkdir -p archive/stage
+      if [ -d archive/stage ]; then
+        mv $dest archive/stage/
+        if [ -f $dest ]; then
+          info "Failed to move $dest into archive/stage"
+          msgstatus=2
+          message="$message: Failed to move into archive/stage"
+        fi
+      else
+        info "Unable to create stage directory"
+        msgstatus=2
+        message="$message: Unable to create stage directory"
+      fi
     fi
+    [ $msgstatus = 0 ] && message="$message prepared for archiving"
+    echo "[$(date +'%a, %d %b %Y %T %z')] $msgstatus $message" >>report.queue
   done
 
   [ -d archive/receipt ] || mkdir -p archive/receipt
@@ -132,6 +144,7 @@ if [ $opt_P = yes ]; then
           info "[Error] Move of $dest failed"
         else
           info "Moved $dest to done"
+          echo "[$(date +'%a, %d %b %Y %T %z')] Moved $dest to done" >>report.queue
           rm $rcpt
         fi
       elif [ -f archive/done/$dest ]; then
