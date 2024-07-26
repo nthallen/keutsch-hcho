@@ -100,8 +100,9 @@ dfs.plot('hgthgc','label','Current','vars',{'THG_OutputCurrent'});
 dfs.plot('hgthgv','label','Voltage','vars',{'THG_OutputVoltage'});
 dfs.plot('hgthgs','label','Status','vars',{'THG_DevStatus'});
 dfs.end_col;
-dfs.resize(context_level);
 dfs.set_connection('127.0.0.1', 1417);
 if nargout > 0
   dfs_out = dfs;
+else
+  dfs.resize(context_level);
 end

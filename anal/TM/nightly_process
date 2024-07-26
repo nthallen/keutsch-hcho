@@ -47,7 +47,7 @@ done
 if [ -n "$opt_q" ]; then
   [ -d "$opt_q" ] ||
     nl_error "Specified directory '$opt_q' is not a directory"
-  run=/${opt_q#*raw/}
+  run=${opt_q#*raw/}
   [ "$run" = "$opt_q" ] &&
     nl_error "Expected raw/ in directory path '$opt_q'"
   echo $opt_q >>saved.runs
@@ -78,7 +78,7 @@ if [ $opt_P = yes ]; then
   fi
   for dir in $dirs; do
     # redo our sanity checks
-    run=/${dir#*raw/}
+    run=${dir#*raw/}
     msgstatus=0
     message=$dir
     if [ ! -d "$dir" ]; then

@@ -420,7 +420,7 @@ State Chop_Active {
   #define THG_DEADBAND 0.015
   #define THG_STEPSIZE 0.005
   #define THG_HARD_LOWER_LIMIT 36.3
-  #define THG_HARD_UPPER_LIMIT 36.4
+  #define THG_HARD_UPPER_LIMIT 36.5
   #include "TM_average.h"
   TM_average<double> LasPwrAvg;
 %}

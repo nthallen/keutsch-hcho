@@ -57,3 +57,7 @@ hchojsonext : BCtr_conv.tmc HtrCtrl_conv.tmc TS_conv.tmc fcc_conv.tmc \
 doit : hcho.doit
 hchoalgo : BCtr_conv.tmc TS_conv.tmc hcho.tma hcho.sws
 normctsext : BCtr_conv.tmc normcts.cdf
+
+%%
+CXXFLAGS=-g
+
