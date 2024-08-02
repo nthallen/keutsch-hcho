@@ -9,6 +9,7 @@
 # Options:
 #   -q $directory Queue $directory for overnight processing
 #   -s Invoke -p via SSH
+#   -H hostname Name of host to ssh to (localhost)
 #   -p Invoke -P inside nice nohup background execution
 #   -P Perform overnight processing in the foreground
 
@@ -30,10 +31,12 @@ opt_q=''
 opt_p=no
 opt_P=no
 opt_s=no
+opt_H=localhost
 
-while getopts "q:pPs" option; do
+while getopts "q:H:pPs" option; do
   case $option in
     q) opt_q=$OPTARG;;
+    H) opt_H=$OPTARG;;
     p) opt_p=yes;;
     P) opt_P=yes;;
     s) opt_s=yes;;
@@ -55,8 +58,8 @@ if [ -n "$opt_q" ]; then
 fi
 
 if [ $opt_s = yes ]; then
-  info "Invoking analysis via SSH"
-  ssh localhost $0 -p
+  info "Invoking analysis via SSH $opt_H"
+  ssh $opt_H $0 -p
 fi
 
 if [ $opt_p = yes ]; then
