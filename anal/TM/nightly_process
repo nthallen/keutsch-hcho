@@ -48,12 +48,12 @@ done
   nl_error "Options -p and -P are mutually exclusive"
 
 if [ -n "$opt_q" ]; then
+  run=${opt_q#*raw/}
+  [ "$run" = "$opt_q" ] &&
+    nl_error "Expected raw/ in directory path '$opt_q'"
   if [ $opt_H = localhost ]; then
     [ -d "$opt_q" ] ||
       nl_error "Specified directory '$opt_q' is not a directory"
-    run=${opt_q#*raw/}
-    [ "$run" = "$opt_q" ] &&
-      nl_error "Expected raw/ in directory path '$opt_q'"
     echo $opt_q >>saved.runs
     info "Directory $opt_q queued for processing"
   else
