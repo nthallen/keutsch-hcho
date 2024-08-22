@@ -16,26 +16,13 @@ TM typedef double LaserPwr_t { text "%7.4lf"; convert Laser_mW; }
 LaserPwt_t is in Volts (TS1_T), Laser_mW is in mW
 Verified May 7, 2021 by JDS
 FILIF Folder: 210508.1 
+New Cal 8/3/2024:
+  Data01.LasIn_mW_JBS=Data01.TS1_T.*14.18+0.0057; % JBS 2023 - Munich Alignment
 */
 Calibration (LaserPwr_t,Laser_mW) {
-  0.0000, 0.00,
-  0.0150, 0.072,
-  0.0410, 0.21,
-  0.0610, 0.31,
-  0.0880, 0.46,
-  0.1220, 0.64,
-  0.1600, 0.85,
-  0.2030, 1.08,
-  0.2250, 1.21,
-  0.2450, 1.33,
-  0.2860, 1.59,
-  0.3190, 1.81,
-  0.3450, 2.00,
-  0.3600, 2.12,
-  0.3650, 2.16,
-  0.3670, 2.18
+  0.0000, 0.0057,
+  0.2000, 2.8417
 }
-
 
 
 /* TM 1 Hz TS_raw_t TS0_raw; TM 1 Hz TS_cnt_t TS0_cnt; */

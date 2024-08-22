@@ -5,6 +5,7 @@
   2018-09-07 NTA 2700 based on back-of-the-envelope
   2018-09-07 NTA/JDS 71.87 reverting to Josh's number after power cal
   2019-07-24 JDS 77.8 based on recent calibration verification from 190724.2
+  2024-08-03 JBS 74 based on Munch '24 and post calibration
 
   The laser power calibration from Volts to mW
   is defined in TS.tmc. Record changes here.
@@ -12,4 +13,4 @@
   2018-09-07 NTA 3.91 V == 1 mW
   2018-09-07 NTA/JDS nonlinear cal
 */
-#define HCHO_CAL_CONSTANT 77.8
+#define HCHO_CAL_CONSTANT 74.0
