@@ -4,10 +4,13 @@
 # Optionally override the username with:
 #   hostname 10.245.83.9 in Cambridge
 #   hostname 192.168.0.112 in Munich 3/2/24
+#   hostname 10.2.84.173 at MIT 3/2/26
 #   user my_username
 
-host ch2o ch2o.arp.harvard.edu hcho 10.245.83.9
+host ch2o ch2o.arp.harvard.edu hcho 10.2.84.79
 # hostname 10.245.83.9
-hostname 192.168.1.227
+# hostname 192.168.1.227
+# hostname 10.2.84.173
+hostname 10.2.84.79
 ForwardAgent yes
 user ch2o_user
