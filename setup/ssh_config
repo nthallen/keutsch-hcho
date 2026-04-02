@@ -2,10 +2,13 @@
 #   include /home/ch2o/src/setup/ssh_config
 # to ~/.ssh/config
 # Optionally override the username with:
+#   user my_username
+#
 #   hostname 10.245.83.9 in Cambridge
 #   hostname 192.168.0.112 in Munich 3/2/24
-#   hostname 10.2.84.173 at MIT 3/2/26
-#   user my_username
+#   hostname 192.168.1.227 at MIT before 2026
+#   hostname 10.2.84.173 at MIT 2/27/26
+#   hostname 10.2.84.79 at MIT 4/2/26
 
 host ch2o ch2o.arp.harvard.edu hcho 10.2.84.79
 # hostname 10.245.83.9
