@@ -10,7 +10,7 @@ host ch2o ch2o.arp.harvard.edu hcho 10.245.83.9
 # hostname 10.245.83.9
 # Below was IP on one subnet in Kroll lab at MIT before 2026:
 # hostname 192.168.1.227
-# This is IP in Kroll lab at MIT as of 2/27/2026:
-hostname 10.2.84.173
+# This is IP in Kroll lab at MIT as of 4/8/2026:
+hostname 10.84.0.40
 ForwardAgent yes
 user ch2o_user
